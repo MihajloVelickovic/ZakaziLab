@@ -7,6 +7,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+
 mongoose.connect(URI)
         .then(() => {
             app.listen(process.env.SERVER_PORT, () => {
