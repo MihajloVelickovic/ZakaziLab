@@ -15,3 +15,4 @@ const URI = `mongodb+srv://${process.env.MONGO_USER}:`+
                            "appName=Zakazi-Lab-Cluster"
 
 export {URI};
+
