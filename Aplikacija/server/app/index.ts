@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import {URI} from "./config";
+import Kabinet, {IKabinet, IRacunar} from "./models/kabinet"
 
 const app = express();
 app.use(express.json());
@@ -9,11 +10,11 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended:true }));
 
-
 mongoose.connect(URI)
         .then(() => {
             app.listen(process.env.SERVER_PORT, () => {
-                console.log(`Running on port ${process.env.SERVER_PORT}`);            
+                console.log(`Running on port ${process.env.SERVER_PORT}`);
+
             })
         })
         .catch((err) => {

@@ -12,7 +12,7 @@ const URI = `mongodb+srv://${process.env.MONGO_USER}:`+
                            "zakazi-lab-cluster.bt5bepa.mongodb.net/?"+
                            "retryWrites=true&"+
                            "w=majority&"+
-                           "appName=Zakazi-Lab-Cluster"
+                           "appName=Zakazi-Lab-Cluster";
 
 export {URI};
 
