@@ -1,6 +1,5 @@
-import mongoose from "mongoose";
-
-//dodati stavkuSpiskaStudenata
+import mongoose, { mongo } from "mongoose";
+import { IStudentEntry, StudentEntrySchema } from "./studentEntry";
 
 export interface ILab extends Document{
     name: string;
@@ -8,6 +7,7 @@ export interface ILab extends Document{
     mandatory: boolean;
     workNum: number;
     maxPoints: number;
+    studentList: IStudentEntry[];
 }
 
 export const LabScheme = new mongoose.Schema<ILab> ({
@@ -30,6 +30,10 @@ export const LabScheme = new mongoose.Schema<ILab> ({
     maxPoints: {
         type: Number,
         required:true
+    },
+    studentList: {
+        type: [StudentEntrySchema],
+        required: true
     }
  });
 

@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import {URI} from "./config";
-import Classroom, {IClassroom, IComputer} from "./models/kabinet"
+
 
 const app = express();
 app.use(express.json());
