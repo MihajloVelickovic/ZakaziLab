@@ -18,7 +18,7 @@ export const StudentSchema = new mongoose.Schema<IStudent>({
         required: true
     },
     module: {
-        tpye: String,
+        type: String,
         required:true
     }
 });
