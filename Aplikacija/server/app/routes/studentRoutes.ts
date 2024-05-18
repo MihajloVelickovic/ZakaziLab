@@ -5,7 +5,7 @@ import { Request, Response } from 'express';
 const router = Router();
 
 //dodavanje
-router.post('students/studnetAdd', async (req, res) => {
+router.post('/students/studentAdd', async (req, res) => {
     const { name, lastName, email,
          privileges, birthDate, index, module} = req.body;
     
@@ -21,7 +21,7 @@ router.post('students/studnetAdd', async (req, res) => {
 });
 
 //find all
-router.get('students/studentFindAll', async (req, res) => {
+router.get('/students/studentFindAll', async (req, res) => {
     try {
         const students = await Student.find();
         res.json(students);
