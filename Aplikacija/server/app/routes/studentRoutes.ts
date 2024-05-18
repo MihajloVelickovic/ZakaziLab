@@ -5,7 +5,7 @@ import { Request, Response } from 'express';
 const router = Router();
 
 //dodavanje
-router.post('/students/studentAdd', async (req, res) => {
+router.post('/studentAdd', async (req, res) => {
     const { name, lastName, email,
          privileges, birthDate, index, module} = req.body;
     
@@ -16,12 +16,12 @@ router.post('/students/studentAdd', async (req, res) => {
         const savedStudent = await student.save();
         res.status(201).json(savedStudent);
     } catch(error) {
-        res.status(400).json( {message: "greska"});
+        res.status(400).json( {message: "greska"} );
     }
 });
 
 //find all
-router.get('/students/studentFindAll', async (req, res) => {
+router.get('/studentFindAll', async (req, res) => {
     try {
         const students = await Student.find();
         res.json(students);
@@ -32,7 +32,7 @@ router.get('/students/studentFindAll', async (req, res) => {
 
 //find one
 router.get(
-    '/students/filteredFind',
+    '/filteredFind',
     async ( req: Request, res: Response) => {
     
         try {
@@ -53,7 +53,7 @@ router.get(
 
 //delete one
 router.delete(
-    '/students/deleteStudent/:id',
+    '/deleteStudent/:id',
     async (req: Request, res: Response) => {
         try {
             const studentId = req.params.id;
