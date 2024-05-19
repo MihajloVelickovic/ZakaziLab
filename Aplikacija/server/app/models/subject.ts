@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-export interface ISubject extends Document{
+export interface ISubject extends mongoose.Document {
     ordNum: Number;
     desc: string;
     date: Date;

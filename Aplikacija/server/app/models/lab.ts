@@ -1,7 +1,7 @@
 import mongoose, { mongo } from "mongoose";
 import { IStudentEntry, StudentEntrySchema } from "./studentEntry";
 
-export interface ILab extends Document{
+export interface ILab extends mongoose.Document{
     name: string;
     desc: string;
     mandatory: boolean;

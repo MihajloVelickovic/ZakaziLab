@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 
 
-export interface IUser {
+export interface IUser extends mongoose.Document{
     name: string;
     lastName: string;
     email: string;

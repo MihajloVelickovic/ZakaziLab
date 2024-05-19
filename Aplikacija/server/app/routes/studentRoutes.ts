@@ -1,11 +1,10 @@
 import { Router } from 'express';
 import Student from '../models/student';
-import { Request, Response } from 'express';
 
-const router = Router();
+const studentRouter = Router();
 
 //dodavanje
-router.post('/studentAdd', async (req, res) => {
+studentRouter.post('/studentAdd', async (req, res) => {
     const { name, lastName, email,
          privileges, birthDate, index, module} = req.body;
     
@@ -21,7 +20,7 @@ router.post('/studentAdd', async (req, res) => {
 });
 
 //find all
-router.get('/studentFindAll', async (req, res) => {
+studentRouter.get('/studentFindAll', async (req, res) => {
     try {
         const students = await Student.find();
         res.json(students);
@@ -31,9 +30,9 @@ router.get('/studentFindAll', async (req, res) => {
 });
 
 //find one
-router.get(
+studentRouter.get(
     '/filteredFind',
-    async ( req: Request, res: Response) => {
+    async ( req, res) => {
     
         try {
             const query = req.body;
@@ -52,9 +51,9 @@ router.get(
 });
 
 //delete one
-router.delete(
+studentRouter.delete(
     '/deleteStudent/:id',
-    async (req: Request, res: Response) => {
+    async (req, res) => {
         try {
             const studentId = req.params.id;
 
@@ -71,4 +70,4 @@ router.delete(
         }
 });
 
-export default router;
+export default studentRouter;

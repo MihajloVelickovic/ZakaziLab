@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-export interface IComputer extends Document {
+export interface IComputer extends mongoose.Document {
     name: string;
     malfunctioned: boolean;
     malfunctionDesc: string;
@@ -26,7 +26,7 @@ export const ComputerSchema = new mongoose.Schema<IComputer>({
     }
 });
 
-export interface IClassroom extends Document {
+export interface IClassroom extends mongoose.Document {
     name: string;
     computerNum: number;
     rows: number;
