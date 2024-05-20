@@ -1,13 +1,16 @@
 import { Link, NavLink } from 'react-router-dom';
 import '../styles/Header.css';
+import '../styles/LoginButton.css';
 import { useState } from 'react';
+
 
 const Header=()=>{
     const[menuOpen, setMenuOpen] = useState(false);
+
     return(
         <header className="header-container">
             <nav>
-                <Link to='/' className="title">ZakaziLab <span className="version">alpha0.0</span></Link>
+                <Link to='/' className="title">ZakažiLab <span className="version">alpha0.0</span></Link>
                 <div className="menu" onClick={()=>{
                     setMenuOpen(!menuOpen);
                 }}>
@@ -16,7 +19,13 @@ const Header=()=>{
                     <span></span>
                 </div>
                 <ul className={menuOpen? "open" : ""}>
-                    <li><NavLink to="login">Prijavi se</NavLink></li>
+                    <li><NavLink to="/login">
+                        <button className="login-button">
+                            Prijavi se
+                        <div class="arrow-wrapper">
+                            <div class="arrow"></div>
+                        </div>
+                </button></NavLink></li>
                 </ul>
             </nav>
         </header>

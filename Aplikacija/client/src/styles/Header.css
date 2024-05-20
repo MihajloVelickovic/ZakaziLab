@@ -1,6 +1,7 @@
 .version {
     font-size: 1rem;
     color: white;
+    color: #888; /* Set the color to gray */
 }
 
 nav{
@@ -35,10 +36,6 @@ nav ul li a{
     border-radius: 0.5rem;
 }
 
-nav ul li a:not(.active):hover{
-    background-color: #01579B;
-}
-
 nav .menu{
     display: none;
     position: absolute;
@@ -55,10 +52,6 @@ nav .menu span{
     width: 100%;
     background-color: white;
     border-radius: 0.2rem;
-}
-
-.active{
-    background-color: #01579B;
 }
 
 @media (max-width: 480px){
@@ -85,4 +78,9 @@ nav .menu span{
     nav ul.open{
         display:flex;
     }
+    nav ul li button {
+        width: 100%;
+    }
 }
+
+  
