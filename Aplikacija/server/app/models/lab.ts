@@ -5,7 +5,7 @@ export interface ILab extends mongoose.Document{
     name: string;
     desc: string;
     mandatory: boolean;
-    workNum: number;
+    subjectNum: number;
     maxPoints: number;
     studentList: IStudentEntry[];
 }
@@ -23,7 +23,7 @@ export const LabScheme = new mongoose.Schema<ILab> ({
         type: Boolean,
         required:true
     },
-    workNum: {
+    subjectNum: {
         type: Number,
         required:true
     },

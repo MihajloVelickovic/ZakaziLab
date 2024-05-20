@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { IStudentEntry, StudentEntrySchema } from "./studentEntry";
 
 export interface ISubject extends mongoose.Document {
     ordNum: Number;
@@ -6,6 +7,7 @@ export interface ISubject extends mongoose.Document {
     date: Date;
     timeSlots: Date[];
     maxPoints: Number;
+    studentList: IStudentEntry[];
 }
 
 export const TemaSchema = new mongoose.Schema<ISubject>({
@@ -27,6 +29,10 @@ export const TemaSchema = new mongoose.Schema<ISubject>({
     },
     maxPoints: {
         type: Number,
+        required:true
+    },
+    studentList: {
+        type: [StudentEntrySchema],
         required:true
     }
 });

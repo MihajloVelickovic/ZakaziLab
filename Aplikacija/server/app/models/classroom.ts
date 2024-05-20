@@ -5,6 +5,7 @@ export interface IComputer extends mongoose.Document {
     malfunctioned: boolean;
     malfunctionDesc: string;
     free: boolean;
+    student: number;
 }
 
 export const ComputerSchema = new mongoose.Schema<IComputer>({
@@ -23,6 +24,10 @@ export const ComputerSchema = new mongoose.Schema<IComputer>({
     free: { 
         type: Boolean,
          default: true 
+    },
+    student: {
+        type: Number,
+        required:false
     }
 });
 

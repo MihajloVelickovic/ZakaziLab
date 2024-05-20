@@ -29,7 +29,8 @@ assistantRouter.post("/add", async (req, res) => {
         res.status(200).send(result);
     }
     catch(err: any){
-        res.status(400).send({message: `Error adding assistant: ${err.message}`});
+        res.status(400).send({message: `Error adding assistant:
+         ${err.message}`});
     }
 
 });

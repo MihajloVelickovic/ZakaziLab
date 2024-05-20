@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
-import Assistent, { IAssistent } from "./assistent";
+import Assistent, { IAssistant } from "./assistant";
 
 
-export interface IProfessor extends IAssistent {
+export interface IProfessor extends IAssistant {
     phdGradDate: Date;
     phdGradFaculty: string;
 }

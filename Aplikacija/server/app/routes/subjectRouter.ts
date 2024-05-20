@@ -1,12 +1,15 @@
-import { Router } from 'express';
-import Subject from '../models/subject'
+import { Router } from "express";
+import Subject from "../models/subject";
 
 const subjectRouter = Router();
 
-subjectRouter.post('/add', async (req, res) => {
-    const { ordNum, desc, date, timeSlots, maxPoints } = req.body;
+subjectRouter.post("/add", async (req, res) => {
+    const { ordNum, desc, date, timeSlots, maxPoints, studentList } = req.body;
 
-    const subject = new Subject({ ordNum, desc, date, timeSlots, maxPoints });
+    const subject = new Subject({ 
+                                    ordNum, desc, date, 
+                                    timeSlots, maxPoints, studentList
+                                 });
 
     try {
         const savedSubject = await subject.save();
@@ -17,16 +20,16 @@ subjectRouter.post('/add', async (req, res) => {
     }
 });
 
-subjectRouter.get('/findAll', async (req, res) => {
+subjectRouter.get("/findAll", async (req, res) => {
     try {
-        const subjects = await Subject.find();
+        const subjects = await Subject.find({});
         res.json(subjects);
     } catch (err) {
         res.status(500).json( { message: "Could not find subjects"});
     }
 });
 
-subjectRouter.get('/filteredFind', async (req, res) => {
+subjectRouter.get("/filteredFind", async (req, res) => {
     try {
         const query = req.body;
 
@@ -38,7 +41,7 @@ subjectRouter.get('/filteredFind', async (req, res) => {
     }
 });
 
-subjectRouter.delete('/delete/:id', async (req, res) => {
+subjectRouter.delete("/delete/:id", async (req, res) => {
     try {
         const subjectId = req.params.id;
 

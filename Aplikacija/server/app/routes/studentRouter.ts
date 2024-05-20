@@ -1,10 +1,10 @@
-import { Router } from 'express';
-import Student from '../models/student';
+import { Router } from "express";
+import Student from "../models/student";
 
 const studentRouter = Router();
 
 //dodavanje
-studentRouter.post('/add', async (req, res) => {
+studentRouter.post("/add", async (req, res) => {
     const { name, lastName, email,
          privileges, birthDate, index, module} = req.body;
     
@@ -25,13 +25,13 @@ studentRouter.get('/findAll', async (req, res) => {
         const students = await Student.find({});
         res.json(students);
     } catch(error) {
-        res.status(500).json({ message: "greska"});
+        res.status(500).json({ message: "Could not find students"});
     }
 });
 
 //find one
 studentRouter.get(
-    '/filteredFind',
+    "/filteredFind",
     async ( req, res) => {
     
         try {
@@ -52,7 +52,7 @@ studentRouter.get(
 
 //delete one
 studentRouter.delete(
-    '/delete/:id',
+    "/delete/:id",
     async (req, res) => {
         try {
             const studentId = req.params.id;
