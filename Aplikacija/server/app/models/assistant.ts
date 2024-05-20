@@ -2,13 +2,13 @@ import mongoose from "mongoose";
 import User, { IUser } from "./user";
 
 
-export interface IAssistent extends IUser {
+export interface IAssistant extends IUser {
     module: string;
     gradDate: Date;
     gradFaculty: string;
 }
 
-const AssistentSchema = new mongoose.Schema<IAssistent>({
+const AssistantSchema = new mongoose.Schema<IAssistant>({
     module: {
         type: String,
         required: true
@@ -23,6 +23,6 @@ const AssistentSchema = new mongoose.Schema<IAssistent>({
     }
 });
 
-const Assistent = User.discriminator('Assistent', AssistentSchema);
+const Assistant = User.discriminator('Assistant', AssistantSchema);
 
-export default Assistent;
+export default Assistant;

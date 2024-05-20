@@ -3,7 +3,7 @@ import Subject from '../models/subject'
 
 const subjectRouter = Router();
 
-subjectRouter.post('/addSubject', async (req, res) => {
+subjectRouter.post('/add', async (req, res) => {
     const { ordNum, desc, date, timeSlots, maxPoints } = req.body;
 
     const subject = new Subject({ ordNum, desc, date, timeSlots, maxPoints });
@@ -17,7 +17,7 @@ subjectRouter.post('/addSubject', async (req, res) => {
     }
 });
 
-subjectRouter.get('/findAllSubjects', async (req, res) => {
+subjectRouter.get('/findAll', async (req, res) => {
     try {
         const subjects = await Subject.find();
         res.json(subjects);
@@ -30,7 +30,7 @@ subjectRouter.get('/filteredFind', async (req, res) => {
     try {
         const query = req.body;
 
-        const subject = await Subject.findOne(query);
+        const subject = await Subject.find(query);
 
         res.json(subject);
     } catch (err) {
@@ -38,7 +38,7 @@ subjectRouter.get('/filteredFind', async (req, res) => {
     }
 });
 
-subjectRouter.delete('/deleteSubject/:id', async (req, res) => {
+subjectRouter.delete('/delete/:id', async (req, res) => {
     try {
         const subjectId = req.params.id;
 
