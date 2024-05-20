@@ -1,0 +1,163 @@
+body {
+    background: yellowgreen;
+}
+.container {
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+    margin-top: 200px;
+    width: 600px;
+    background: white;
+    padding-bottom: 30px;
+    align-items: center;
+    justify-content: center;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    margin-top: 30px;
+}
+
+.text {
+    
+    color: darkblue;
+    font-size: 48px;
+    font-weight: 700;
+}
+
+.underline {
+    width: 61px;
+    height: 6px;
+    background: darkblue;
+    border-radius: 9px;
+}
+
+.inputs {
+    margin-top: 55px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.input {
+    display: flex;
+    align-items: center;
+    margin:auto;
+    width: 480px;
+    height: 80px;
+    background: whitesmoke;
+    border-radius: 6px;    
+}
+
+.input img{
+    margin: 0px 30px;
+}
+
+.input input{
+    height: 50px;
+    width: 400px;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: darkgray;
+    font-size: 20px;
+}
+
+.forgot-password {
+    padding-left: 62px;
+    margin-top: 27px;
+    color: darkgray;
+    font-size: 18px;
+}
+
+.forgot-password span{
+    color: darkblue;
+    cursor: pointer;
+}
+
+.submit-container {
+    display: flex;
+    gap: 30px;
+    margin-top: 60px;
+    margin-bottom: 60px;
+    /* margin: 60px auto; */
+    /* padding-top: 60px; */
+}
+
+.submit{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 220px;
+    height: 59px;
+    color: whitesmoke;
+    background: darkblue;
+    border-radius: 30px;
+    font-size: 19px;
+    font-weight: 700;
+    cursor: pointer;
+    position: relative;
+    z-index: 0;
+}
+
+.submit:before {
+    content: '';
+    background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+    position: absolute;
+    top: -2px;
+    left:-2px;
+    background-size: 400%;
+    z-index: -1;
+    filter: blur(5px);
+    width: calc(100% + 4px);
+    height: calc(100% + 4px);
+    animation: glowing 20s linear infinite;
+    opacity: 0;
+    transition: opacity .3s ease-in-out;
+    border-radius: 30px;
+}
+
+.submit:active {
+    color: #000
+}
+
+.submit:active:after {
+    background: transparent;
+}
+
+.submit:hover:before {
+    opacity: 1;
+}
+
+.submit:after {
+    z-index: -1;
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: darkblue;
+    left: 0;
+    top: 0;
+    border-radius: 30px;
+    
+}
+
+.submit-gray {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 220px;
+    height: 59px;
+    color: darkgrey;
+    background: whitesmoke;
+    border-radius: 30px;
+    font-size: 19px;
+    font-weight: 700;
+    cursor: pointer;
+    position: relative;
+    z-index: 0;
+}
