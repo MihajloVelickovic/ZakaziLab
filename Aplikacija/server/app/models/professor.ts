@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Assistent, { IAssistant } from "./assistant";
+import User from "./user";
 
 
 export interface IProfessor extends IAssistant {
@@ -18,6 +19,6 @@ const ProfessorSchema = new mongoose.Schema<IProfessor>({
     }
 });
 
-const Professor = Assistent.discriminator('Professor', ProfessorSchema);
+const Professor = User.discriminator('Professor', ProfessorSchema);
 
 export default Professor;
