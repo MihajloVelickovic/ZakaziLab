@@ -19,8 +19,8 @@ app.use("/student", studentRouter);
 app.use("/subject", subjectRouter);
 app.use("/assistant", assistantRouter);
 app.use("/classrooms", classroomRouter);
-app.use("professors", professorRouter);
-app.use("labs", labRouter);
+app.use("/professors", professorRouter);
+app.use("/labs", labRouter);
 
 mongoose.connect(URI)
         .then(() => {
