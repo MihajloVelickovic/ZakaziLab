@@ -8,7 +8,8 @@ const AppRoutes=()=>{
         <Router>
             <Routes>
                 <Route exact path="/" element={<HomePage/>}/>
-                <Route path="login" element={<LoginSignupPage/>}/>
+                <Route exact path="/login" element={<LoginSignupPage/>}/>
+                
             </Routes>
         </Router>
     );

@@ -6,13 +6,15 @@ import '../styles/LoginSignup.css';
 import userImg from '../images/person.png';
 import emailImg from '../images/email.png';
 import passwordImg from '../images/password.png';
+import backgroundImg from '../images/loginBackground.jpg';
 
 const LoginSignup = () => {
 
     const [action, setAction] = useState("Sign Up");
 
     return (
-        <div className='container'>
+        <div className='loginContainer'>
+        
             <div className='header'>
                 <div className='text'>{action}</div>
                 <div className='underline'></div>
@@ -42,7 +44,6 @@ const LoginSignup = () => {
                 <div className={action==="Sign Up"?'submit-gray':'submit'} onClick={()=>{setAction("Login")}}>Login</div>
             </div>
         </div>
-
     )
 }
 

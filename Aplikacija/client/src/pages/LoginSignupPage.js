@@ -4,7 +4,7 @@ import LoginSignup from '../components/LoginSignup';
 
 const LoginSignupPage=()=>{
     return(
-        <div className="home-page"> 
+        <div className="loginSignup-page"> 
             <LoginSignup/>
         </div>
     );
