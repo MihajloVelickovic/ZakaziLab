@@ -19,13 +19,25 @@ const Header=()=>{
                     <span></span>
                 </div>
                 <ul className={menuOpen? "open" : ""}>
+                    <li>
+                        <p style={{fontSize: "12px", paddingTop: "20px", color: "whitesmoke"}}>Privremeno cu ovde da stavim linkove za stranice</p>
+                    </li>
                     <li><NavLink to="/login">
                         <button className="login-button">
                             Prijavi se
                         <div class="arrow-wrapper">
                             <div class="arrow"></div>
                         </div>
-                </button></NavLink></li>
+                        </button>
+                    </NavLink></li>
+                    <li><NavLink to="/student">
+                        <button className="login-button">
+                            Student page
+                        <div class="arrow-wrapper">
+                            <div class="arrow"></div>
+                        </div>
+                        </button>
+                    </NavLink></li>
                 </ul>
             </nav>
         </header>
