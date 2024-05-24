@@ -2,17 +2,20 @@ body {
     height: 100%;
     width: 100%;
 }
+
 .student-page {
     width: 100vw;
     height: 100vh;
-    background: yellowgreen;
+    /* background: yellowgreen; */
     /*object-fit: contain;*/
     /*background-image: url(../images/loginBackground.jpg);*/
     /*padding: 5%;*/
 }
+
 .studentContainer {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    /* width: 300px; */
     /*margin: auto;*/
     /* margin-top: 200px; */
     /* padding-top: 200px; */
@@ -20,6 +23,34 @@ body {
     /* height: 800px; */
     background: white;
     /*padding-bottom: 30px;*/
-    align-items: center;
-    justify-content: center;
+    /* align-items: center;
+    justify-content: center; */
+}
+
+aside {
+    width: 25%;
+    padding-left: 10px;
+    margin-left: 10px;
+    padding: 20px;
+    float: left;
+    background-color: lightgray;
+}
+
+main {
+    display: flex;    
+    flex-direction: column;
+    justify-content: space-between;
+    row-gap: 20px;
+    width: 100vw;
+    background: azure;
+    padding: 20px;
+    border: 20px;
+}
+
+main div {
+    border: 40px;
+}
+
+main button {
+    width: 300px;
 }

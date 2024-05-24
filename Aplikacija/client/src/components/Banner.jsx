@@ -22,7 +22,7 @@ export const Banner = () => {
           style={{
             backgroundSize: `${(window.outerHeight - scrollPosition) / 3}%`,
           }}
-          className="banner container"
+          className="banner bannerContainer"
         >
           <h2>ZakažiLab</h2>
           <button className="main-button">Prijavi se</button>

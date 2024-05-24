@@ -1,4 +1,4 @@
-import { Link, NavLink } from 'react-router-dom';
+//import { Link, NavLink } from 'react-router-dom';
 import React, {useState} from "react";
 import '../styles/LoginSignup.css';
 
@@ -6,7 +6,7 @@ import '../styles/LoginSignup.css';
 import userImg from '../images/person.png';
 import emailImg from '../images/email.png';
 import passwordImg from '../images/password.png';
-import backgroundImg from '../images/loginBackground.jpg';
+//import backgroundImg from '../images/loginBackground.jpg';
 
 const LoginSignup = () => {
 
