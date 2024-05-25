@@ -1,20 +1,23 @@
 import { Nav, Navbar, NavLink } from 'react-bootstrap';
 import { Link } from "react-router-dom"
 import React from "react";
-import { useState } from 'react';
+import Brand from "../images/favicon.ico";
 
 const NavigationBar = () => {
     return (
-        <Navbar collapseOnSelect expand="xl" bg="dark" variant='dark'>
+        <Navbar expand="xl" variant='black' Navbar='black'>
             
-            <Navbar.Toggle aria-controls='navbarScroll' data-bs-target="#navbarScroll" />
+            <Navbar.Toggle aria-controls='navbarScroll' data-bs-target="#navbarScroll" style={{backgroundColor:"lightgrey"}}/>
             <Navbar.Collapse id='navbarScroll'>
-                <Nav className="mr-auto flex-column">
-                    <Navbar.Brand as={Link} to="/">ZakažiLab</Navbar.Brand>
-                    <NavLink eventKey="1" as={Link} to="home" style={{display:"block"}}>Home</NavLink>
-                    <NavLink eventKey="2" as={Link} to="lab"style={{display:"block"}}>Laboratorijske vezbe</NavLink>
-                    <NavLink eventKey="3" as={Link} to="poeni" style={{display:"block"}}>Osvojeni poeni</NavLink>
-                    <NavLink eventKey="4" as={Link} to="aktivnosti" style={{display:"block"}}>Kalendar aktivnosti</NavLink>
+                <Nav className="flex-column">
+                    <Navbar.Brand as={Link} to="/">
+                        <img src={Brand} alt="" style={{width:"40px"}} className="rounded-pill"/>
+                        <span style={{paddingLeft:"20px"}}>ZakažiLab</span>
+                    </Navbar.Brand>
+                    <NavLink className="bi bi-house" eventKey="1" as={Link} to="home" > Home</NavLink>
+                    <NavLink eventKey="2" as={Link} to="lab"><i class="fa fa-flask"></i> Laboratorijske vezbe</NavLink>
+                    <NavLink className="bi bi-card-checklist" eventKey="3" as={Link} to="poeni" > Osvojeni poeni</NavLink>
+                    <NavLink className="bi bi-calendar3" eventKey="4" as={Link} to="aktivnosti" > Kalendar aktivnosti</NavLink>
                 </Nav>
             </Navbar.Collapse>
         </Navbar>
@@ -24,7 +27,7 @@ const NavigationBar = () => {
 export default NavigationBar;
 
 
-{/* <Navbar collapseOnSelect expand="sm" bg="dark" variant='dark'>
+/* <Navbar collapseOnSelect expand="sm" bg="dark" variant='dark'>
             <Navbar.Toggle aria-controls='navbarScroll' data-bs-target="#navbarScroll" />
             <Navbar.Collapse id='navbarScroll'>
                 <Nav>
@@ -34,7 +37,7 @@ export default NavigationBar;
                     <NavLink eventKey="4" as={Link} to="aktivnosti">Kalendar aktivnosti</NavLink>
                 </Nav>
             </Navbar.Collapse>
-        </Navbar> */}
+        </Navbar> */
 
 
 /*
