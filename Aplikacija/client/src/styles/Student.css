@@ -7,9 +7,23 @@ body {
     width: 100vw;
     height: 100vh;
     background: whitesmoke;
-    /*object-fit: contain;*/
-    /*background-image: url(../images/loginBackground.jpg);*/
-    /*padding: 5%;*/
+    /* margin-left: 25px; */
+    /* object-fit: contain; */
+    /* background-image: url(../images/loginBackground.jpg); */
+    /* padding: 5%; */
+}
+
+.StudentHeader {
+    background-color:dimgray;
+    /* margin-left: 26px; */
+    padding-left: 40px;
+    height: 55px;
+    font-size: x-large;
+    color: whitesmoke;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    
 }
 
 .studentContainer {
@@ -19,11 +33,11 @@ body {
     width: 100%;
 }
 
-aside {
+.StudentAside {
     width: auto;
     height: 100%;
     padding-left: 10px;
-    margin-left: 10px;
+    /* margin-left: 10px; */
     padding: 20px;
     float: left;
     background-color:dimgray;
@@ -35,15 +49,18 @@ nav {
 }
 
 .navbar a {
+
+    border-radius: 30px;
+    width: 100%;
     color: white;
     font-family: "Georgia", serif;
     padding: 15px;
 }
 .navbar a:hover {
-    border-radius: 30px;
+    /* border-radius: 30px; */
     background-color:whitesmoke; /*will change background-color of element on hover */
     color: black; /*will change color of text within the element on hover */
-}
+ }
 
 main {
     display: flex;    

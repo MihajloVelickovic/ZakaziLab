@@ -3,22 +3,22 @@ import { Link } from "react-router-dom"
 import React from "react";
 import Brand from "../images/favicon.ico";
 
-const NavigationBar = () => {
+const NavigationBar = (show) => {
     return (
-        <Navbar expand="xl" variant='black' Navbar='black'>
+        <Navbar variant='black' Navbar='black'>
             
             <Navbar.Toggle aria-controls='navbarScroll' data-bs-target="#navbarScroll" style={{backgroundColor:"lightgrey"}}/>
             <Navbar.Collapse id='navbarScroll'>
-                <Nav className="flex-column">
+                <nav className="flex-column" style={{alignItems:"start"}}>
                     <Navbar.Brand as={Link} to="/">
                         <img src={Brand} alt="" style={{width:"40px"}} className="rounded-pill"/>
                         <span style={{paddingLeft:"20px"}}>ZakažiLab</span>
                     </Navbar.Brand>
-                    <NavLink className="bi bi-house" eventKey="1" as={Link} to="home" > Home</NavLink>
-                    <NavLink eventKey="2" as={Link} to="lab"><i class="fa fa-flask"></i> Laboratorijske vezbe</NavLink>
+                    <NavLink className="nav-item bi bi-house" eventKey="1" as={Link} to="home"> Home</NavLink>
+                    <NavLink eventKey="2" as={Link} to="lab"><i className="fa fa-flask" ></i> Laboratorijske vezbe</NavLink>
                     <NavLink className="bi bi-card-checklist" eventKey="3" as={Link} to="poeni" > Osvojeni poeni</NavLink>
                     <NavLink className="bi bi-calendar3" eventKey="4" as={Link} to="aktivnosti" > Kalendar aktivnosti</NavLink>
-                </Nav>
+                </nav>
             </Navbar.Collapse>
         </Navbar>
     );
