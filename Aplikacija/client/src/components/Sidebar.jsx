@@ -1,7 +1,6 @@
-import { Nav, Navbar, NavLink } from 'react-bootstrap';
+import { Navbar, NavLink } from 'react-bootstrap';
 import { Link } from "react-router-dom"
 import React from "react";
-import Brand from "../images/favicon.ico";
 
 const Sidebar = ({ show, role }) => {
     const renderStudentLinks = () => (
@@ -23,7 +22,11 @@ const Sidebar = ({ show, role }) => {
 
     const renderProfessorLinks = () => (
         <>
-            {/* Add links specific to professors */}
+        <NavLink className="sidebar-buttons nav-item bi bi-house" eventKey="1" as={Link} to="home"> Home</NavLink>
+        <NavLink className="sidebar-buttons" eventKey="2" as={Link} to="lab"><i className="fa fa-flask" ></i> Laboratorijske vezbe</NavLink>
+        <NavLink className="sidebar-buttons bi bi-card-checklist" eventKey="3" as={Link} to="IzvestajOPoenima" > Izveštaj o poenima</NavLink>
+        <NavLink className="sidebar-buttons bi bi-calendar3" eventKey="4" as={Link} to="aktivnosti" > Kalendar aktivnosti</NavLink>
+        <NavLink className="sidebar-buttons" eventKey="5" as={Link} to="kabinet" ><i class="fa-solid fa-display"></i> Kabineti</NavLink>
         </>
     );
 

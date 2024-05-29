@@ -1,6 +1,7 @@
-import { Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import React from "react";
-import '../styles/Student.css';
+import '../styles/Professor.css';
+import '../styles/Page.css';
 import { useState } from "react";
 
 
@@ -8,14 +9,16 @@ import Brand from "../images/favicon.ico";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css'
 import {Route, Routes} from 'react-router-dom';
-import PageHome from './PageHome';
+
+import PageHome from "./PageHome";
 import LaboratorijskaVezba from "./LaboratorijskaVezba";
-import OsvojeniPoeni from "./OsvojeniPoeni";
+import IzvestajOPoenima from "./IzvestajOPoenima";
 import KalendarAktivnosti from "./KalendarAktivnosti";
+import Kabinet from './Kabinet';
 
 import Sidebar from "./Sidebar";
 
-const Student = () => {
+const Professor = () => {
     const [showSidebar, setShowSidebar] = useState(false);
 
     const toggleSidebar = () => {
@@ -23,7 +26,7 @@ const Student = () => {
     };
     return (
         <>
-        <header className="StudentHeader">            
+        <header className="pageHeader">            
             <div>
             <button onClick={toggleSidebar} className='toggleButton' >
                 <i className="fa-solid fa-bars"></i>
@@ -33,17 +36,18 @@ const Student = () => {
              <Link to='/' className="title"><img src={Brand} alt="" style={{width:"40px"}} className="rounded-pill"/> ZakažiLab <span className="version">alpha0.0</span></Link>
             </div>
         </header>
-        <div className="studentContainer">            
-            <aside className="StudentAside" style={{left: showSidebar ? '0' : '-250px', position:"fixed"}}> 
+        <div className="pageContainer">            
+            <aside className="pageAside" style={{left: showSidebar ? '0' : '-250px', position:"fixed"}}> 
                 {/* <NavigationBar /> */}
-                <Sidebar show={showSidebar} role="student" />
+                <Sidebar show={showSidebar} role="professor" />
             </aside>
             <main style={{ marginLeft: showSidebar ? '250px' : '0', transition: 'margin-left 0.3s ease' }}>
                 <Routes>
-                    <Route path="home" element={<PageHome role="student"/>} />
-                    <Route path="lab" element={<LaboratorijskaVezba role="student"/>} />
-                    <Route path="poeni" element={<OsvojeniPoeni/>} />
-                    <Route path="aktivnosti" element={<KalendarAktivnosti role="student"/>} />
+                    <Route path="home" element={<PageHome role="professor"/>} />
+                    <Route path="lab" element={<LaboratorijskaVezba role="professor"/>} />
+                    <Route path="IzvestajOPoenima" element={<IzvestajOPoenima />} />
+                    <Route path="aktivnosti" element={<KalendarAktivnosti role="professor"/>} />
+                    <Route path="Kabinet" element={<Kabinet />} />
                 </Routes>
             </main>
             
@@ -52,7 +56,7 @@ const Student = () => {
     )
 }
 
-export default Student;
+export default Professor;
 
 //position: 'fixed', top: '10px', left: '10px', 
 //id="collapseClass" className="collapse"
