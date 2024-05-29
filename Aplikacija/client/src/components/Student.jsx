@@ -1,11 +1,10 @@
-//import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import React from "react";
 import '../styles/Student.css';
 import { useState } from "react";
 
 
-
-import NavigationBar from "./NavigationBar";
+import Brand from "../images/favicon.ico";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css'
 import {Route, Routes} from 'react-router-dom';
@@ -14,7 +13,7 @@ import LaboratorijskaVezba from "./LaboratorijskaVezba";
 import OsvojeniPoeni from "./OsvojeniPoeni";
 import KalendarAktivnosti from "./KalendarAktivnosti";
 
-import { Button } from "react-bootstrap";
+import Sidebar from "./Sidebar";
 
 const Student = () => {
     const [showSidebar, setShowSidebar] = useState(false);
@@ -26,23 +25,18 @@ const Student = () => {
         <>
         <header className="StudentHeader">            
             <div>
-            <Button
-                    onClick={toggleSidebar} 
-                    style={{ zIndex: 1000, backgroundColor:"grey", borderColor:"grey"}}>
-                    <i className="fa-solid fa-bars"></i>
-                    <span style={{paddingLeft:"10px"}}>
-                        {showSidebar ? 'Hide' : 'Show'} Menu
-                    </span>
-                </Button>
+            <button onClick={toggleSidebar} className='toggleButton' >
+                <i className="fa-solid fa-bars"></i>
+            </button>
             </div>
-            <div style={{paddingLeft:"80px"}}>
-                ZakažiLab
+            <div>
+             <Link to='/' className="title"><img src={Brand} alt="" style={{width:"40px"}} className="rounded-pill"/> ZakažiLab <span className="version">alpha0.0</span></Link>
             </div>
         </header>
         <div className="studentContainer">            
             <aside className="StudentAside" style={{left: showSidebar ? '0' : '-250px', position:"fixed"}}> 
                 {/* <NavigationBar /> */}
-                <NavigationBar show={showSidebar} />
+                <Sidebar show={showSidebar} role="student" />
             </aside>
             <main style={{ marginLeft: showSidebar ? '250px' : '0', transition: 'margin-left 0.3s ease' }}>
                 <Routes>

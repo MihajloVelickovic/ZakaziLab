@@ -12,18 +12,25 @@ body {
     /* background-image: url(../images/loginBackground.jpg); */
     /* padding: 5%; */
 }
-
+.title{
+    font-size: 1.5rem;
+    margin: 1rem;
+    font-weight: bold;
+    text-decoration: none;
+    color: white;
+}
 .StudentHeader {
-    background-color:dimgray;
-    /* margin-left: 26px; */
-    padding-left: 40px;
-    height: 55px;
-    font-size: x-large;
-    color: whitesmoke;
     display: flex;
-    flex-wrap: wrap;
-    align-content: center;
-    
+    justify-content:start;
+    align-items: center;
+    background-color:#03A9F4 ;
+    position: sticky;
+    top:0;
+    padding: 15px;
+}
+
+.sidebar-buttons{
+    margin: 10px;
 }
 
 .studentContainer {
@@ -40,12 +47,18 @@ body {
     /* margin-left: 10px; */
     padding: 20px;
     float: left;
-    background-color:dimgray;
+    background-color:#64B5F6;
 }
 
-nav {
-    background-color: dimgray;
-    
+.toggleButton {
+    margin-left: 5px;
+    margin-right: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    background-color:#03A9F4;
+    color: white;
+    border: none;
+    font-size: 33px;
 }
 
 .navbar a {
@@ -78,4 +91,8 @@ main div {
 
 main button {
     width: 300px;
+}
+
+.sidebar-buttons-wrapper{
+    margin-top: -20px;
 }

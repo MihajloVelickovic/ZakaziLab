@@ -2,15 +2,15 @@ import { Link, NavLink } from 'react-router-dom';
 import '../styles/Header.css';
 import '../styles/LoginButton.css';
 import { useState } from 'react';
-
+import Brand from "../images/favicon.ico";
 
 const Header=()=>{
     const[menuOpen, setMenuOpen] = useState(false);
 
     return(
         <header className="header-container">
-            <nav>
-                <Link to='/' className="title">ZakažiLab <span className="version">alpha0.0</span></Link>
+            <nav className="header-nav">
+                <Link to='/' className="title"><img src={Brand} alt="" style={{width:"40px"}} className="rounded-pill"/> ZakažiLab <span className="version">alpha0.0</span></Link>
                 <div className="menu" onClick={()=>{
                     setMenuOpen(!menuOpen);
                 }}>

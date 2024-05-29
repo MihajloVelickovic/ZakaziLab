@@ -1,10 +1,10 @@
 .version {
     font-size: 1rem;
     color: white;
-    color: #888; /* Set the color to gray */
+    color: black; /* Set the color to gray */
 }
 
-nav{
+.header-nav{
     display:flex;
     justify-content: space-between;
     align-items: center;
