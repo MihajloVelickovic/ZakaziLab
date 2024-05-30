@@ -5,7 +5,8 @@ export interface IStudentEntry {
     student: IStudent;
     attendance: boolean[];
     timeSlot: Date;
-    points: number[];   
+    points: number[];  
+    labName: string; 
 }
 
 export const StudentEntrySchema = new mongoose.Schema<IStudentEntry>({
@@ -23,6 +24,10 @@ export const StudentEntrySchema = new mongoose.Schema<IStudentEntry>({
     },
     points: {
         type: [Number],
+        required: true
+    },
+    labName: {
+        type: String,
         required: true
     }
 });

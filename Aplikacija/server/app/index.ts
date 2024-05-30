@@ -8,6 +8,7 @@ import assistantRouter from "./routes/assistantRouter";
 import classroomRouter from "./routes/classroomRouter";
 import professorRouter from "./routes/professorRouter";
 import labRouter from "./routes/labRouter";
+import studentEntryRouter from "./routes/studentEntryRouter";
 
 
 const app = express();
@@ -29,8 +30,6 @@ app.use(function (req, res, next) {
     // Set to true if you need the website to include cookies in the requests sent
     // to the API (e.g. in case you use sessions)
     // res.setHeader('Access-Control-Allow-Credentials');
-
-    // Pass to next layer of middleware
     next();
 });
 
@@ -40,6 +39,7 @@ app.use("/assistant", assistantRouter);
 app.use("/classrooms", classroomRouter);
 app.use("/professors", professorRouter);
 app.use("/labs", labRouter);
+app.use("/studentEntry", studentEntryRouter);
 
 mongoose.connect(URI)
         .then(() => {
