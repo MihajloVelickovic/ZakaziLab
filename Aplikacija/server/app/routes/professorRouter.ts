@@ -36,7 +36,7 @@ professorRouter.post("/add", async (req, res) => {
 
 });
 
-professorRouter.get("/filteredFind", async (req, res) => {
+professorRouter.post("/filteredFind", async (req, res) => {
     const query = req.body;
 
     const professors = await professor.find(query);

@@ -24,7 +24,7 @@ classroomRouter.get("/findAll", async (req, res) => {
     res.status(400).json({message:"Could not find classrooms"});
 });
 
-classroomRouter.get("/filteredFind", async (req,res) => {
+classroomRouter.post("/filteredFind", async (req,res) => {
     const query = req.body;
 
     const classrooms = await Classroom.find(query);

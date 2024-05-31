@@ -34,7 +34,7 @@ labRouter.post("/add", async (req, res) => {
 
 });
 
-labRouter.get("/filteredFind", async (req, res) => {
+labRouter.post("/filteredFind", async (req, res) => {
     const query = req.body;
 
     const labs = await lab.find(query);

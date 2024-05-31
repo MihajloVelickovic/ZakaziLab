@@ -29,7 +29,7 @@ subjectRouter.get("/findAll", async (req, res) => {
     }
 });
 
-subjectRouter.get("/filteredFind", async (req, res) => {
+subjectRouter.post("/filteredFind", async (req, res) => {
     try {
         const query = req.body;
 

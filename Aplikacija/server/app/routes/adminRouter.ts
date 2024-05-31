@@ -34,7 +34,7 @@ adminRouter.post("/add", async (req, res) => {
 
 });
 
-adminRouter.get("/filteredFind", async (req, res) => {
+adminRouter.post("/filteredFind", async (req, res) => {
     const query = req.body;
 
     const admins = await admin.find(query);

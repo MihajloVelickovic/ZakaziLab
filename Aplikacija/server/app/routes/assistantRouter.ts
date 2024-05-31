@@ -35,7 +35,7 @@ assistantRouter.post("/add", async (req, res) => {
 
 });
 
-assistantRouter.get("/filteredFind", async (req, res) => {
+assistantRouter.post("/filteredFind", async (req, res) => {
     const query = req.body;
 
     const assistants = await Assistant.find(query);
