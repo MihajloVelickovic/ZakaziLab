@@ -14,7 +14,7 @@ studentEntryRouter.get("/findAll", async (req, res) => {
         } else {
             res.status(404).send({ message: "entry not found" });
         }
-    } catch (err) {
+    } catch (err:any) {
         res.status(500).send({ message: `Error retrieving entries: ${err.message}` });
     }
 
