@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import { IStudent, StudentSchema } from "./student";
 
 export interface IStudentEntry {
@@ -10,9 +10,9 @@ export interface IStudentEntry {
 }
 
 export const StudentEntrySchema = new mongoose.Schema<IStudentEntry>({
-    student: {
-        type: StudentSchema,
-        required: true
+    student: { 
+        type: Schema.Types.ObjectId,
+        ref: 'Student'
     },
     attendance: {
         type: [Boolean],

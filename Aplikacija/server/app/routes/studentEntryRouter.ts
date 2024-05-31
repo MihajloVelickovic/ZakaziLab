@@ -19,13 +19,25 @@ studentEntryRouter.post("/add", async (req, res) => {
     const {
            student, attendance, timeSlot, points, labName
         } = req.body;
-    const ast = new StudentEntry({
-                            student, attendance,
-                            timeSlot, points, labName
-                        });
+    // const ast = new StudentEntry({
+    //                         student, attendance,
+    //                         timeSlot, points, labName
+    //                     });
     
     try{
-        const result = await ast.save();
+        let studentDoc = await Student.findById(student);
+
+        if (!studentDoc) {
+            res.status(400).send({ message: `Student not found: ${student}` });
+            return;
+        }
+
+        const studentEntry = new StudentEntry({
+            student, attendance, timeSlot, points, labName
+        });
+
+
+        const result = await studentEntry.save();
         res.status(200).send(result);
     }
     catch(err: any){
