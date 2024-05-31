@@ -7,11 +7,16 @@ const studentEntryRouter = Router();
 
 studentEntryRouter.get("/findAll", async (req, res) => {
     
-    const found = await StudentEntry.find({});
-
-    found != null ? 
-    res.status(200).send(found) : 
-    res.status(404).send({message: "entry not found"});
+    try {
+        const found = await StudentEntry.find({}).populate('student');
+        if (found) {
+            res.status(200).send(found);
+        } else {
+            res.status(404).send({ message: "entry not found" });
+        }
+    } catch (err) {
+        res.status(500).send({ message: `Error retrieving entries: ${err.message}` });
+    }
 
 }); 
 
