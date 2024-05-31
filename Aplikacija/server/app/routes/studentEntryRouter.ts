@@ -35,7 +35,7 @@ studentEntryRouter.post("/add", async (req, res) => {
 
 });
 
-studentEntryRouter.get("/filteredFind", async (req, res) => {
+studentEntryRouter.post("/filteredFind", async (req, res) => {
     const query = req.body;
 
     const labs = await StudentEntry.find(query);
