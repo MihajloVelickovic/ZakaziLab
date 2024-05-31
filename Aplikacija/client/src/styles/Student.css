@@ -1,12 +1,14 @@
 body {
     height: 100%;
     width: 100%;
+    font-family: "JetBrains Mono", "Georgia", serif;
 }
 
 .student-page {
     width: 100vw;
     height: 100vh;
     background: whitesmoke;
+    font-family: "JetBrains Mono", "Georgia", serif;
     /* margin-left: 25px; */
     /* object-fit: contain; */
     /* background-image: url(../images/loginBackground.jpg); */
@@ -38,6 +40,7 @@ body {
     flex-direction: row;
     height: 100%;
     width: 100%;
+    font-family: "JetBrains Mono", "Georgia", serif;
 }
 
 .StudentAside {
@@ -66,7 +69,7 @@ body {
     border-radius: 30px;
     width: 100%;
     color: white;
-    font-family: "Georgia", serif;
+    font-family: "JetBrains Mono", "Georgia", serif;
     padding: 15px;
 }
 .navbar a:hover {
