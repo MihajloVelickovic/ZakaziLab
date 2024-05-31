@@ -1,6 +1,7 @@
 import {Router} from "express";
 import lab from "../models/lab";
 import Student from "../models/student";
+import Lab from "../models/lab";
 
 const labRouter = Router();
 
@@ -45,7 +46,18 @@ labRouter.post("/filteredFind", async (req, res) => {
 });
 
 labRouter.delete("/delete/:id", async (req, res) => {
-    //TODO
+    try{
+        const {id} = req.params;
+        const entry = await Lab.findByIdAndDelete(id);
+        entry != null ?
+        res.status(200).send({message: `Deleted Lab with id: ${id}`}) :
+        res.status(404).send({message: `No Lab with id: ${id} found`});
+        
+    }
+    catch(err: any){
+        console.log(err.message);
+        return res.status(500).send({message: "Internal Server Error"});
+    }
 });
 
 export default labRouter;

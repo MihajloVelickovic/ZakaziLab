@@ -1,5 +1,6 @@
 import {Router} from "express";
 import professor from "../models/professor";
+import Professor from "../models/professor";
 
 const professorRouter = Router();
 
@@ -47,7 +48,18 @@ professorRouter.post("/filteredFind", async (req, res) => {
 });
 
 professorRouter.delete("/delete/:id", async (req, res) => {
-    //TODO
+    try{
+        const {id} = req.params;
+        const entry = await Professor.findByIdAndDelete(id);
+        entry != null ?
+        res.status(200).send({message: `Deleted Professor with id: ${id}`}) :
+        res.status(404).send({message: `No Professor with id: ${id} found`});
+        
+    }
+    catch(err: any){
+        console.log(err.message);
+        return res.status(500).send({message: "Internal Server Error"});
+    }
 });
 
 export default professorRouter;

@@ -46,7 +46,18 @@ assistantRouter.post("/filteredFind", async (req, res) => {
 });
 
 assistantRouter.delete("/delete/:id", async (req, res) => {
-    //TODO
+    try{
+        const {id} = req.params;
+        const entry = await Assistant.findByIdAndDelete(id);
+        entry != null ?
+        res.status(200).send({message: `Deleted Assistant with id: ${id}`}) :
+        res.status(404).send({message: `No Assistant with id: ${id} found`});
+        
+    }
+    catch(err: any){
+        console.log(err.message);
+        return res.status(500).send({message: "Internal Server Error"});
+    }
 });
 
 export default assistantRouter;
