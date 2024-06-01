@@ -2,6 +2,7 @@ import '../styles/Banner.css';
 import '../styles/MainButton.css';
 
 import { useEffect, useState } from "react";
+import { NavLink } from 'react-router-dom';
 
 export const Banner = () => {
     const [scrollPosition, setScrollPosition] = useState(0);
@@ -15,6 +16,10 @@ export const Banner = () => {
         window.removeEventListener("scroll", handleScroll);
       };
     }, []);
+
+    const redirectFunc = async () => {
+      const response = await fetch(`http://127.0.0.1:1738/msLogin`);
+    }
   
     return (
       <div className="page home-page">
@@ -25,7 +30,8 @@ export const Banner = () => {
           className="banner bannerContainer"
         >
           <h2>ZakažiLab</h2>
-          <button className="main-button">Prijavi se</button>
+          <button className="main-button" onClick={redirectFunc}>Prijavi se</button>
+          {/* <button className="main-button">Prijavi se</button> */}
         </section>
         <section>
         <p>
