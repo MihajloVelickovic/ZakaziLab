@@ -1,6 +1,6 @@
 import msal, { ConfidentialClientApplication } from "@azure/msal-node";
 import { Router } from "express";
-import { AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, AZURE_TENANT_ID } from "../config";
+import { AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, AZURE_TENANT_ID , AZURE_REDIRECT_URI} from "../config";
 
 const msLoginRouter = Router();
 
@@ -15,9 +15,9 @@ const config: any = {
 const confidentialApp = new ConfidentialClientApplication(config);
 
 msLoginRouter.get("/",  (req, res)=>{
-    const params = {
+    const params: any = {
         scopes: ["email", "profile", "user.read"],
-        redirectUri: "http://localhost:1738/msLogin/auth/callback",
+        redirectUri: AZURE_REDIRECT_URI,
         prompt: "login"
     };
 
@@ -27,14 +27,14 @@ msLoginRouter.get("/",  (req, res)=>{
                           })
                           .catch(err => {
                             console.log(JSON.stringify(err));
-                          });
+                          });``
 });
 
 msLoginRouter.get("/auth/callback",  (req, res) => {
     const tokenReq: any = {
         code: req.query.code,
         scopes: ["email", "profile", "user.read"],
-        redirectUri: "http://localhost:1738/msLogin/auth/callback"
+        redirectUri: AZURE_REDIRECT_URI
     };
 
      confidentialApp.acquireTokenByCode(tokenReq)
