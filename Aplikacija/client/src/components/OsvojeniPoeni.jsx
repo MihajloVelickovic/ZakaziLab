@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+/* import React, { useEffect, useState } from "react";
 import "../styles/OsvojeniPoeni.css";
 
 const fetchData = async () => {
@@ -48,7 +48,143 @@ const OsvojeniPoeni = () => {
   );
 }
 
+export default OsvojeniPoeni; */
+ 
+
+
+import React, { useEffect, useState } from "react";
+import "../styles/OsvojeniPoeni.css";
+
+const fetchData = async () => {
+    try {
+        const response = await fetch(`http://127.0.0.1:1738/studentEntry/findAll`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch data');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        throw error;
+    }
+};
+
+const OsvojeniPoeni = () => {
+    const [entries, setEntries] = useState([]);
+    const [selectedLabs, setSelectedLabs] = useState([]);
+    const [studentIndex, setStudentIndex] = useState(null);
+
+    useEffect(() => {
+        fetchData()
+            .then((res) => {
+                console.log('Fetched data:', res);
+                const filteredEntries = res.filter(entry => entry.student.index === 18569);
+                setEntries(filteredEntries);
+                if (filteredEntries.length > 0) {
+                    setStudentIndex(filteredEntries[0].student.index);
+                }
+            })
+            .catch((error) => {
+                console.error('Error fetching data:', error);
+            });
+    }, []);
+
+    const toggleLab = (labName) => {
+        setSelectedLabs(prevSelectedLabs => {
+            if (prevSelectedLabs.includes(labName)) {
+                return prevSelectedLabs.filter(name => name !== labName);
+            } else {
+                return [...prevSelectedLabs, labName];
+            }
+        });
+    };
+
+    const renderTables = () => {
+        const tables = {};
+
+        entries.forEach(entry => {
+            if (!tables[entry.labName]) {
+                tables[entry.labName] = {
+                    points: [],
+                    totalPoints: 0
+                };
+            }
+            tables[entry.labName].points.push(...entry.points);
+            tables[entry.labName].totalPoints += entry.points.reduce((acc, cur) => acc + cur, 0);
+        });
+
+        return (
+            <div>
+                <h2>Osvojeni poeni na laboratorijskim vezbama</h2>
+                <p>Indeks studenta: {studentIndex}</p>
+                {Object.keys(tables).map((labName, index) => (
+                    <div key={index} className="lab-table">
+                        <button className={selectedLabs.includes(labName) ? "active" : ""} onClick={() => toggleLab(labName)}>{labName}</button>
+                        <div className={selectedLabs.includes(labName) ? "table-open" : "table-closed"}>
+                            <table className="custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>Redni broj vezbe</th>
+                                        <th>Broj poena</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {tables[labName].points.map((points, i) => (
+                                        <tr key={i}>
+                                            <td>{i + 1}</td>
+                                            <td>{points}</td>
+                                        </tr>
+                                    ))}
+                                    <tr>
+                                        <td><strong>Ukupno:</strong></td>
+                                        <td><strong>{tables[labName].totalPoints}</strong></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        );
+    };
+
+    return (
+        <div>
+            {entries.length > 0 ? (
+                renderTables()
+            ) : (
+                <p>No data available</p>
+            )}
+        </div>
+    );
+};
+
 export default OsvojeniPoeni;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     // const yourDataObject = { labName: "OOP"};
