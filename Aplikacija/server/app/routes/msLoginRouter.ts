@@ -1,6 +1,7 @@
 import msal, { ConfidentialClientApplication } from "@azure/msal-node";
 import { Router } from "express";
 import { AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, AZURE_TENANT_ID , AZURE_REDIRECT_URI} from "../config";
+import Student, { IStudent } from "../models/student";
 
 const msLoginRouter = Router();
 
@@ -30,20 +31,21 @@ msLoginRouter.get("/",  (req, res)=>{
                           });``
 });
 
-msLoginRouter.get("/auth/callback",  (req, res) => {
+msLoginRouter.get("/auth/callback",  async (req, res) => {
     const tokenReq: any = {
         code: req.query.code,
         scopes: ["email", "profile", "user.read"],
         redirectUri: AZURE_REDIRECT_URI
     };
 
-     confidentialApp.acquireTokenByCode(tokenReq)
-                         .then(result => {
-                            res.status(200).send({message: `Hello ${result.account?.name}`});
-                         })
-                         .catch(err => {
-                            res.status(500).send({message: JSON.stringify(err)});
-                         });
+    const result = await confidentialApp.acquireTokenByCode(tokenReq);
+
+    const stud = await Student.findOne({email: result.account?.username});
+
+    stud != null ?
+    res.status(200).send({stud}) :
+    res.status(404).send({error: `Student with email ${result.account?.username} not found`}); 
+
 });
 
 export default msLoginRouter;
