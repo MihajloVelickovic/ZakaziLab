@@ -14,5 +14,9 @@ const URI = `mongodb+srv://${process.env.MONGO_USER}:`+
                            "w=majority&"+
                            "appName=Zakazi-Lab-Cluster";
 
-export {URI};
+const AZURE_CLIENT_ID = process.env.AZURE_CLIENT_ID;
+const AZURE_TENANT_ID = process.env.AZURE_TENANT_ID;
+const AZURE_CLIENT_SECRET = process.env.AZURE_CLIENT_SECRET;
+
+export {URI, AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET};
 

@@ -9,7 +9,7 @@ import classroomRouter from "./routes/classroomRouter";
 import professorRouter from "./routes/professorRouter";
 import labRouter from "./routes/labRouter";
 import studentEntryRouter from "./routes/studentEntryRouter";
-
+import msLoginRouter from "./routes/msLoginRouter"
 
 const app = express();
 app.use(express.json());
@@ -46,6 +46,7 @@ app.use("/classrooms", classroomRouter);
 app.use("/professors", professorRouter);
 app.use("/labs", labRouter);
 app.use("/studentEntry", studentEntryRouter);
+app.use("/msLogin",msLoginRouter);
 
 mongoose.connect(URI)
         .then(() => {
