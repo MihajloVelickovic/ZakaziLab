@@ -10,6 +10,7 @@ import professorRouter from "./routes/professorRouter";
 import labRouter from "./routes/labRouter";
 import studentEntryRouter from "./routes/studentEntryRouter";
 import msLoginRouter from "./routes/msLoginRouter"
+import userRouter from "./routes/userRouter";
 
 const corsOptions = {
     origin: 'http://localhost:3000', // Your client URL
@@ -44,7 +45,7 @@ app.use(cors(corsOptions));
 //     // res.setHeader('Access-Control-Allow-Credentials');
 //     next();
 // });
-
+app.use("/user", userRouter);
 app.use("/student", studentRouter);
 app.use("/subject", subjectRouter);
 app.use("/assistant", assistantRouter);

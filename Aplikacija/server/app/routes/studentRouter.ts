@@ -30,7 +30,7 @@ studentRouter.get('/findAll', async (req, res) => {
 });
 
 //find one
-studentRouter.get(
+studentRouter.post(
     "/filteredFind",
     async ( req, res) => {
     
