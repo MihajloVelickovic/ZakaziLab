@@ -3,6 +3,7 @@ import '../styles/MainButton.css';
 
 import { useEffect, useState } from "react";
 import { NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 export const Banner = () => {
     const [scrollPosition, setScrollPosition] = useState(0);
@@ -18,8 +19,36 @@ export const Banner = () => {
     }, []);
 
     const redirectFunc = async () => {
-      const response = await fetch(`http://127.0.0.1:1738/msLogin`);
+      //const response = await fetch(`http://localhost:1738/msLogin`);
+      <Link to="msLogin" target="_blank" rel="noopener noreferrer" />
+      await fetch('http://localhost:1738/msLogin'
+      // , 
+      // {
+      //   mode: "no-cors"
+      // }
+      )
+          .then(response => response.json())
+          .then(data => console.log(data))
+          .catch(error => console.error('Error:', error));
     }
+
+    // const redirectFunc = async () => {
+    //   try {
+    //     const response = await fetch('http://localhost:1738/msLogin', {
+    //       method: 'GET',
+    //       headers: {
+    //         'Content-Type': 'application/json',
+    //       }
+    //     });
+    //     if (!response.ok) {
+    //       throw new Error(`HTTP error! status: ${response.status}`);
+    //     }
+    //     const data = await response.json();
+    //     console.log(data);
+    //   } catch (error) {
+    //     console.error('Error:', error);
+    //   }
+    // };
   
     return (
       <div className="page home-page">

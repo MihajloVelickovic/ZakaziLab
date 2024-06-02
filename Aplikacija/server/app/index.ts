@@ -11,9 +11,14 @@ import labRouter from "./routes/labRouter";
 import studentEntryRouter from "./routes/studentEntryRouter";
 import msLoginRouter from "./routes/msLoginRouter"
 
+const corsOptions = {
+    origin: 'http://localhost:3000', // Your client URL
+    optionsSuccessStatus: 200,
+};
+
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(cors(corsOptions));
 // app.use(cors(
 //     {
 //         origin: "http://localhost:3000",

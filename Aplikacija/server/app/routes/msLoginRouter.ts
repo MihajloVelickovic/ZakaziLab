@@ -28,7 +28,7 @@ msLoginRouter.get("/",  (req, res)=>{
                           })
                           .catch(err => {
                             console.log(JSON.stringify(err));
-                          });``
+                          });
 });
 
 msLoginRouter.get("/auth/callback",  async (req, res) => {
@@ -40,12 +40,36 @@ msLoginRouter.get("/auth/callback",  async (req, res) => {
 
     const result = await confidentialApp.acquireTokenByCode(tokenReq);
 
-    const stud = await Student.findOne({email: result.account?.username});
-
+    const stud = await Student.find({email: result.account?.username});
+    
     stud != null ?
     res.status(200).send({stud}) :
     res.status(404).send({error: `Student with email ${result.account?.username} not found`}); 
 
 });
+
+// msLoginRouter.get("/auth/callback", async (req, res) => {
+    
+//     try {
+//         console.log("before critical");
+//         const tokenReq: any = {
+//             code: req.query.code,
+//             scopes: ["email", "profile", "user.read"],
+//             redirectUri: AZURE_REDIRECT_URI
+//         };    
+//         console.log("before critical");
+//         const result = await confidentialApp.acquireTokenByCode(tokenReq);
+//         console.log("it got to here");
+//         const found = await Student.find({email: result.account?.username});
+//         if (found) {
+//             res.status(200).send(found);
+//         } else {
+//             res.status(404).send({ message: "entry not found" });
+//         }
+//     } catch (err:any) {
+//         res.status(500).send({ message: `Error retrieving entries: ${err.message}` });
+//     }
+
+// }); 
 
 export default msLoginRouter;
