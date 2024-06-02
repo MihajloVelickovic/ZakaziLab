@@ -11,6 +11,13 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 //import backgroundImg from '../images/loginBackground.jpg';
 
+
+//msLogin shit
+import { useMsal } from '@azure/msal-react';
+import { loginRequest } from '../authConfig';
+import { InteractionType } from '@azure/msal-browser';
+
+
 const LoginSignup = () => {
 
     const [action, setAction] = useState("Sign Up");
@@ -19,6 +26,32 @@ const LoginSignup = () => {
     const [formValues, setFormValues] = useState(initialValues);
     const [formErrors, setFormErrors] = useState({});
     const [isSubmit, setIsSubmit] = useState(false);
+
+    //msLogin
+    const { instance, accounts } = useMsal();
+    const [isLoggedIn, setIsLoggedIn] = useState(accounts.length>0);
+
+    const handleLogin = () => {
+        setIsLoggedIn(true);
+        instance.loginRedirect(loginRequest).catch(e => {
+        console.error(e);
+        });
+    };
+
+    const getUserDetails = () => {
+        if (accounts.length > 0) {
+        const account = accounts[0];
+        return (
+            <div>
+            <p style={{fontWeight: 'bold'}}>User Details</p>
+            <p>Username: {account.idTokenClaims.name}</p>
+            <p>Email: {account.username}</p>
+            </div>
+        );
+        }
+        return null;
+    };
+    //end of msLogin
 
     const postValues = async () => {
         if (Object.keys(formErrors).length === 0 && isSubmit) {
@@ -48,8 +81,25 @@ const LoginSignup = () => {
         setFormValues({...formValues, [name]: value});
     }
 
+    const fetchStudent = async (email) => {
+        try {
+            const response = await fetch(`http://127.0.0.1:1738/student/filteredFind`, {
+                method: "POST",
+                body: JSON.stringify({email: {email}})
+            });
+            if (!response.ok) {
+                throw new Error('Failed to fetch data');
+            }
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            throw error;
+        }
+    };
+
     const handleSubmit = (e) => {
-        e.preventDefault();
+        //e.preventDefault();
         setFormErrors(validate(formValues));
         setIsSubmit(true);
         //console.log("true submit");
@@ -61,31 +111,20 @@ const LoginSignup = () => {
     }
 
     useEffect( () => {
+        if (!isLoggedIn)
+            handleLogin();
+        if (accounts.length > 0) {
+            const account = accounts[0];
+            var Username = account.idTokenClaims.name;
+            var Email = account.username;
+
+
+        }
         if (Object.keys(formErrors).length === 0 && isSubmit) {
             //console.log(JSON.stringify(formValues));
             console.log("success!");
             postValues();
         }
-        // if (Object.keys(formErrors).length === 0 && isSubmit) {
-        //     //console.log(formValues);
-        //     // console.log(JSON.stringify(formValues));
-        //     // console.log("success!");
-        //     // try {
-        //     //     await fetch('http://127.0.0.1:1738/studentSignUp', {
-        //     //         method: 'POST',
-        //     //         headers: {
-        //     //             'Accept': 'application/json',
-        //     //             'Content-Type': 'application/json',
-        //     //         },
-        //     //         body: JSON.stringify(
-        //     //             formValues
-        //     //         )
-        //     //         })
-        //     // } catch (err) {
-        //     //     console.log("Error: ", err);
-        //     // }
-
-        // }
     },[formErrors])
 
     const validate = (values) => {
@@ -107,7 +146,10 @@ const LoginSignup = () => {
         return errors;
     }
 
+    
+
     return (
+        <>
         <div className='loginContainer'>
             {/* {Object.keys(formErrors).length === 0 && isSubmit ? (<div className="ui message success">Signed in successfully</div>) : 
             (<pre>{JSON.stringify(formValues)} </pre>
@@ -155,6 +197,7 @@ const LoginSignup = () => {
             <button type ="submit" className="submit"> Submit dugme</button>
             </form>            
         </div>
+        </>
     )
 }
 
