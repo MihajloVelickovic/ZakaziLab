@@ -2,7 +2,7 @@ import { Link} from 'react-router-dom';
 import React from "react";
 import '../styles/Student.css';
 import { useState } from "react";
-
+import "../styles/LoginButton.css";
 
 import Brand from "../images/favicon.ico";
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -12,6 +12,8 @@ import PageHome from './PageHome';
 import LaboratorijskaVezba from "./LaboratorijskaVezba";
 import OsvojeniPoeni from "./OsvojeniPoeni";
 import KalendarAktivnosti from "./KalendarAktivnosti";
+
+
 
 import Sidebar from "./Sidebar";
 
@@ -36,6 +38,10 @@ const Student = () => {
             <div>
              <Link to='/' className="title"><img src={Brand} alt="" style={{width:"40px"}} className="rounded-pill"/> ZakažiLab <span className="version">alpha0.0</span></Link>
             </div>
+            <button className="login-button" style={{position: "absolute", right: "40px"}} onClick={() => console.log("jos nije implementovano")}>Log Out
+            {/* <i className="bi bi-box-arrow-right"></i> */}
+            <i className = "fa-solid fa-right-from-bracket"></i>
+            </button>
         </header>
         <div className="studentContainer">            
             <aside className="StudentAside" style={{left: showSidebar ? '0' : '-250px', position:"fixed"}}> 

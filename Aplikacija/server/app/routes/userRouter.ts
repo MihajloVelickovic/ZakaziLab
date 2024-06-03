@@ -38,7 +38,7 @@ userRouter.post(
         try {
             const query = req.body;
 
-            const user = await User.find(query);
+            const user = await User.findOne(query);
             
             if(!user) {
                 return res.status(404).json({ error: "user not found" });
