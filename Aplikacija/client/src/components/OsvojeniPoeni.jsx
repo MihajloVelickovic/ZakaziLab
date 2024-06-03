@@ -55,14 +55,25 @@ export default OsvojeniPoeni; */
 import React, { useEffect, useState } from "react";
 import "../styles/OsvojeniPoeni.css";
 
+const user = JSON.parse(localStorage.getItem('userData'));
+const ID = user._id;
+const Index = user.index;
+//console.log(ID);
+console.log("user je: ", user);
+
 const fetchData = async () => {
     try {
-        const response = await fetch(`http://127.0.0.1:1738/studentEntry/findAll`);
+        const response = await fetch(`http://127.0.0.1:1738/studentEntry/filteredFind`, {
+                method: "POST",
+                body: JSON.stringify({student: user}),
+                headers: {"Content-Type": "application/json"}
+            });
         if (!response.ok) {
             throw new Error('Failed to fetch data');
         }
 
         const data = await response.json();
+        console.log("ovo sam fethovao buraz: ", data);
         return data;
     } catch (error) {
         console.error('Error fetching data:', error);
@@ -79,7 +90,8 @@ const OsvojeniPoeni = () => {
         fetchData()
             .then((res) => {
                 console.log('Fetched data:', res);
-                const filteredEntries = res.filter(entry => entry.student.index === 18569);
+                // const filteredEntries = res.filter(entry => entry.student.index === 18569);
+                const filteredEntries = res;
                 setEntries(filteredEntries);
                 if (filteredEntries.length > 0) {
                     setStudentIndex(filteredEntries[0].student.index);
@@ -117,7 +129,8 @@ const OsvojeniPoeni = () => {
         return (
             <div>
                 <h2>Osvojeni poeni na laboratorijskim vezbama</h2>
-                <p>Indeks studenta: {studentIndex}</p>
+                <p>Student: {user.name} {user.lastName}</p>
+                <p>Indeks: {Index}</p>
                 {Object.keys(tables).map((labName, index) => (
                     <div key={index} className="lab-table">
                         <button className={selectedLabs.includes(labName) ? "active" : ""} onClick={() => toggleLab(labName)}>{labName}</button>

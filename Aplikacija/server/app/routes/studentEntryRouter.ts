@@ -55,11 +55,14 @@ studentEntryRouter.post("/add", async (req, res) => {
 studentEntryRouter.post("/filteredFind", async (req, res) => {
     const query = req.body;
 
-    const labs = await StudentEntry.find(query);
+    console.log(query);
+    const labs = await StudentEntry.find(query).populate('student');
+    console.log("nadjen student: ", labs);
     labs != null ?
-    res.status(200).send(labs) :
-    res.status(404).send({message: "labs with filter not found"});
+    res.status(200).json(labs) :
+    res.status(404).json({message: "labs with filter not found"});
 
+    
 });
 
 studentEntryRouter.delete("/delete/:id", async (req, res) => {

@@ -26,13 +26,13 @@ export const msalConfig = {
             console.error(message);
             break;
           case LogLevel.Info:
-            console.info(message);
+            //console.info(message);
             break;
           case LogLevel.Verbose:
             console.debug(message);
             break;
           case LogLevel.Warning:
-            console.warn(message);
+            //console.warn(message);
             break;
           default:
             break;

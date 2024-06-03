@@ -6,9 +6,10 @@ body {
     width: 100vw;
     height: 100vh;
     background: yellowgreen;
-    object-fit: contain;
     background-image: url(../images/loginBackground.jpg);
     padding: 5%;
+    /* object-fit: contain; */
+    object-fit: fill;
 }
 .loginContainer {
     display: flex;
@@ -52,7 +53,7 @@ body {
     margin-top: 55px;
     display: flex;
     flex-direction: column;
-    gap: 25px;
+    /* gap: 25px; */
 }
 
 .input {
@@ -176,4 +177,31 @@ body {
     cursor: pointer;
     position: relative;
     z-index: 0;
+}
+
+.dropdown-menu {
+    display: none; /* Hidden by default */
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: darkblue;
+    border-radius: 0 0 25px 25px;
+    padding: 10px 0;
+    margin: 0;
+    list-style: none;
+    z-index: 1000;
+}
+
+.dropdown-menu.show {
+    display: block; /* Show the menu when 'show' class is added */
+}
+
+.dropdown-item {
+    padding: 10px 20px;
+    color: white;
+    cursor: pointer;
+}
+
+.dropdown-item:hover {
+    background-color: #00008b; /* Darker shade on hover */
 }

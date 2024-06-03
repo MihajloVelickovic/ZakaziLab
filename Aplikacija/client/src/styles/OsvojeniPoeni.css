@@ -18,7 +18,8 @@
 }
 
 .custom-table {
-    width: 90%; /* Adjust the width as needed */
+    width: 50%;
+    
     border-collapse: collapse;
 }
 
@@ -26,6 +27,7 @@
     border: 1px solid #dddddd;
     padding: 6px;
     text-align: left;
+    width: 50%;
 }
 
 .custom-table th {

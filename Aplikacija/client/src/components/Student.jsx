@@ -16,6 +16,10 @@ import KalendarAktivnosti from "./KalendarAktivnosti";
 import Sidebar from "./Sidebar";
 
 const Student = () => {
+
+    const user = JSON.parse(localStorage.getItem('userData'));
+    console.log("sacu da ti pokazem nesto kul: ", user, user.index);
+
     const [showSidebar, setShowSidebar] = useState(false);
 
     const toggleSidebar = () => {
