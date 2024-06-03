@@ -1,14 +1,17 @@
 import { Router } from "express";
-import Student from "../models/student";
+import Student from "../models/Student";
+
+
+
 
 const studentRouter = Router();
 
 //dodavanje
 studentRouter.post("/add", async (req, res) => {
-    const { name, lastName, email,
+    const { name, lastName, email, password,
          privileges, birthDate, index, module} = req.body;
     
-    const student = new Student({ name, lastName, email,
+    const student = new Student({ name, lastName, email, password,
         privileges, birthDate, index, module});
         
     try {

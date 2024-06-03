@@ -1,6 +1,6 @@
 import {Router} from "express";
 import lab from "../models/lab";
-import Student from "../models/student";
+import Student from "../models/Student";
 import Lab from "../models/lab";
 
 const labRouter = Router();

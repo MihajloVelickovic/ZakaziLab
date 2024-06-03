@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
-import Assistent, { IAssistant } from "./assistant";
+import { IAssistant } from "./Assistant";
 import User from "./user";
+
 
 
 export interface IProfessor extends IAssistant {

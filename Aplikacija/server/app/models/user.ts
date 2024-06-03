@@ -3,6 +3,7 @@ export interface IUser extends mongoose.Document{
     name: string;
     lastName: string;
     email: string;
+    password:string;
     privileges: string;
 }
 
@@ -18,7 +19,12 @@ const UserSchema = new mongoose.Schema<IUser>({
     email: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        match: [/\S+@\S+\.\S+/, 'Email is invalid']
+    },
+    password: {
+        type: String,
+        required: true
     },
     privileges: {
         type: String,

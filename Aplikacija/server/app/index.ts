@@ -9,8 +9,9 @@ import classroomRouter from "./routes/classroomRouter";
 import professorRouter from "./routes/professorRouter";
 import labRouter from "./routes/labRouter";
 import studentEntryRouter from "./routes/studentEntryRouter";
-import msLoginRouter from "./routes/msLoginRouter"
 import userRouter from "./routes/userRouter";
+import loginRouter from "./routes/login";
+import registerRouter from "./routes/register";
 
 const corsOptions = {
     origin: 'http://localhost:3000', // Your client URL
@@ -53,7 +54,8 @@ app.use("/classrooms", classroomRouter);
 app.use("/professors", professorRouter);
 app.use("/labs", labRouter);
 app.use("/studentEntry", studentEntryRouter);
-app.use("/msLogin",msLoginRouter);
+app.use("/login", loginRouter);
+app.use("/register", registerRouter);
 
 mongoose.connect(URI)
         .then(() => {

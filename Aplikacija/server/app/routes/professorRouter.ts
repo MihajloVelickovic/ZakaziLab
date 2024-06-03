@@ -1,12 +1,12 @@
 import {Router} from "express";
-import professor from "../models/professor";
 import Professor from "../models/professor";
+
 
 const professorRouter = Router();
 
 professorRouter.get("/findAll", async (req, res) => {
     
-    const found = await professor.find({});
+    const found = await Professor.find({});
 
     found != null ? 
     res.status(200).send(found) : 
@@ -20,7 +20,7 @@ professorRouter.post("/add", async (req, res) => {
             privileges, module, gradDate,
             gradFaculty, phdGradDate, phdGradFaculty
         } = req.body;
-    const ast = new professor({
+    const ast = new Professor({
                                 name, lastName, email,
                                 privileges, module, gradDate,
                                 gradFaculty, phdGradDate, phdGradFaculty
@@ -40,7 +40,7 @@ professorRouter.post("/add", async (req, res) => {
 professorRouter.post("/filteredFind", async (req, res) => {
     const query = req.body;
 
-    const professors = await professor.find(query);
+    const professors = await Professor.find(query);
     professors != null ?
     res.status(200).send(professors) :
     res.status(404).send({message: "professors with filter not found"});

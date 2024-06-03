@@ -1,6 +1,7 @@
 import {Router} from "express";
-import admin from "../models/admin";
-import Admin from "../models/admin";
+import admin from "../models/Admin";
+import Admin from "../models/Admin";
+
 
 const adminRouter = Router();
 
@@ -16,11 +17,11 @@ adminRouter.get("/findAll", async (req, res) => {
 
 adminRouter.post("/add", async (req, res) => {
     const {
-            name, lastName, email,
+            name, lastName, email, password,
             privileges, FoG
         } = req.body;
     const ast = new admin({
-                                name, lastName, email,
+                                name, lastName, email, password,
                                 privileges, FoG
                             });
     

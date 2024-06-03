@@ -1,6 +1,6 @@
 import {Router} from "express";
-import Assistant from "../models/assistant";
-import Student from "../models/student";
+import Assistant from "../models/Assistant";
+
 
 const assistantRouter = Router();
 
@@ -16,11 +16,11 @@ assistantRouter.get("/findAll", async (req, res) => {
 
 assistantRouter.post("/add", async (req, res) => {
     const {
-            name, lastName, email,
+            name, lastName, email, password,
             privileges, module, gradDate, gradFaculty
         } = req.body;
     const ast = new Assistant({
-                                name, lastName, email,
+                                name, lastName, email, password,
                                 privileges, module, gradDate, gradFaculty
                             });
     

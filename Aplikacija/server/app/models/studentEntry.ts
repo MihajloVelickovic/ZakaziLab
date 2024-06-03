@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
-import { IStudent, StudentSchema } from "./student";
+import { IStudent } from "./Student";
+
 
 export interface IStudentEntry {
     student: IStudent;
