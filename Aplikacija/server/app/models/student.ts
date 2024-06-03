@@ -15,7 +15,8 @@ export const StudentSchema = new mongoose.Schema<IStudent>({
     },
     index: {
         type: Number,
-        required: true
+        required: true,
+        unique: true
     },
     module: {
         type: String,
