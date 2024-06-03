@@ -1,5 +1,5 @@
 import { Router } from "express";
-import Student from "../models/Student";
+import Student from "../models/student";
 
 
 

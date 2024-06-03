@@ -1,26 +1,24 @@
 import {Router} from "express";
-import admin from "../models/Admin";
-import Admin from "../models/Admin";
+import Admin from "../models/admin";
 
+const AdminRouter = Router();
 
-const adminRouter = Router();
-
-adminRouter.get("/findAll", async (req, res) => {
+AdminRouter.get("/findAll", async (req, res) => {
     
-    const found = await admin.find({});
+    const found = await Admin.find({});
 
     found != null ? 
     res.status(200).send(found) : 
-    res.status(404).send({message: "admins not found"});
+    res.status(404).send({message: "Admins not found"});
 
 }); 
 
-adminRouter.post("/add", async (req, res) => {
+AdminRouter.post("/add", async (req, res) => {
     const {
             name, lastName, email, password,
             privileges, FoG
         } = req.body;
-    const ast = new admin({
+    const ast = new Admin({
                                 name, lastName, email, password,
                                 privileges, FoG
                             });
@@ -30,23 +28,23 @@ adminRouter.post("/add", async (req, res) => {
         res.status(200).send(result);
     }
     catch(err: any){
-        res.status(400).send({message: `Error adding admin:
+        res.status(400).send({message: `Error adding Admin:
          ${err.message}`});
     }
 
 });
 
-adminRouter.post("/filteredFind", async (req, res) => {
+AdminRouter.post("/filteredFind", async (req, res) => {
     const query = req.body;
 
-    const admins = await admin.find(query);
-    admins != null ?
-    res.status(200).send(admins) :
-    res.status(404).send({message: "admins with filter not found"});
+    const Admins = await Admin.find(query);
+    Admins != null ?
+    res.status(200).send(Admins) :
+    res.status(404).send({message: "Admins with filter not found"});
 
 });
 
-adminRouter.delete("/delete/:id", async (req, res) => {
+AdminRouter.delete("/delete/:id", async (req, res) => {
     try{
         const {id} = req.params;
         const entry = await Admin.findByIdAndDelete(id);
@@ -61,4 +59,4 @@ adminRouter.delete("/delete/:id", async (req, res) => {
     }
 });
 
-export default adminRouter;
+export default AdminRouter;

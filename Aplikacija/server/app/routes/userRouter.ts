@@ -1,5 +1,4 @@
 import { Router } from "express";
-import user from "../models/user";
 import User from "../models/user";
 
 const userRouter = Router();
@@ -23,7 +22,7 @@ userRouter.post("/add", async (req, res) => {
 //find all
 userRouter.get('/findAll', async (req, res) => {
     try {
-        const users = await user.find({});
+        const users = await User.find({});
         res.json(users);
     } catch(error) {
         res.status(500).json({ message: "Could not find users"});

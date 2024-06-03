@@ -1,9 +1,9 @@
 import { Router, Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 
-import Assistant from '../models/Assistant';
-import Admin from '../models/Admin';
-import Student from '../models/Student';
+import Assistant from '../models/assistant';
+import Admin from '../models/admin';
+import Student from '../models/student';
 import User from '../models/user';
 
 const loginRouter = Router();
@@ -22,7 +22,9 @@ loginRouter.post('/', async (req: Request, res: Response) => {
       return res.status(400).json({ message: 'Invalid email' });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const newpass = await bcrypt.hash(password, 10);
+
+    const isMatch = await bcrypt.compare(newpass, user.password);
 
     if (!isMatch) {
       return res.status(400).json({ message: 'Invalid password' });

@@ -1,5 +1,5 @@
 import {Router} from "express";
-import Assistant from "../models/Assistant";
+import Assistant from "../models/assistant";
 
 
 const assistantRouter = Router();
