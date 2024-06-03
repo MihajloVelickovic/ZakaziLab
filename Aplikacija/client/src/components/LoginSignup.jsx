@@ -81,16 +81,20 @@ const LoginSignup = () => {
         setFormValues({...formValues, [name]: value});
     }
 
-    const fetchStudent = async (email) => {
+    const fetchStudent = async (Email) => {
         try {
-            const response = await fetch(`http://127.0.0.1:1738/student/filteredFind`, {
+            console.log(Email);
+            const response = await fetch(`http://127.0.0.1:1738/user/filteredFind`, {
                 method: "POST",
-                body: JSON.stringify({email: {email}})
+                body: JSON.stringify({email: Email}),
+                headers: {"Content-Type": "application/json"}
             });
             if (!response.ok) {
-                throw new Error('Failed to fetch data');
+                throw new Error('Failed to fetch data jbg');
             }
+            
             const data = await response.json();
+            console.log("hoce vljd", data);
             return data;
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -117,6 +121,7 @@ const LoginSignup = () => {
             const account = accounts[0];
             var Username = account.idTokenClaims.name;
             var Email = account.username;
+            fetchStudent(Email);
 
 
         }
