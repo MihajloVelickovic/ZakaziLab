@@ -36,9 +36,9 @@ const LoginSignup = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(accounts.length>0);
 
     const handleLogin = () => {
-        setIsLoggedIn(true);
         instance.loginRedirect(loginRequest).catch(e => {
         console.error(e);
+        setIsLoggedIn(true);
         });
     };
 

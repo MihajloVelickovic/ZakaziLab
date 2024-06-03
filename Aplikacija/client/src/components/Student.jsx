@@ -13,9 +13,21 @@ import LaboratorijskaVezba from "./LaboratorijskaVezba";
 import OsvojeniPoeni from "./OsvojeniPoeni";
 import KalendarAktivnosti from "./KalendarAktivnosti";
 
+import { redirect } from 'react-router-dom';
 
 
 import Sidebar from "./Sidebar";
+
+const LogOutFunction = () => {
+    console.log("kliknut logout");
+    const postLogoutRedirectUri2 = 'http%3A%2F%Flocalhost%3A3000';
+    const postLogoutRedirectUri = "http://localhost:3000";
+    const logoutUrl = `https://login.microsoftonline.com/common/oauth2/v2.0/logout?post_logout_redirect_uri=${postLogoutRedirectUri}`;
+    console.log(logoutUrl);
+    //redirect(logoutUrl);
+    window.location.replace(logoutUrl);
+    
+}
 
 const Student = () => {
 
@@ -26,6 +38,7 @@ const Student = () => {
 
     const toggleSidebar = () => {
         setShowSidebar(!showSidebar);
+
     };
     return (
         <>
@@ -38,7 +51,7 @@ const Student = () => {
             <div>
              <Link to='/' className="title"><img src={Brand} alt="" style={{width:"40px"}} className="rounded-pill"/> ZakažiLab <span className="version">alpha0.0</span></Link>
             </div>
-            <button className="login-button" style={{position: "absolute", right: "40px"}} onClick={() => console.log("jos nije implementovano")}>Log Out
+            <button onClick={LogOutFunction} className="login-button" style={{position: "absolute", right: "40px"}} >Log Out
             {/* <i className="bi bi-box-arrow-right"></i> */}
             <i className = "fa-solid fa-right-from-bracket"></i>
             </button>
