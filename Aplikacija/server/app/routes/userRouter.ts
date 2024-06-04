@@ -10,6 +10,8 @@ import Professor from "../models/professor";
 
 const userRouter = Router();
 
+let mainRefreshToken: string = "";
+
 //dodavanje
 userRouter.post("/add", authorizeToken, async (req: any, res) => {
     
@@ -151,31 +153,33 @@ userRouter.post("/login", async (req, res) => {
       return res.status(400).json({ message: 'Email and password are required' });
     
     try {
-      const user = await User.findOne({ email });
-  
-      if (!user)
-        return res.status(400).json({ message: 'Invalid email or password' });
-  
-      const isMatch = await bcrypt.compare(password, user.password);
-  
-      if (!isMatch) 
-        return res.status(400).json({ message: 'Invalid password or password' });
+        const user = await User.findOne({ email });
+    
+        if (!user)
+            return res.status(400).json({ message: 'Invalid email or password' });
+    
+        const isMatch = await bcrypt.compare(password, user.password);
+    
+        if (!isMatch) 
+            return res.status(400).json({ message: 'Invalid password or password' });
+        
+        let userType = 'User';
+    
+        if (user instanceof Assistant) 
+            userType = 'Assistant';
+        else if (user instanceof Professor)
+            userType = "Professor"
+        else if (user instanceof Admin) 
+            userType = 'Admin';
+        else if (user instanceof Student) 
+            userType = 'Student';
       
-      let userType = 'User';
+        const token = signToken({id: user._id, email: user.email});
+        const refreshToken = signRefresh({id: user._id, email: user.email});
   
-      if (user instanceof Assistant) 
-        userType = 'Assistant';
-      else if (user instanceof Professor)
-        userType = "Professor"
-      else if (user instanceof Admin) 
-        userType = 'Admin';
-      else if (user instanceof Student) 
-        userType = 'Student';
-      
-      const token = signToken({id: user._id, email: user.email});
-      const refreshToken = signRefresh({id: user._id, email: user.email});
-  
-      res.status(200).json({token, refreshToken, user, message: 'Login successful'});
+        mainRefreshToken = refreshToken;
+
+        res.status(200).json({token, refreshToken, user, message: 'Login successful'});
     } 
     catch (error) {
       res.status(500).json({ message: 'Error logging in', error });
@@ -186,21 +190,31 @@ userRouter.get("/refresh", (req, res) => {
     if (!req.body.token)
         res.status(422).send({message: "Unprocessable request"});
     else{
+        if(req.body.token !== mainRefreshToken)
+            return res.status(422).send({message: "Invalid refresh token"});
         const verified: any = verifyRefresh(req.body.token);
         if(!verified)
             res.status(400).send({message: "Invalid refresh token"}); //AKO SE OVO DESI TREBA DA SE IZLOGUJE KORISNIK
         else{
             const token = signToken({id: verified._id, email: verified.email});
             const refreshToken = signRefresh({id: verified._id, email: verified.email});
+            mainRefreshToken = refreshToken;
             res.status(200).send({token, refreshToken});
         }
     }
 })
 
 userRouter.post("/logout", authorizeToken, (req: any, res) => {
-    if(!verifyToken(req.token)) 
+    if(!verifyToken(req.token))
         res.status(403).send({message: "Invalid token"});
     else{
+        if(!req.body.token)
+            return res.status(422).send({message: "Need refresh token"});
+        
+        if(verifyRefresh(req.body.token) !== false){
+            mainRefreshToken = "";
+            res.status(200).send({message: "Logged out successfully"});
+        }
 
     }
 });

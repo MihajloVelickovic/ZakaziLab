@@ -23,7 +23,7 @@ subjectRouter.post("/add", async (req, res) => {
 
 subjectRouter.get("/findAll", authorizeToken, async (req: any, res) => {
     try {
-        if(!verifyToken(req.token)) 
+        if(!verifyToken(req.token))
             res.status(403).send({message: "Invalid authentication"});
         else{
             const subjects = await Subject.find({});
