@@ -52,6 +52,40 @@ labRouter.post("/filteredFind", authorizeToken, async (req: any, res) => {
     }
 });
 
+labRouter.patch("/update", async (req, res) => {
+    const {
+        _id, name, desc, mandatory, subjectNum, maxPoints, studentList
+    } = req.body;
+
+    if (!_id) {
+        return res.status(400).send({ message: "Lab ID is required for update" });
+    }
+
+    try {
+        const updateFields: any = {};
+        if (name !== undefined) updateFields.name = name;
+        if (desc !== undefined) updateFields.desc = desc;
+        if (mandatory !== undefined) updateFields.mandatory = mandatory;
+        if (subjectNum !== undefined) updateFields.subjectNum = subjectNum;
+        if (maxPoints !== undefined) updateFields.maxPoints = maxPoints;
+        if (studentList !== undefined) updateFields.studentList = studentList;
+
+        const result = await Lab.findOneAndUpdate(
+            { _id },
+            { $set: updateFields },
+            { new: true, runValidators: true }
+        );
+
+        if (!result) {
+            return res.status(404).send({ message: "Lab not found" });
+        }
+
+        res.status(200).send(result);
+    } catch (err: any) {
+        res.status(400).send({ message: `Error updating lab: ${err.message}` });
+    }
+});
+
 labRouter.delete("/delete/:id", async (req, res) => {
     try{
         const {id} = req.params;
