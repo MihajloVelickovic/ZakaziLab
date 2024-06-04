@@ -1,5 +1,6 @@
 import { Router } from "express";
 import User from "../models/user";
+import { authorizeToken, verifyToken } from "../config/tokenFuncs";
 
 const userRouter = Router();
 
@@ -20,8 +21,11 @@ userRouter.post("/add", async (req, res) => {
 });
 
 //find all
-userRouter.get('/findAll', async (req, res) => {
+userRouter.get('/findAll', authorizeToken, async (req: any, res) => {
     try {
+        if(!verifyToken(req.token)) 
+            res.status(403).send({message: "Invalid authentication"});
+
         const users = await User.find({});
         res.json(users);
     } catch(error) {
@@ -32,21 +36,26 @@ userRouter.get('/findAll', async (req, res) => {
 //find one
 userRouter.post(
     "/filteredFind",
-    async (req, res) => {
+    authorizeToken,
+    async (req:any, res) => {
     
-        try {
-            const query = req.body;
+        if(!verifyToken(req.token)) 
+            res.status(403).send({message: "Invalid authentication"});
+        else{
+            try {
+                const query = req.body;
 
-            const user = await User.findOne(query);
-            
-            if(!user) {
-                return res.status(404).json({ error: "user not found" });
+                const user = await User.findOne(query);
+                
+                if(!user) 
+                    return res.status(404).json({ error: "user not found" });
+
+                res.status(200).json(user);
             }
-
-            res.status(200).json(user);
-        } catch(error) {
-            console.error('Error finding user: ', error);
-            res.status(500).json({ error: 'Internal server error' });
+            catch(error) {
+                console.error('Error finding user: ', error);
+                res.status(500).json({ error: 'Internal server error' });
+            }
         }
 });
 

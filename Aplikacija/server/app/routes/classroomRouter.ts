@@ -1,13 +1,12 @@
 import { Router } from "express";
 import Classroom from "../models/classroom";
+import { authorizeToken, verifyToken } from "../config/tokenFuncs";
 
 const classroomRouter = Router();
 
 classroomRouter.post("/add", async (req, res) => {
     const { name, computerNum, rows, cols, computers } = req.body;
-
     const classroom = new Classroom({name, computerNum, rows, cols, computers});
-
     try{
         const savedClassroom = await classroom.save();
         res.status(200).json(savedClassroom);
@@ -16,22 +15,30 @@ classroomRouter.post("/add", async (req, res) => {
     }
 });
 
-classroomRouter.get("/findAll", async (req, res) => {
-    const classrooms = await Classroom.find({});
-
-    classrooms != null ?
-    res.status(200).json(classrooms):
-    res.status(400).json({message:"Could not find classrooms"});
+classroomRouter.get("/findAll", authorizeToken, async (req: any, res) => {
+    if(!verifyToken(req.token)) 
+        res.status(403).send({message: "Invalid authentication"});
+    else{
+        const classrooms = await Classroom.find({});
+        classrooms != null ?
+        res.status(200).json(classrooms):
+        res.status(400).json({message:"Could not find classrooms"});
+    }
 });
 
-classroomRouter.post("/filteredFind", async (req,res) => {
-    const query = req.body;
-
-    const classrooms = await Classroom.find(query);
+classroomRouter.post("/filteredFind", authorizeToken, async (req: any,res) => {
     
-    classrooms != null ?
-    res.status(200).json(classrooms):
-    res.status(400).json({message: "Could not find matching classrooms"});
+    if(!verifyToken(req.token)) 
+        res.status(403).send({message: "Invalid authentication"});
+    else{
+        const query = req.body;
+
+        const classrooms = await Classroom.find(query);
+        
+        classrooms != null ?
+        res.status(200).json(classrooms):
+        res.status(400).json({message: "Could not find matching classrooms"});
+    }
 
 });
 

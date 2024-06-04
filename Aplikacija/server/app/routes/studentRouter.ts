@@ -1,5 +1,6 @@
 import { Router } from "express";
 import Student from "../models/student";
+import { authorizeToken, verifyToken } from "../config/tokenFuncs";
 
 
 
@@ -23,10 +24,14 @@ studentRouter.post("/add", async (req, res) => {
 });
 
 //find all
-studentRouter.get('/findAll', async (req, res) => {
+studentRouter.get('/findAll', authorizeToken, async (req: any, res) => {
     try {
-        const students = await Student.find({});
-        res.json(students);
+        if(!verifyToken(req.token)) 
+            res.status(403).send({message: "Invalid authentication"});
+        else{
+            const students = await Student.find({});
+            res.json(students);
+        }   
     } catch(error) {
         res.status(500).json({ message: "Could not find students"});
     }
@@ -35,18 +40,22 @@ studentRouter.get('/findAll', async (req, res) => {
 //find one
 studentRouter.post(
     "/filteredFind",
-    async ( req, res) => {
+    authorizeToken,
+    async (req: any, res) => {
     
         try {
-            const query = req.body;
 
-            const student = await Student.find(query);
+            if(!verifyToken(req.token)) 
+                res.status(403).send({message: "Invalid authentication"});
+            else{
+                const query = req.body;
 
-            if(!student) {
-                return res.status(404).json({ error: "Student not found" });
+                const student = await Student.find(query);
+                student === null ? 
+                res.status(404).json({ error: "Student not found" }) :
+                res.status(200).json(student);
+
             }
-
-            res.status(200).json(student);
         } catch(error) {
             console.error('Error finding student: ', error);
             res.status(500).json({ error: 'Internal server error' });

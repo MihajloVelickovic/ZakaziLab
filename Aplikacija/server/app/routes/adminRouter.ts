@@ -1,10 +1,14 @@
 import {Router} from "express";
 import Admin from "../models/admin";
+import { authorizeToken, verifyToken } from "../config/tokenFuncs";
 
 const AdminRouter = Router();
 
-AdminRouter.get("/findAll", async (req, res) => {
+AdminRouter.get("/findAll", authorizeToken, async (req: any, res) => {
     
+    if(!verifyToken(req.token)) 
+        res.status(403).send({message: "Invalid authentication"});
+
     const found = await Admin.find({});
 
     found != null ? 
@@ -34,7 +38,11 @@ AdminRouter.post("/add", async (req, res) => {
 
 });
 
-AdminRouter.post("/filteredFind", async (req, res) => {
+AdminRouter.post("/filteredFind", authorizeToken, async (req: any, res) => {
+    
+    if(!verifyToken(req.token)) 
+        res.status(403).send({message: "Invalid authentication"});
+
     const query = req.body;
 
     const Admins = await Admin.find(query);

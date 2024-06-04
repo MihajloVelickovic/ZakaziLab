@@ -1,5 +1,6 @@
 import { Router } from "express";
 import Subject from "../models/subject";
+import { authorizeToken, verifyToken } from "../config/tokenFuncs";
 
 const subjectRouter = Router();
 
@@ -20,22 +21,29 @@ subjectRouter.post("/add", async (req, res) => {
     }
 });
 
-subjectRouter.get("/findAll", async (req, res) => {
+subjectRouter.get("/findAll", authorizeToken, async (req: any, res) => {
     try {
-        const subjects = await Subject.find({});
-        res.json(subjects);
+        if(!verifyToken(req.token)) 
+            res.status(403).send({message: "Invalid authentication"});
+        else{
+            const subjects = await Subject.find({});
+            res.json(subjects);
+        }
     } catch (err) {
         res.status(500).json( { message: "Could not find subjects"});
     }
 });
 
-subjectRouter.post("/filteredFind", async (req, res) => {
+subjectRouter.post("/filteredFind", authorizeToken, async (req: any, res) => {
     try {
-        const query = req.body;
 
-        const subject = await Subject.find(query);
-
-        res.json(subject);
+        if(!verifyToken(req.token)) 
+            res.status(403).send({message: "Invalid authentication"});
+        else{
+            const query = req.body;
+            const subject = await Subject.find(query);
+            res.json(subject);
+        }
     } catch (err) {
         res.status(500).json( { message: "Could not find subjects"});
     }

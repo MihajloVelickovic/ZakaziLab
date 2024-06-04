@@ -8,6 +8,8 @@
 node_modules/
 dist/
 
+keys/
+
 # Compiled Java class files
 *.class
 

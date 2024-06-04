@@ -1,17 +1,20 @@
 import {Router} from "express";
 import Professor from "../models/professor";
+import { authorizeToken, verifyToken } from "../config/tokenFuncs";
 
 
 const professorRouter = Router();
 
-professorRouter.get("/findAll", async (req, res) => {
+professorRouter.get("/findAll", authorizeToken, async (req: any, res) => {
     
-    const found = await Professor.find({});
-
-    found != null ? 
-    res.status(200).send(found) : 
-    res.status(404).send({message: "professors not found"});
-
+    if(!verifyToken(req.token)) 
+        res.status(403).send({message: "Invalid authentication"});
+    else{
+        const found = await Professor.find({});
+        found != null ? 
+        res.status(200).send(found) : 
+        res.status(404).send({message: "professors not found"});
+    }
 }); 
 
 professorRouter.post("/add", async (req, res) => {
@@ -37,7 +40,10 @@ professorRouter.post("/add", async (req, res) => {
 
 });
 
-professorRouter.post("/filteredFind", async (req, res) => {
+professorRouter.post("/filteredFind", authorizeToken, async (req: any, res) => {
+    if(!verifyToken(req.token)) 
+        res.status(403).send({message: "Invalid authentication"});
+    
     const query = req.body;
 
     const professors = await Professor.find(query);

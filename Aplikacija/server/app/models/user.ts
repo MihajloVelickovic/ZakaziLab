@@ -29,7 +29,7 @@ const UserSchema = new mongoose.Schema<IUser>({
     privileges: {
         type: String,
         required: true
-    }
+    },
 });
 
 const User = mongoose.model<IUser>('User', UserSchema);

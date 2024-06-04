@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
-import {URI} from "./config";
+import {URI} from "./config/config";
 import subjectRouter from "./routes/subjectRouter";
 import studentRouter from "./routes/studentRouter";
 import assistantRouter from "./routes/assistantRouter";
@@ -14,38 +14,15 @@ import loginRouter from "./routes/login";
 import registerRouter from "./routes/register";
 
 const corsOptions = {
-    origin: 'http://localhost:3000', // Your client URL
+    origin: 'http://localhost:3000',
     optionsSuccessStatus: 200,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"]
 };
 
 const app = express();
 app.use(express.json());
 app.use(cors(corsOptions));
-// app.use(cors(
-//     {
-//         origin: "http://localhost:3000",
-//         methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-//         allowedHeaders: ["X-Requested-With", "content-type"]
-//     }));
-    
-// app.use(express.urlencoded({ extended:true }));
 
-// app.use(function (req, res, next) {
-
-//     // Website you wish to allow to connect
-//     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-
-//     // Request methods you wish to allow
-//     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-
-//     // Request headers you wish to allow
-//     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-
-//     // Set to true if you need the website to include cookies in the requests sent
-//     // to the API (e.g. in case you use sessions)
-//     // res.setHeader('Access-Control-Allow-Credentials');
-//     next();
-// });
 app.use("/user", userRouter);
 app.use("/student", studentRouter);
 app.use("/subject", subjectRouter);
@@ -66,4 +43,3 @@ mongoose.connect(URI)
         .catch((err) => {
             console.log(err.message);
         });
-

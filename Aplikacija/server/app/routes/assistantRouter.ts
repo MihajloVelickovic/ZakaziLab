@@ -1,11 +1,15 @@
 import {Router} from "express";
 import Assistant from "../models/assistant";
+import { authorizeToken, verifyToken } from "../config/tokenFuncs";
 
 
 const assistantRouter = Router();
 
-assistantRouter.get("/findAll", async (req, res) => {
+assistantRouter.get("/findAll", authorizeToken, async (req: any, res) => {
     
+    if(!verifyToken(req.token)) 
+        res.status(403).send({message: "Invalid authentication"});
+
     const found = await Assistant.find({});
 
     found != null ? 
@@ -35,14 +39,17 @@ assistantRouter.post("/add", async (req, res) => {
 
 });
 
-assistantRouter.post("/filteredFind", async (req, res) => {
-    const query = req.body;
-
-    const assistants = await Assistant.find(query);
-    assistants != null ?
-    res.status(200).send(assistants) :
-    res.status(404).send({message: "Assistants with filter not found"});
-
+assistantRouter.post("/filteredFind", authorizeToken, async (req: any, res) => {
+    
+    if(!verifyToken(req.token)) 
+        res.status(403).send({message: "Invalid authentication"});
+    else{
+        const query = req.body;
+        const assistants = await Assistant.find(query);
+        assistants != null ?
+        res.status(200).send(assistants) :
+        res.status(404).send({message: "Assistants with filter not found"});
+    }
 });
 
 assistantRouter.delete("/delete/:id", async (req, res) => {

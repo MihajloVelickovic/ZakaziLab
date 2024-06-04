@@ -14,7 +14,8 @@ const fetchData = async () => {
         const response = await fetch(`http://127.0.0.1:1738/studentEntry/filteredFind`, {
                 method: "POST",
                 body: JSON.stringify({student: user}),
-                headers: {"Content-Type": "application/json"}
+                //OVO DODAJ LAKI :DDD
+                headers: {/*"Authorization": `Bearer ${localStorage.getItem("JWT")}`,*/"Content-Type": "application/json"}
             });
         if (!response.ok) {
             throw new Error('Failed to fetch data');

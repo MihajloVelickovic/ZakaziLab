@@ -2,16 +2,20 @@ import {Router} from "express";
 import lab from "../models/lab";
 import Student from "../models/student";
 import Lab from "../models/lab";
+import { authorizeToken, verifyToken } from "../config/tokenFuncs";
 
 const labRouter = Router();
 
-labRouter.get("/findAll", async (req, res) => {
+labRouter.get("/findAll", authorizeToken, async (req: any, res) => {
     
-    const found = await lab.find({});
-
-    found != null ? 
-    res.status(200).send(found) : 
-    res.status(404).send({message: "labs not found"});
+    if(!verifyToken(req.token)) 
+        res.status(403).send({message: "Invalid authentication"});
+    else{
+        const found = await lab.find({});
+        found != null ? 
+        res.status(200).send(found) : 
+        res.status(404).send({message: "labs not found"});
+    }
 
 }); 
 
@@ -35,14 +39,17 @@ labRouter.post("/add", async (req, res) => {
 
 });
 
-labRouter.post("/filteredFind", async (req, res) => {
-    const query = req.body;
-
-    const labs = await lab.find(query);
-    labs != null ?
-    res.status(200).send(labs) :
-    res.status(404).send({message: "labs with filter not found"});
-
+labRouter.post("/filteredFind", authorizeToken, async (req: any, res) => {
+   
+    if(!verifyToken(req.token)) 
+        res.status(403).send({message: "Invalid authentication"});
+    else{
+        const query = req.body;
+        const labs = await lab.find(query);
+        labs != null ?
+        res.status(200).send(labs) :
+        res.status(404).send({message: "labs with filter not found"});
+    }
 });
 
 labRouter.delete("/delete/:id", async (req, res) => {
