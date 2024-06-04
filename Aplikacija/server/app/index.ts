@@ -10,8 +10,8 @@ import professorRouter from "./routes/professorRouter";
 import labRouter from "./routes/labRouter";
 import studentEntryRouter from "./routes/studentEntryRouter";
 import userRouter from "./routes/userRouter";
-import loginRouter from "./routes/login";
-import registerRouter from "./routes/register";
+import loginRouter from "./routes/loginRouter";
+import registerRouter from "./routes/registerRouter";
 
 const corsOptions = {
     origin: 'http://localhost:3000',
