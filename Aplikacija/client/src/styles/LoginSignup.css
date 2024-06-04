@@ -60,10 +60,14 @@ body {
     display: flex;
     align-items: center;
     margin:auto;
-    width: 480px;
-    height: 80px;
+    width: 440px;
+    height: 60px;
     background: whitesmoke;
     border-radius: 6px;    
+}
+
+.inputs p{
+    color: brown;
 }
 
 .input img{
@@ -99,8 +103,9 @@ body {
 .submit-container {
     display: flex;
     gap: 30px;
-    margin-top: 60px;
-    margin-bottom: 60px;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    justify-content: space-around;
     /* margin: 60px auto; */
     /* padding-top: 60px; */
 }
@@ -113,7 +118,7 @@ body {
     height: 59px;
     color: whitesmoke;
     background: darkblue;
-    border-radius: 30px;
+    /* border-radius: 30px; */
     font-size: 19px;
     font-weight: 700;
     cursor: pointer;
@@ -135,7 +140,7 @@ body {
     animation: glowing 20s linear infinite;
     opacity: 0;
     transition: opacity .3s ease-in-out;
-    border-radius: 30px;
+    /* border-radius: 30px; */
 }
 
 .submit:active {
@@ -159,7 +164,7 @@ body {
     background: darkblue;
     left: 0;
     top: 0;
-    border-radius: 30px;
+    /* border-radius: 30px; */
     
 }
 
@@ -171,7 +176,7 @@ body {
     height: 59px;
     color: darkgrey;
     background: whitesmoke;
-    border-radius: 30px;
+    /* border-radius: 30px; */
     font-size: 19px;
     font-weight: 700;
     cursor: pointer;
@@ -179,12 +184,13 @@ body {
     z-index: 0;
 }
 
-.dropdown-menu {
+.userMenu {
     display: none; /* Hidden by default */
     position: absolute;
+    width: 100%;
     top: 100%;
     left: 0;
-    background-color: darkblue;
+    background-color: black;
     border-radius: 0 0 25px 25px;
     padding: 10px 0;
     margin: 0;
@@ -192,16 +198,16 @@ body {
     z-index: 1000;
 }
 
-.dropdown-menu.show {
+.userMenu.show {
     display: block; /* Show the menu when 'show' class is added */
 }
 
-.dropdown-item {
+.userItem {
     padding: 10px 20px;
     color: white;
     cursor: pointer;
 }
 
-.dropdown-item:hover {
+.userItem:hover {
     background-color: #00008b; /* Darker shade on hover */
 }

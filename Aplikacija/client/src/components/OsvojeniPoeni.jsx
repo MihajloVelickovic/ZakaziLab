@@ -1,65 +1,13 @@
-/* import React, { useEffect, useState } from "react";
-import "../styles/OsvojeniPoeni.css";
-
-const fetchData = async () => {
-  try {
-    const response = await fetch('http://127.0.0.1:1738/studentEntry/findAll');
-    if (!response.ok) {
-      throw new Error('Failed to fetch data');
-    }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    throw error;
-  }
-};
-
-const ListItem = ({ _id, student, attendance, timeSlot, points, labName, __v }) => (
-  <li>
-    {_id} &mdash; {labName} &mdash; {student.index}
-  </li>
-);
-
-const ListItems = ({ items }) => (
-  <ul>
-    {items.map((props) => (
-      <ListItem key={props._id} {...props} />
-    ))}
-  </ul>
-);
-
-const OsvojeniPoeni = () => {
-  const [result, setResult] = useState([]);
-
-  useEffect(() => {
-    fetchData().then((res) => {
-        console.log('Fetched data:', res);
-      setResult(res);
-    }).catch((error) => {
-      console.error('Error fetching data:', error);
-    });
-  }, []);
-
-  return (
-    <div>
-      {result.length > 0 && <ListItems items={result} />}
-    </div>
-  );
-}
-
-export default OsvojeniPoeni; */
- 
-
-
 import React, { useEffect, useState } from "react";
 import "../styles/OsvojeniPoeni.css";
 
-const user = JSON.parse(localStorage.getItem('userData'));
-const ID = user._id;
-const Index = user.index;
+var user = null;
+if (localStorage.getItem('userData')){
+    user = JSON.parse(localStorage.getItem('userData'));
+}
+var Index = user? user.index : -1;
 //console.log(ID);
-console.log("user je: ", user);
+//console.log("user je: ", user);
 
 const fetchData = async () => {
     try {
@@ -87,7 +35,8 @@ const OsvojeniPoeni = () => {
     const [studentIndex, setStudentIndex] = useState(null);
 
     useEffect(() => {
-        fetchData()
+        if (user){
+            fetchData()
             .then((res) => {
                 console.log('Fetched data:', res);
                 // const filteredEntries = res.filter(entry => entry.student.index === 18569);
@@ -100,6 +49,8 @@ const OsvojeniPoeni = () => {
             .catch((error) => {
                 console.error('Error fetching data:', error);
             });
+        }
+        
     }, []);
 
     const toggleLab = (labName) => {

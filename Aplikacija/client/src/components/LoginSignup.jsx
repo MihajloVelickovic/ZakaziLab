@@ -1,4 +1,3 @@
-//import { Link, NavLink } from 'react-router-dom';
 import React, {useState, useEffect} from "react";
 import { useNavigate } from 'react-router-dom';
 import { Navigate } from "react-router-dom";
@@ -11,6 +10,7 @@ import passwordImg from '../images/password.png';
 
 import DropdownButton from "react-bootstrap/DropdownButton";
 import { Dropdown } from "react-bootstrap";
+import Button from 'react-bootstrap/Button';
 //import backgroundImg from '../images/loginBackground.jpg';
 
 
@@ -25,15 +25,17 @@ const LoginSignup = () => {
 
     //const [action, setAction] = useState("Sign Up");
 
-    const initialValues = {username:"", email: "", password: ""};
+    const initialValues = {email: "", password: "", name:"",lastName:"", modul:"", index:"", DoB:"", Ddiplomiranja:"", Fdiplomiranja:"", Ddoktoriranja:"", Fdoktoriranja:""};
+
     const [formValues, setFormValues] = useState(initialValues);
     const [formErrors, setFormErrors] = useState({});
-    const [isSubmit, setIsSubmit] = useState(false);
+    const [action, setAction] = useState("Login");
+    const [typeOfUser, setTypeOfUser] = useState("student");
     const navigate = useNavigate();
 
-    //msLogin
+    //msLogin (izbaci ga kad budes imao vremena)
     const { instance, accounts } = useMsal();
-    const [isLoggedIn, setIsLoggedIn] = useState(accounts.length>0);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     const handleLogin = () => {
         instance.loginRedirect(loginRequest).catch(e => {
@@ -58,7 +60,7 @@ const LoginSignup = () => {
     //end of msLogin
 
     const postValues = async () => {
-        if (Object.keys(formErrors).length === 0 && isSubmit) {
+        if (Object.keys(formErrors).length === 0) {
             console.log(formValues);
             console.log(JSON.stringify(formValues));
             console.log("success!");
@@ -120,83 +122,147 @@ const LoginSignup = () => {
     const handleSubmit = (e) => {
         
         e.preventDefault();
-        setFormErrors(validate(formValues));
-        //setIsSubmit(true);
-        //console.log("true submit");
-        if (Object.keys(formErrors).length === 0 && isSubmit) {
+        var errorList = validate(formValues);
+        setFormErrors(errorList);
+        if (Object.keys(errorList).length === 0) {
             //console.log(formValues);
             // console.log(JSON.stringify(formValues));
-            console.log("success! pressed submit");
+            console.log("success! pressed submit and input fields are adequate");
+            //ovde sada treba da se pozove fetch ka serveru
         }
-        console.log("submit button pressed");
+        else {
+            console.log("submit failed, input fields")
+        };
     }
 
     useEffect( () => {
-        if (!isLoggedIn){
-            console.log("nije logovan");
-            handleLogin();
-        }
-            
-        if (accounts.length > 0) {
-            const account = accounts[0];
-            var Username = account.idTokenClaims.name;
-            var Email = account.username;
-            var result = fetchStudent(Email);
-            result.then(res => {
-                console.log(res.name);
-            })
-        }
-        if (Object.keys(formErrors).length === 0 && isSubmit) {
-            //console.log(JSON.stringify(formValues));
-            console.log("success! pressed submit 2");
-            //postValues();                                             //this is sending to server sign up details
-        }
+        console.log("nije logovan");
     },[formErrors])
 
     const validate = (values) => {
-        const errors = {}
+        const errors = {};
         const regex = /^(?!\s)[A-Z0-9\s]+$/i;
-        if (!values.username) {
-            errors.username = "Username is required!";
+
+        for (let key in values) {
+
+            if (action=="Login"){
+                if (key == "email" || key == "password")
+                    if (!values[key]) {
+                        errors[key] = `${key} is required!`;
+                    }
+            }
+            else if (typeOfUser=="student"){
+                if (key != "Ddiplomiranja" && key != "Fdiplomiranja" && key != "Ddoktoriranja" && key != "Fdoktoriranja")
+                    if (!values[key]) {
+                        errors[key] = `${key} is required!`;
+                    }
+            }
+            else if (typeOfUser=="assistant"){
+                if (key != "Dob" && key != "index" && key!="Ddoktoriranja" && key!="Fdoktoriranja")
+                    if (!values[key]) {
+                        errors[key] = `${key} is required!`;
+                    }
+            }
+            else if (typeOfUser=="professor"){
+                if (key != "Dob" && key != "index") {
+                    if (!values[key]) {
+                        errors[key] = `${key} is required!`;
+                    }
+                }
+            }else if (typeOfUser=="admin"){
+                if (key == "email" || key == "password" || key=="name" || key=="lastName")
+                    if (!values[key]) {
+                        errors[key] = `${key} is required!`;
+                    }
+            }
         }
-        if (!values.email) {
-            errors.email = "Email is required";
-         }//else if (!regex.test(values.email)) {
-        //     errors.email = "This is not a valid email format!";
-        // }
-        if (!values.password) {
-            errors.password = "Password is required!";
-        }else if (values.password.length < 4) {
-            errors.password = "Password must be more than 4 characters";
-        }
+
         return errors;
     }
 
-    const DropdownButton = ({ title, items }) => {
-        const [showMenu, setShowMenu] = useState(false);
-    
-        const toggleMenu = () => {
-            setShowMenu(!showMenu);
-        };
-    
-        const handleItemClick = (item) => {
-            console.log(item); // Handle item click
-            setShowMenu(false); // Close the menu
-        };
-    
+    const showInputFields = () => {
         return (
-            <div className="submit" onClick={toggleMenu}>
-                {title} <i className="bi bi-caret-down" style={{paddingLeft: "25px"}}></i>
-                <ul className={`dropdown-menu ${showMenu ? 'show' : ''}`}>
-                    {items.map((item, index) => (
-                        <li key={index} className="dropdown-item" onClick={() => handleItemClick(item)}>
-                            {item}
-                        </li>
-                    ))}
-                </ul>
+            <div className='inputs'>
+                <div className='input'>
+                    <img src={emailImg} alt=''></img>
+                    <input type='email' name='email' placeholder='Email' value = {formValues.email} onChange={handleChange}></input>
+                </div>
+                <p>{formErrors.email}</p>
+                <div className='input'>
+                    <img src={passwordImg} alt='' ></img>
+                    <input type='password' name='password' placeholder='Password' value = {formValues.password} onChange={handleChange}></input>
+                </div>
+                <p>{formErrors.password}</p>
+
+                {action!="Sign Up"? <></> : <>
+                    <div className='input'>
+                        <img src={userImg} alt='' ></img>
+                        <input type='text' name='name' placeholder='Name' value = {formValues.name} onChange={handleChange}></input>                        
+                    </div>
+                    <p>{formErrors.name}</p>
+
+                    <div className='input'>
+                        <img src={userImg} alt='' ></img>
+                        <input type='text' name='lastName' placeholder='LastName' value = {formValues.lastName} onChange={handleChange}></input>                        
+                    </div>
+                    <p>{formErrors.lastName}</p>
+
+                    {typeOfUser=="admin"? <></>: <>
+                        <div className='input'>
+                            <img src={userImg} alt='' ></img>
+                            <input type='text' name='modul' placeholder='modul' value = {formValues.modul} onChange={handleChange}></input>                        
+                        </div>
+                        <p>{formErrors.modul}</p>
+
+                        {typeOfUser=="student"? <>
+                            <div className='input'>
+                                <img src={userImg} alt='' ></img>
+                                <input type="number" name='index' placeholder='index' value = {formValues.index} onChange={handleChange}></input>                        
+                            </div>
+                            <p>{formErrors.index}</p>
+
+                            <div className='input'>
+                                <img src={userImg} alt='' ></img>
+                                <input className="textbox-n" type="text" onFocus={(e) => (e.target.type = "date")}
+                                        onBlur={(e) => (e.target.type = "text")} name='DoB' placeholder='datum rodjenja' value = {formValues.DoB} onChange={handleChange}></input>                        
+                            </div>
+                            <p>{formErrors.DoB}</p>
+                        </>:
+                        <>
+                            <div className='input'>
+                                <img src={userImg} alt='' ></img>
+                                <input className="textbox-n" type="text" onFocus={(e) => (e.target.type = "date")}
+                                        onBlur={(e) => (e.target.type = "text")} name='Ddiplomiranja' placeholder='datum diplomiranja' value = {formValues.Ddiplomiranja} onChange={handleChange}></input>                        
+                            </div>
+                            <p>{formErrors.Ddiplomiranja}</p>
+
+                            <div className='input'>
+                                <img src={userImg} alt='' ></img>
+                                <input type="text" name='Fdiplomiranja' placeholder='fakultet diplomiranja' value = {formValues.Fdiplomiranja} onChange={handleChange}></input>                        
+                            </div>
+                            <p>{formErrors.Fdiplomiranja}</p>
+
+                            {typeOfUser!="professor"?<></> :
+                            <>
+                                <div className='input'>
+                                <img src={userImg} alt='' ></img>
+                                <input className="textbox-n" type="text" onFocus={(e) => (e.target.type = "date")}
+                                        onBlur={(e) => (e.target.type = "text")} placeholder="datum doktoriranja" name='Ddoktoriranja' value = {formValues.Ddoktoriranja} onChange={handleChange}></input>                        
+                                </div>
+                                <p>{formErrors.Ddoktoriranja}</p>
+
+                                <div className='input'>
+                                <img src={userImg} alt='' ></img>
+                                <input type="text" name='Fdoktoriranja' placeholder='fakultet doktoriranja' value = {formValues.Fdoktoriranja} onChange={handleChange}></input>                        
+                                </div>
+                                <p>{formErrors.Fdoktoriranja}</p>
+                            </>}
+                        </>}
+                    </>}
+                </>}
             </div>
-        );
-    };
+        )
+    }
 
     
 
@@ -208,42 +274,24 @@ const LoginSignup = () => {
             )} */}
             <form>
             <div className='header'>
-                <div className='text'>Sign Up</div>
+                <div className='text'>{action=="Login"?<>Login</>: <>Sign Up</>}</div>
                 <div className='underline'></div>
             </div>
-            <div className='inputs'>
-                    
-                <div className='input'>
-                    <img src={userImg} alt='' ></img>
-                    <input type='text' name='username' placeholder='Name' value = {formValues.username} onChange={handleChange}></input>                        
-                </div>
-                <p>{formErrors.username}</p>
-                <div className='input'>
-                    <img src={emailImg} alt='' ></img>
-                    <input type='email' name='email' placeholder='Email' value = {formValues.email} onChange={handleChange}></input>
-                </div>
-                <p>{formErrors.email}</p>
-                <div className='input'>
-                    <img src={passwordImg} alt='' ></img>
-                    <input type='password' name='password' placeholder='Password' value = {formValues.password} onChange={handleChange}></input>
-                </div>
-                <p>{formErrors.password}</p>
-            </div>
-            {/* {action==="Sign Up"?<div></div>:
-                <div className="forgot-password">Do you have Alzheimer's? <span>Here's the cure</span></div>
-            }             */}
             <div className='submit-container'>
-                {/* <div className={action==="Login"?'submit-gray':'submit'} onClick={()=>{setAction("Sign Up")}}>Sign Up</div> */}
-                {/* <div className={action==="Sign Up"?'submit-gray':'submit'} onClick={()=>{setAction("Login")}}>Login</div> */}
-                {/* <DropdownButton className='submit' onClick={() => { }} title="Sign Up">
-                    <Dropdown.Item className='dropdown-item'>Action</Dropdown.Item>
-                    <Dropdown.Item className='dropdown-item'>Another action</Dropdown.Item>
-                    <Dropdown.Item className='dropdown-item'>Something else</Dropdown.Item>
-                </DropdownButton> */}
-                <DropdownButton title="Sign Up" items={["Action", "Another action", "Something else"]}></DropdownButton>
-                <button className="submit" onClick={handleSubmit}> Submit dugme </button>
+                <Button variant="primary" onClick={()=>{setAction("Login")}}>Login</Button>
+                <DropdownButton id="dropdown-basic-button" title="Dropdown button">
+                    <Dropdown.Item onClick={()=>{setAction("Sign Up"); setTypeOfUser("student")}}>student</Dropdown.Item>
+                    <Dropdown.Item onClick={()=>{setAction("Sign Up"); setTypeOfUser("assistant")}}>assistant</Dropdown.Item>
+                    <Dropdown.Item onClick={()=>{setAction("Sign Up"); setTypeOfUser("professor")}}>professor</Dropdown.Item>
+                    <Dropdown.Item onClick={()=>{setAction("Sign Up"); setTypeOfUser("admin")}}>admin</Dropdown.Item>
+                </DropdownButton>
             </div>
+
+            {showInputFields()}
             
+            <div style={{padding:"20px", float:"right"}}>
+                <Button variant="primary" onClick={handleSubmit}>Submit dugme</Button>    
+            </div>
             </form>            
         </div>
         </>
@@ -251,26 +299,3 @@ const LoginSignup = () => {
 }
 
 export default LoginSignup;
-
-
-
-// const onSubmit = async (values) => {
-//         console.log("Values: ", values);
-//         setError("");
-
-//         try {
-//             const response = await fetch('https://mywebsite.example/endpoint/', {
-//                 method: 'POST',
-//                 headers: {
-//                     'Accept': 'application/json',
-//                     'Content-Type': 'application/json',
-//                 },
-//                 body: JSON.stringify({
-//                     firstParam: 'yourValue',
-//                     secondParam: 'yourOtherValue',
-//                 })
-//                 })
-//         } catch (err) {
-//             console.log("Error: ", err);
-//         }
-//     };

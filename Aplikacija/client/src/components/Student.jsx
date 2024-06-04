@@ -20,7 +20,6 @@ import Sidebar from "./Sidebar";
 
 const LogOutFunction = () => {
     console.log("kliknut logout");
-    const postLogoutRedirectUri2 = 'http%3A%2F%Flocalhost%3A3000';
     const postLogoutRedirectUri = "http://localhost:3000";
     const logoutUrl = `https://login.microsoftonline.com/common/oauth2/v2.0/logout?post_logout_redirect_uri=${postLogoutRedirectUri}`;
     console.log(logoutUrl);
@@ -30,9 +29,6 @@ const LogOutFunction = () => {
 }
 
 const Student = () => {
-
-    const user = JSON.parse(localStorage.getItem('userData'));
-    console.log("sacu da ti pokazem nesto kul: ", user, user.index);
 
     const [showSidebar, setShowSidebar] = useState(false);
 
