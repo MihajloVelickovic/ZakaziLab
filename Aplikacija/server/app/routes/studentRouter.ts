@@ -23,6 +23,41 @@ studentRouter.post("/add", async (req, res) => {
     }
 });
 
+studentRouter.patch("/update/:id", async (req, res) => {
+    const studentId = req.params.id;
+    const { name, lastName, email, password, privileges, birthDate, index, module } = req.body;
+
+    if (!studentId) {
+        return res.status(400).send({ message: "Student ID is required for update" });
+    }
+
+    try {
+        const updateFields: any = {};
+        if (name !== undefined) updateFields.name = name;
+        if (lastName !== undefined) updateFields.lastName = lastName;
+        if (email !== undefined) updateFields.email = email;
+        if (password !== undefined) updateFields.password = password;
+        if (privileges !== undefined) updateFields.privileges = privileges;
+        if (birthDate !== undefined) updateFields.birthDate = birthDate;
+        if (index !== undefined) updateFields.index = index;
+        if (module !== undefined) updateFields.module = module;
+
+        const result = await Student.findByIdAndUpdate(
+            studentId,
+            { $set: updateFields },
+            { new: true, runValidators: true }
+        );
+
+        if (!result) {
+            return res.status(404).send({ message: "Student not found" });
+        }
+
+        res.status(200).json(result);
+    } catch (err: any) {
+        res.status(400).json({ message: `Error updating student: ${err.message}` });
+    }
+});
+
 //find all
 studentRouter.get('/findAll', authorizeToken, async (req: any, res) => {
     try {
@@ -64,18 +99,22 @@ studentRouter.post(
 
 //delete one
 studentRouter.delete(
-    "/delete/:id",
-    async (req, res) => {
+    "/delete/:id", authorizeToken,
+    async (req:any, res) => {
         try {
-            const studentId = req.params.id;
+            if(!verifyToken(req.token)) 
+                res.status(403).send({message: "Invalid authentication"});
+            else {
+                const studentId = req.params.id;
 
-            const student = await Student.findByIdAndDelete(studentId);
-
-            if (!student) {
-                return res.status(404).json({ error: "Student not found" });
+                const student = await Student.findByIdAndDelete(studentId);
+    
+                if (!student) {
+                    return res.status(404).json({ error: "Student not found" });
+                }
+    
+                res.json({ message: "Student deleted successfully" });
             }
-
-            res.json({ message: "Student deleted successfully" });
         } catch (error) {
             console.error('Error deleting student: ', error);
             res.status(500).json({ error: 'Internal server error' });

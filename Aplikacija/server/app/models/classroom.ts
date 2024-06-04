@@ -1,42 +1,14 @@
 import mongoose from "mongoose";
+import { IComputer } from "./computer";
 
-export interface IComputer extends mongoose.Document {
-    name: string;
-    malfunctioned: boolean;
-    malfunctionDesc: string;
-    free: boolean;
-    student: number;
-}
 
-export const ComputerSchema = new mongoose.Schema<IComputer>({
-    name: { 
-        type: String, 
-        required: true 
-    },
-    malfunctioned: { 
-        type: Boolean, 
-        default: false 
-    },
-    malfunctionDesc: { 
-        type: String,
-         default: '' 
-    },
-    free: { 
-        type: Boolean,
-         default: true 
-    },
-    student: {
-        type: Number,
-        required:false
-    }
-});
 
 export interface IClassroom extends mongoose.Document {
     name: string;
     computerNum: number;
     rows: number;
     cols: number;
-    computers: IComputer[][];
+    computers: mongoose.Types.ObjectId[][];
 }
 
 export const ClassroomSchema = new mongoose.Schema<IClassroom>({
@@ -57,7 +29,8 @@ export const ClassroomSchema = new mongoose.Schema<IClassroom>({
         required:true 
     },
     computers: {
-        type: [[ComputerSchema]],
+        type: [[mongoose.Types.ObjectId]],
+        ref: 'Computer',
         default: []
     }
 });

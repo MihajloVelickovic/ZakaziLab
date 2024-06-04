@@ -9,7 +9,7 @@ professorRouter.get("/findAll", authorizeToken, async (req: any, res) => {
     
     if(!verifyToken(req.token)) 
         res.status(403).send({message: "Invalid authentication"});
-    else{
+    else {
         const found = await Professor.find({});
         found != null ? 
         res.status(200).send(found) : 
@@ -40,31 +40,81 @@ professorRouter.post("/add", async (req, res) => {
 
 });
 
+professorRouter.patch("/update/:id", authorizeToken,async (req:any, res) => {
+    if(!verifyToken(req.token)) 
+        res.status(403).send({message: "Invalid authentication"});
+    else {
+            const professorId = req.params.id;
+        const {
+            name, lastName, email,
+            privileges, module, gradDate,
+            gradFaculty, phdGradDate, phdGradFaculty
+        } = req.body;
+
+        if (!professorId) {
+            return res.status(400).send({ message: "Professor ID is required for update" });
+        }
+
+        try {
+            const updateFields: any = {};
+            if (name !== undefined) updateFields.name = name;
+            if (lastName !== undefined) updateFields.lastName = lastName;
+            if (email !== undefined) updateFields.email = email;
+            if (privileges !== undefined) updateFields.privileges = privileges;
+            if (module !== undefined) updateFields.module = module;
+            if (gradDate !== undefined) updateFields.gradDate = gradDate;
+            if (gradFaculty !== undefined) updateFields.gradFaculty = gradFaculty;
+            if (phdGradDate !== undefined) updateFields.phdGradDate = phdGradDate;
+            if (phdGradFaculty !== undefined) updateFields.phdGradFaculty = phdGradFaculty;
+
+            const result = await Professor.findByIdAndUpdate(
+                professorId,
+                { $set: updateFields },
+                { new: true, runValidators: true }
+            );
+
+            if (!result) {
+                return res.status(404).send({ message: "Professor not found" });
+            }
+
+            res.status(200).send(result);
+        } catch (err: any) {
+            res.status(400).send({ message: `Error updating professor: ${err.message}` });
+        }
+    }
+});
+
+
 professorRouter.post("/filteredFind", authorizeToken, async (req: any, res) => {
     if(!verifyToken(req.token)) 
         res.status(403).send({message: "Invalid authentication"});
     
-    const query = req.body;
+   else {
+        const query = req.body;
 
-    const professors = await Professor.find(query);
-    professors != null ?
-    res.status(200).send(professors) :
-    res.status(404).send({message: "professors with filter not found"});
-
+        const professors = await Professor.find(query);
+        professors != null ?
+        res.status(200).send(professors) :
+        res.status(404).send({message: "professors with filter not found"});
+   }
 });
 
-professorRouter.delete("/delete/:id", async (req, res) => {
-    try{
-        const {id} = req.params;
-        const entry = await Professor.findByIdAndDelete(id);
-        entry != null ?
-        res.status(200).send({message: `Deleted Professor with id: ${id}`}) :
-        res.status(404).send({message: `No Professor with id: ${id} found`});
-        
-    }
-    catch(err: any){
-        console.log(err.message);
-        return res.status(500).send({message: "Internal Server Error"});
+professorRouter.delete("/delete/:id", authorizeToken,async (req:any, res) => {
+    if(!verifyToken(req.token)) 
+        res.status(403).send({message: "Invalid authentication"});
+    else {
+        try{
+            const {id} = req.params;
+            const entry = await Professor.findByIdAndDelete(id);
+            entry != null ?
+            res.status(200).send({message: `Deleted Professor with id: ${id}`}) :
+            res.status(404).send({message: `No Professor with id: ${id} found`});
+            
+        }
+        catch(err: any){
+            console.log(err.message);
+            return res.status(500).send({message: "Internal Server Error"});
+        }
     }
 });
 

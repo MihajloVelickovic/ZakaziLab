@@ -53,6 +53,44 @@ studentEntryRouter.post("/add", async (req, res) => {
 
 });
 
+studentEntryRouter.patch("/update/:id", async (req, res) => {
+    const studentEntryId = req.params.id;
+    const { student, attendance, timeSlot, points, labName } = req.body;
+
+    if (!studentEntryId) {
+        return res.status(400).send({ message: "Student Entry ID is required for update" });
+    }
+
+    try {
+        const updateFields: any = {};
+        if (student !== undefined) {
+            const studentDoc = await Student.findById(student);
+            if (!studentDoc) {
+                return res.status(400).send({ message: `Student not found: ${student}` });
+            }
+            updateFields.student = student;
+        }
+        if (attendance !== undefined) updateFields.attendance = attendance;
+        if (timeSlot !== undefined) updateFields.timeSlot = timeSlot;
+        if (points !== undefined) updateFields.points = points;
+        if (labName !== undefined) updateFields.labName = labName;
+
+        const result = await StudentEntry.findByIdAndUpdate(
+            studentEntryId,
+            { $set: updateFields },
+            { new: true, runValidators: true }
+        );
+
+        if (!result) {
+            return res.status(404).send({ message: "Student Entry not found" });
+        }
+
+        res.status(200).send(result);
+    } catch (err: any) {
+        res.status(400).send({ message: `Error updating student entry: ${err.message}` });
+    }
+});
+
 studentEntryRouter.post("/filteredFind", authorizeToken, async (req: any, res: any) => {
     
     if(!verifyToken(req.token)) 

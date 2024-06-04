@@ -10,6 +10,8 @@ import professorRouter from "./routes/professorRouter";
 import labRouter from "./routes/labRouter";
 import studentEntryRouter from "./routes/studentEntryRouter";
 import userRouter from "./routes/userRouter";
+import adminRouter from "./routes/adminRouter";
+import computerRouter from "./routes/computerRouter";
 
 const corsOptions = {
     origin: 'http://localhost:3000',
@@ -25,10 +27,12 @@ app.use("/user", userRouter);
 app.use("/student", studentRouter);
 app.use("/subject", subjectRouter);
 app.use("/assistant", assistantRouter);
-app.use("/classrooms", classroomRouter);
-app.use("/professors", professorRouter);
+app.use("/classroom", classroomRouter);
+app.use("/professor", professorRouter);
+app.use("/admin", adminRouter);
 app.use("/labs", labRouter);
 app.use("/studentEntry", studentEntryRouter);
+app.use("/computer", computerRouter);
 
 mongoose.connect(URI)
         .then(() => {

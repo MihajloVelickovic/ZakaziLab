@@ -3,7 +3,7 @@ import { IStudent } from "./student";
 
 
 export interface IStudentEntry {
-    student: IStudent;
+    student: mongoose.Types.ObjectId;
     attendance: boolean[];
     timeSlot: Date;
     points: number[];  

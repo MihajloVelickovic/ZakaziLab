@@ -39,6 +39,44 @@ assistantRouter.post("/add", async (req, res) => {
 
 });
 
+assistantRouter.patch("/update/:id", async (req, res) => {
+    const assistantId = req.params.id;
+    const {
+        name, lastName, email, password,
+        privileges, module, gradDate, gradFaculty
+    } = req.body;
+
+    if (!assistantId) {
+        return res.status(400).send({ message: "Assistant ID is required for update" });
+    }
+
+    try {
+        const updateFields: any = {};
+        if (name !== undefined) updateFields.name = name;
+        if (lastName !== undefined) updateFields.lastName = lastName;
+        if (email !== undefined) updateFields.email = email;
+        if (password !== undefined) updateFields.password = password;
+        if (privileges !== undefined) updateFields.privileges = privileges;
+        if (module !== undefined) updateFields.module = module;
+        if (gradDate !== undefined) updateFields.gradDate = gradDate;
+        if (gradFaculty !== undefined) updateFields.gradFaculty = gradFaculty;
+
+        const result = await Assistant.findByIdAndUpdate(
+            assistantId,
+            { $set: updateFields },
+            { new: true, runValidators: true }
+        );
+
+        if (!result) {
+            return res.status(404).send({ message: "Assistant not found" });
+        }
+
+        res.status(200).send(result);
+    } catch (err: any) {
+        res.status(400).send({ message: `Error updating assistant: ${err.message}` });
+    }
+});
+
 assistantRouter.post("/filteredFind", authorizeToken, async (req: any, res) => {
     
     if(!verifyToken(req.token)) 

@@ -34,6 +34,41 @@ userRouter.post("/add", authorizeToken, async (req: any, res) => {
     }
 });
 
+userRouter.patch("/update/:id", authorizeToken, async (req: any, res) => {
+    if (!verifyToken(req.token)) {
+        return res.status(403).send({ message: "Invalid token" });
+    }
+
+    const userId = req.params.id;
+    const { name, lastName, email, privileges } = req.body;
+
+    if (!userId) {
+        return res.status(400).send({ message: "User ID is required for update" });
+    }
+
+    try {
+        const updateFields: any = {};
+        if (name !== undefined) updateFields.name = name;
+        if (lastName !== undefined) updateFields.lastName = lastName;
+        if (email !== undefined) updateFields.email = email;
+        if (privileges !== undefined) updateFields.privileges = privileges;
+
+        const result = await User.findByIdAndUpdate(
+            userId,
+            { $set: updateFields },
+            { new: true, runValidators: true }
+        );
+
+        if (!result) {
+            return res.status(404).send({ message: "User not found" });
+        }
+
+        res.status(200).json(result);
+    } catch (error:any) {
+        res.status(400).json({ message: `Error updating user: ${error.message}` });
+    }
+});
+
 //find all
 userRouter.get('/findAll', authorizeToken, async (req: any, res) => {
     try {
@@ -99,51 +134,56 @@ userRouter.delete(
         }
 });
 
-userRouter.post("/register", async (req, res) => {
-    const { 
-            name, lastName, email,
-            password, privileges, module,
-            gradDate, gradFaculty, birthDate, index 
-          } = req.body;
-    
-      if (!name || !lastName || !email || !password || !privileges) 
-        return res.status(400).json({ message: 'All fields are required' });
-      
-      try {
-        const userExists = await User.findOne({ email });
-        if (userExists) 
-          return res.status(400).json({ message: 'Email already exists' });
+userRouter.post("/register", authorizeToken, async (req:any, res) => {
+    if(!verifyToken(req.token)) 
+        res.status(403).send({message: "Invalid token"});
+    else {
+            const { 
+                name, lastName, email,
+                password, privileges, module,
+                gradDate, gradFaculty, birthDate, index 
+            } = req.body;
         
-        const hashedPassword = await bcrypt.hash(password, 10);
-        let newUser;
-    
-        switch (privileges) {
-          case 'assistant':
-            newUser = new Assistant({ name, lastName, email, password: hashedPassword, privileges, module, gradDate, gradFaculty });
-            break;
-          case 'admin':
-            newUser = new Admin({ name, lastName, email, password: hashedPassword, privileges, FoG: true });
-            break;
-          case 'student':
-            newUser = new Student({ name, lastName, email, password: hashedPassword, privileges, birthDate, index, module });
-            break;
-          default:
-            return res.status(400).json({ message: 'Invalid privileges' });
+        if (!name || !lastName || !email || !password || !privileges) 
+            return res.status(400).json({ message: 'All fields are required' });
+        
+        try {
+            const userExists = await User.findOne({ email });
+            if (userExists) 
+            return res.status(400).json({ message: 'Email already exists' });
+            
+            const hashedPassword = await bcrypt.hash(password, 10);
+            let newUser;
+        
+            switch (privileges) {
+            case 'assistant':
+                newUser = new Assistant({ name, lastName, email, password: hashedPassword, privileges, module, gradDate, gradFaculty });
+                break;
+            case 'admin':
+                newUser = new Admin({ name, lastName, email, password: hashedPassword, privileges, FoG: true });
+                break;
+            case 'student':
+                newUser = new Student({ name, lastName, email, password: hashedPassword, privileges, birthDate, index, module });
+                break;
+            default:
+                return res.status(400).json({ message: 'Invalid privileges' });
+            }
+        
+            const addedUser = await newUser.save();
+        
+            const tokenObject = {id: addedUser._id, email: addedUser.email};
+        
+            const token = signToken(tokenObject);
+        
+            addedUser.password = "";
+        
+            res.status(201).json({ token: token, message: 'User registered successfully', addedUser});
+        } 
+        catch (error:any) {
+            res.status(500).json({ message: 'Error registering user', error:`${error.message}}`});
         }
+    }
     
-        const addedUser = await newUser.save();
-    
-        const tokenObject = {id: addedUser._id, email: addedUser.email};
-    
-        const token = signToken(tokenObject);
-    
-        addedUser.password = "";
-    
-        res.status(201).json({ token: token, message: 'User registered successfully', addedUser});
-      } 
-      catch (error:any) {
-        res.status(500).json({ message: 'Error registering user', error:`${error.message}}`});
-      }
 });
 
 userRouter.post("/login", async (req, res) => {
