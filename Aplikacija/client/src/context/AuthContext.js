@@ -41,7 +41,7 @@ export const AuthProvider = ({children}) => {
         console.log("authTokens now has value: ", authTokens);
         console.log("user: ", user);
         console.log(user.privileges);
-        // Navigate.push(`/${user.privileges}`);
+        window.location.href = `/${user.privileges}`;
         
     }
 
