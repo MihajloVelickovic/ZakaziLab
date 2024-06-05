@@ -1,5 +1,6 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose, { Schema, mongo } from "mongoose";
 import { IStudentEntry, StudentEntrySchema } from "./studentEntry";
+import { IClassroom } from "./classroom";
 
 export interface ILab extends mongoose.Document{
     name: string;
@@ -7,7 +8,10 @@ export interface ILab extends mongoose.Document{
     mandatory: boolean;
     subjectNum: number;
     maxPoints: number;
-    studentList: IStudentEntry[];
+    studentList: mongoose.Types.ObjectId[];
+    classroom: mongoose.Types.ObjectId;
+    subjects: mongoose.Types.ObjectId[];
+    timeSlots: Date[];   
 }
 
 export const LabScheme = new mongoose.Schema<ILab> ({
@@ -31,9 +35,17 @@ export const LabScheme = new mongoose.Schema<ILab> ({
         type: Number,
         required:true
     },
+    classroom: {
+        type: Schema.Types.ObjectId,
+        ref: 'Classroom',
+    },
+    subjects: {
+        type: [Schema.Types.ObjectId],
+        ref: 'Subject',
+    },
     studentList: {
-        type: [StudentEntrySchema],
-        required: true
+        type: [Schema.Types.ObjectId],
+        ref: 'StudentEntry',
     }
  });
 

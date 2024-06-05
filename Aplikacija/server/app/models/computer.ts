@@ -6,7 +6,7 @@ export interface IComputer extends mongoose.Document {
     malfunctioned: boolean;
     malfunctionDesc: string;
     free: boolean;
-    student: IStudent;
+    student: mongoose.Types.ObjectId;
 }
 
 export const ComputerSchema = new mongoose.Schema<IComputer>({
@@ -28,7 +28,7 @@ export const ComputerSchema = new mongoose.Schema<IComputer>({
     },
     student: {
         type: Schema.Types.ObjectId,
-        ref: 'Student'
+        ref: 'StudentEntry'
     }
 });
 

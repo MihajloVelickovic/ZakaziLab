@@ -92,7 +92,6 @@ computerRouter.get('/filteredFind', authorizeToken,async (req:any, res) => {
         try {
             const filterCriteria = req.body;
 
-        // Retrieve computers based on the filter criteria
         const computers = await Computer.find(filterCriteria)
         .populate('student');
         

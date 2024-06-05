@@ -26,35 +26,35 @@ subjectRouter.patch("/update/:id", authorizeToken, async (req:any, res) => {
         res.status(403).send({message: "Invalid authentication"});
     else {
         const subjectId = req.params.id;
-    const { ordNum, desc, date, timeSlots, maxPoints, studentList } = req.body;
+        const { ordNum, desc, date, timeSlots, maxPoints, studentList } = req.body;
 
-    if (!subjectId) {
-        return res.status(400).send({ message: "Subject ID is required for update" });
-    }
-
-    try {
-            const updateFields: any = {};
-            if (ordNum !== undefined) updateFields.ordNum = ordNum;
-            if (desc !== undefined) updateFields.desc = desc;
-            if (date !== undefined) updateFields.date = date;
-            if (timeSlots !== undefined) updateFields.timeSlots = timeSlots;
-            if (maxPoints !== undefined) updateFields.maxPoints = maxPoints;
-            if (studentList !== undefined) updateFields.studentList = studentList;
-
-            const result = await Subject.findByIdAndUpdate(
-                subjectId,
-                { $set: updateFields },
-                { new: true, runValidators: true }
-            );
-
-            if (!result) {
-                return res.status(404).send({ message: "Subject not found" });
-            }
-
-            res.status(200).json(result);
-        } catch (err:any) {
-            res.status(500).json({ message: `Error updating subject: ${err.message}` });
+        if (!subjectId) {
+            return res.status(400).send({ message: "Subject ID is required for update" });
         }
+
+        try {
+                const updateFields: any = {};
+                if (ordNum !== undefined) updateFields.ordNum = ordNum;
+                if (desc !== undefined) updateFields.desc = desc;
+                if (date !== undefined) updateFields.date = date;
+                if (timeSlots !== undefined) updateFields.timeSlots = timeSlots;
+                if (maxPoints !== undefined) updateFields.maxPoints = maxPoints;
+                if (studentList !== undefined) updateFields.studentList = studentList;
+
+                const result = await Subject.findByIdAndUpdate(
+                    subjectId,
+                    { $set: updateFields },
+                    { new: true, runValidators: true }
+                );
+
+                if (!result) {
+                    return res.status(404).send({ message: "Subject not found" });
+                }
+
+                res.status(200).json(result);
+            } catch (err:any) {
+                res.status(500).json({ message: `Error updating subject: ${err.message}` });
+            }
     }
 });
 
@@ -73,12 +73,11 @@ subjectRouter.get("/findAll", authorizeToken, async (req: any, res) => {
 
 subjectRouter.post("/filteredFind", authorizeToken, async (req: any, res) => {
     try {
-
         if(!verifyToken(req.token)) 
             res.status(403).send({message: "Invalid authentication"});
         else{
             const query = req.body;
-            const subject = await Subject.find(query);
+            const subject = await Subject.find(query).populate('lab');
             res.json(subject);
         }
     } catch (err) {
@@ -86,9 +85,12 @@ subjectRouter.post("/filteredFind", authorizeToken, async (req: any, res) => {
     }
 });
 
-subjectRouter.delete("/delete/:id", async (req, res) => {
+subjectRouter.delete("/delete/:id", authorizeToken, async (req:any, res) => {
     try {
-        const subjectId = req.params.id;
+        if(!verifyToken(req.token)) 
+            res.status(403).send({message: "Invalid authentication"});
+        else {
+            const subjectId = req.params.id;
 
         const subject = await Subject.findByIdAndDelete(subjectId);
 
@@ -97,6 +99,7 @@ subjectRouter.delete("/delete/:id", async (req, res) => {
         }
 
         res.json({ message: "Subject deleted successfully" });
+        }        
     } catch (error) {
         console.error('Error deleting subject: ', error);
         res.status(500).json({ error: 'Internal server error' });
