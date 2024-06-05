@@ -2,6 +2,8 @@
 import { Router } from "express";
 import Classroom from "../models/classroom";
 import { authorizeToken, verifyToken } from "../config/tokenFuncs";
+import Computer from "../models/computer";
+import mongoose, { Schema } from "mongoose";
 
 const classroomRouter = Router();
 
@@ -9,24 +11,44 @@ classroomRouter.post("/add", authorizeToken, async (req:any, res) => {
     if (!verifyToken(req.token))
         return res.status(403).send({ message: "Invalid authentication" });
     else {
-        const { name, computerNum, rows, cols, computers } = req.body;
+        const { name, rows, cols } = req.body;
     
         try {
-            // Validate computers matrix
-            if (!Array.isArray(computers) || !computers.every(row => Array.isArray(row))) {
-                return res.status(400).json({ message: "Invalid format for computers matrix" });
+            
+            const computers: mongoose.Types.ObjectId[][] = [];
+
+            for(let i=0; i<rows; ++i){
+                const iterComputers: mongoose.Types.ObjectId[] = [];
+                const dbComputers: any[] = []
+                for(let j=0; j<cols; ++j){
+                    const computerToAdd = new Computer({name: `${name}_${i}_${j}`})
+                    dbComputers.push(computerToAdd);
+                    iterComputers.push(dbComputers[j]._id);
+                }
+                computers.push(iterComputers);
+                try{
+                    await Computer.insertMany(dbComputers);
+                }
+                catch(err: any){
+                    console.log(`${err.message}`);
+                }
             }
-    
+            if(computers.length != rows)
+                return res.status(400).send({message: "Error creating classroom"});
             const classroom = new Classroom({
                 name,
-                computerNum,
                 rows,
                 cols,
                 computers
             });
-    
+
+            try{
             const savedClassroom = await classroom.save();
             res.status(200).json(savedClassroom);
+            }
+            catch(err){
+                console.log(err);
+            }
         } catch (err: any) {
             res.status(400).json({ message: `Error adding classroom: ${err.message}` });
         }
