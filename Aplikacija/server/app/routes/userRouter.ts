@@ -87,7 +87,7 @@ userRouter.get('/findAll', authorizeToken, async (req: any, res) => {
 
 
 //find one
-userRouter.post(
+userRouter.get(
     "/filteredFind",
     authorizeToken,
     async (req:any, res) => {
@@ -189,8 +189,7 @@ userRouter.post("/register", async (req:any, res) => {
             to: email,
             subject: "Finish registering your account",
             text: `http://localhost:3000/register/${token}`,
-            html: `<p> This link is valid for 15 minutes</p>
-                   <a href="http://localhost:3000/register/${token}" target="_blank"><p>Complete registration</p></a>`
+            html: `<p>http://localhost:3000/register/${token}</p>`
         };
 
         transporer.sendMail(mailOptions, (err, info) => {

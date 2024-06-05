@@ -13,7 +13,7 @@ export const AuthProvider = ({children}) => {
     let [authToken, setAuthToken] = useState(()=> localStorage.getItem('authToken') ? localStorage.getItem('authToken') : null)
     let [refreshToken, setRefreshToken] = useState(()=> localStorage.getItem('refreshToken') ? localStorage.getItem('refreshToken') : null)
     //let [user, setUser] = useState(()=> localStorage.getItem('user') ? JSON.parse(localStorage.getItem('authTokens')) : null)
-    // let [loading, setLoading] = useState(true)
+    let [loading, setLoading] = useState(true)
 
     // useEffect(() => {
     //     console.log("Auth context initialized");
@@ -105,32 +105,36 @@ export const AuthProvider = ({children}) => {
     }
 
 
-    // let updateToken = async ()=> {
+    let updateToken = async ()=> {
 
-    //     let response = await fetch('http://127.0.0.1:1738/user/refresh/', {
-    //         method:'POST',
-    //         headers:{
-    //             'Content-Type':'application/json'
-    //         },
-    //         body:JSON.stringify({'token':refreshToken})
-    //     })
+        var token = refreshToken;
+        let response = await fetch('http://127.0.0.1:1738/user/refresh/', {
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify({token})//JSON.stringify({'token':refreshToken})
+        })
 
-    //     let data = await response.json()
+        let data = await response.json()
         
-    //     if (response.status === 200){
-    //         setAuthToken(data.token);
-    //         setRefreshToken(data.refreshToken);
-    //         //setUser(jwt_decode(data.access))
-    //         localStorage.setItem('authToken', data.token);
-    //         localStorage.setItem('refreshToken', data.refreshToken);
-    //     }else{
-    //         logoutUser()
-    //     }
+        if (response.status === 200){
+            console.log("successful response from updateToken");
+            setAuthToken(data.token);
+            setRefreshToken(data.refreshToken);
+            //setUser(jwt_decode(data.access))
+            localStorage.setItem('authToken', data.token);
+            localStorage.setItem('refreshToken', data.refreshToken);
+        }else{
+            //logoutUser()
+            console.log("unsuccessful update token");
+            console.log("result je: ", response)
+        }
 
-    //     if(loading){
-    //         setLoading(false)
-    //     }
-    // }
+        // if(loading){
+        //     setLoading(false)
+        // }
+    }
 
     let contextData = {
         authToken:authToken,
@@ -141,22 +145,22 @@ export const AuthProvider = ({children}) => {
     }
 
 
-    // useEffect(()=> {
+    useEffect(()=> {
 
-    //     if(loading){
-    //         updateToken()
-    //     }
+        // if(loading){
+        //     updateToken()
+        // }
 
-    //     let fourMinutes = 1000 * 60 * 4
+        // let oneMinutes = 1000 * 60 * 1
 
-    //     let interval =  setInterval(()=> {
-    //         if(authTokens){
-    //             updateToken()
-    //         }
-    //     }, fourMinutes)
-    //     return ()=> clearInterval(interval)
+        // let interval =  setInterval(()=> {
+        //     if(authToken){
+        //         updateToken()
+        //     }
+        // }, oneMinutes)
+        // return ()=> clearInterval(interval)
 
-    // }, [authTokens, loading])
+    }, [authToken, refreshToken, loading])
 
     return(
         // <AuthContext.Provider value={contextData} >

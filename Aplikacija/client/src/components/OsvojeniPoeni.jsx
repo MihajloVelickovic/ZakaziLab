@@ -1,27 +1,36 @@
 import React, { useEffect, useState } from "react";
 import "../styles/OsvojeniPoeni.css";
+import axiosInstance from '../utils/axiosInstance'
+import useAxios from "../utils/useAxios";
+
 
 var user = null;
-if (localStorage.getItem('userData')){
-    user = JSON.parse(localStorage.getItem('userData'));
+if (localStorage.getItem('user')){
+    user = JSON.parse(localStorage.getItem('user'));
+    console.log("user sa localStorage-a: ", user);
 }
 var Index = user? user.index : -1;
+var idStudenta;
 //console.log(ID);
 //console.log("user je: ", user);
 
-const fetchData = async () => {
+const fetchData = async (idStudenta) => {
     try {
-        const response = await fetch(`http://127.0.0.1:1738/studentEntry/filteredFind`, {
-                method: "POST",
-                body: JSON.stringify({student: user}),
-                //OVO DODAJ LAKI :DDD
-                headers: {/*"Authorization": `Bearer ${localStorage.getItem("JWT")}`,*/"Content-Type": "application/json"}
-            });
+
+        // const response = await fetch(`http://127.0.0.1:1738/studentEntry/filteredFind`, {
+        //         method: "POST",
+        //         body: JSON.stringify({student: user}),
+        //         //OVO DODAJ LAKI :DDD
+        //         headers: {/*"Authorization": `Bearer ${localStorage.getItem("JWT")}`,*/"Content-Type": "application/json"}
+        //     });
+        var student = idStudenta;
+        let response = await axiosInstance.post('/studentEntry/filteredFind', {student});
         if (!response.ok) {
-            throw new Error('Failed to fetch data');
+            console.log('Failed to fetch data', response);
         }
 
-        const data = await response.json();
+        //const data = await response.json();
+        const data = response.data;
         console.log("ovo sam fethovao buraz: ", data);
         return data;
     } catch (error) {
@@ -34,10 +43,17 @@ const OsvojeniPoeni = () => {
     const [entries, setEntries] = useState([]);
     const [selectedLabs, setSelectedLabs] = useState([]);
     const [studentIndex, setStudentIndex] = useState(null);
+    
 
     useEffect(() => {
+        if (localStorage.getItem('user')){
+            user = JSON.parse(localStorage.getItem('user'));
+            console.log("user sa localStorage-a: ", user);
+            Index = user.index;
+        }
         if (user){
-            fetchData()
+            idStudenta = user._id;
+            fetchData(idStudenta)
             .then((res) => {
                 console.log('Fetched data:', res);
                 // const filteredEntries = res.filter(entry => entry.student.index === 18569);
