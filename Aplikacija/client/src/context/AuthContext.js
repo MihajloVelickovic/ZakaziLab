@@ -61,6 +61,7 @@ export const AuthProvider = ({children}) => {
 
         }else {
             console.log("server nije uspesno poslao mail");
+            
         }
         
         //window.location.href = `/${user.privileges}`;

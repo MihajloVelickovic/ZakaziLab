@@ -189,7 +189,8 @@ userRouter.post("/register", async (req:any, res) => {
             to: email,
             subject: "Finish registering your account",
             text: `http://localhost:3000/register/${token}`,
-            html: `<p>http://localhost:3000/register/${token}</p>`
+            html: `<p> This link is valid for 15 minutes</p>
+                   <a href="http://localhost:3000/register/${token}" target="_blank"><p>Complete registration</p></a>`
         };
 
         transporer.sendMail(mailOptions, (err, info) => {
