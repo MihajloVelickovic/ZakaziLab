@@ -1,7 +1,7 @@
 import { createContext, useState, useEffect } from 'react'
 //import * as jwt from 'jsonwebtoken'
 import {jwtDecode as jwt_decode} from "jwt-decode";
-import { useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 
 const AuthContext = createContext()
 
@@ -31,6 +31,7 @@ export const AuthProvider = ({children}) => {
         const token = data.token;
         const refreshToken = data.refreshToken;
         var decodedToken = jwt_decode(token);
+        var user = data.user;
         console.log("decoded: ", decodedToken);
 
         console.log("setting tokens with useState");
@@ -38,7 +39,10 @@ export const AuthProvider = ({children}) => {
         const nesto = {token: token, refreshToken: refreshToken};
         setAuthTokens(JSON.stringify(nesto.token, nesto.refreshToken));
         console.log("authTokens now has value: ", authTokens);
-        console.log("this isn't working");
+        console.log("user: ", user);
+        console.log(user.privileges);
+        // Navigate.push(`/${user.privileges}`);
+        
     }
 
 
