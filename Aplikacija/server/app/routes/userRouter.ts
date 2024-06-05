@@ -204,32 +204,37 @@ userRouter.post("/register/confirm", async (req, res) => {
     if(!req.body.token)
         res.status(422).send({message: "Unprocessable request"});
     else{
-        const data = verifyToken(req.body.token);
+        let data = verifyToken(req.body.token);
         if(!data)
-            res.status(400).send({message: "Couldn't validate token"});
+            res.status(400).send({message: "Expired token"});
         else{
-            let userObject = verifyToken(req.body.token);
-            userObject = Object.keys(userObject)
-                               .filter(objectKey => objectKey !== "iat" && objectKey !== "exp")
-                               .reduce((newObject: any, key) => {
-                                    newObject[key] = userObject[key];
+
+            const invalidateTokens = await User.findOne({email: data.email});
+
+            if(invalidateTokens != null)
+                return res.status(400).send({message: `User with email ${data.email} already registered`});
+
+            data =  Object.keys(data)
+                          .filter(objectKey => objectKey !== "iat" && objectKey !== "exp")
+                          .reduce((newObject: any, key) => {
+                                    newObject[key] = data[key];
                                     return newObject;
-                               }, {});
+                                }, {});
             let dbUser;
-            const type = userObject.privileges;
+            const type = data.privileges;
             console.log(type);
             switch(type){
                 case "student": 
-                    dbUser = new Student(userObject);
+                    dbUser = new Student(data);
                     break;
                 case "assistant": 
-                    dbUser = new Assistant(userObject);
+                    dbUser = new Assistant(data);
                     break;
                 case "admin": 
-                    dbUser = new Admin(userObject);
+                    dbUser = new Admin(data);
                     break;
                 case "professor": 
-                    dbUser = new Professor(userObject);
+                    dbUser = new Professor(data);
                     break;
                 default: 
                     return res.status(400).json({ message: "Invalid privileges" });
