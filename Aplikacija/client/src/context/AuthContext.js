@@ -30,24 +30,15 @@ export const AuthProvider = ({children}) => {
         console.log("response: ", data);
         const token = data.token;
         const refreshToken = data.refreshToken;
-        console.log("decoded: ", jwt_decode(token));
+        var decodedToken = jwt_decode(token);
+        console.log("decoded: ", decodedToken);
 
         console.log("setting tokens with useState");
 
         const nesto = {token: token, refreshToken: refreshToken};
-        setAuthTokens(nesto.token, nesto.refreshToken);
+        setAuthTokens(JSON.stringify(nesto.token, nesto.refreshToken));
         console.log("authTokens now has value: ", authTokens);
         console.log("this isn't working");
-        // console.log("response: ", response);
-
-        // if(response.status === 200){
-        //     setAuthTokens(data)
-        //     setUser(jwt_decode(data.access))
-        //     localStorage.setItem('authTokens', JSON.stringify(data))
-        //     navigate.push('/')
-        // }else{
-        //     alert('Something went wrong!')
-        // }
     }
 
 
