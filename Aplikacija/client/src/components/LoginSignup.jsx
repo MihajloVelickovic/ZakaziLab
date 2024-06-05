@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useContext} from "react";
 import { useNavigate } from 'react-router-dom';
 import { Navigate } from "react-router-dom";
 import '../styles/LoginSignup.css';
@@ -11,17 +11,13 @@ import passwordImg from '../images/password.png';
 import DropdownButton from "react-bootstrap/DropdownButton";
 import { Dropdown } from "react-bootstrap";
 import Button from 'react-bootstrap/Button';
+import AuthContext from "../context/AuthContext";
 //import backgroundImg from '../images/loginBackground.jpg';
 
 
-//msLogin shit
-import { useMsal } from '@azure/msal-react';
-import { loginRequest } from '../authConfig';
-import { InteractionType } from '@azure/msal-browser';
-
-
-
 const LoginSignup = () => {
+
+    let {loginUser} = useContext(AuthContext);
 
     //const [action, setAction] = useState("Sign Up");
 
@@ -34,27 +30,24 @@ const LoginSignup = () => {
     const navigate = useNavigate();
 
     //msLogin (izbaci ga kad budes imao vremena)
-    const { instance, accounts } = useMsal();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     const handleLogin = () => {
-        instance.loginRedirect(loginRequest).catch(e => {
-        console.error(e);
-        setIsLoggedIn(true);
-        });
+        console.log("pressed useless login button");
     };
 
     const getUserDetails = () => {
-        if (accounts.length > 0) {
-        const account = accounts[0];
-        return (
-            <div>
-            <p style={{fontWeight: 'bold'}}>User Details</p>
-            <p>Username: {account.idTokenClaims.name}</p>
-            <p>Email: {account.username}</p>
-            </div>
-        );
-        }
+        // if (accounts.length > 0) {
+        // const account = accounts[0];
+        // return (
+        //     <div>
+        //     <p style={{fontWeight: 'bold'}}>User Details</p>
+        //     <p>Username: {account.idTokenClaims.name}</p>
+        //     <p>Email: {account.username}</p>
+        //     </div>
+        // );
+        // }
+        //I'm not using msall anymore so you need to login differently
         return null;
     };
     //end of msLogin
@@ -129,6 +122,13 @@ const LoginSignup = () => {
             // console.log(JSON.stringify(formValues));
             console.log("success! pressed submit and input fields are adequate");
             //ovde sada treba da se pozove fetch ka serveru
+            if (action=="Login"){
+                let sendData = {}
+                sendData.email = formValues.email;
+                sendData.password = formValues.password;
+                loginUser(e, sendData);
+
+            }
         }
         else {
             console.log("submit failed, input fields")

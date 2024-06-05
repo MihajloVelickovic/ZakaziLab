@@ -4,56 +4,32 @@ import HomePage from '../pages/HomePage';
 import LoginSignupPage from '../pages/LoginSignupPage';
 import StudentPage from '../pages/StudentPage';
 import ProfessorPage from '../pages/ProfessorPage';
+import Register from '../components/Register';
 
-// import { useMsal } from '@azure/msal-react';
-// import { loginRequest } from '../authConfig';
-// import { InteractionType } from '@azure/msal-browser';
+import PrivateRoute from '../utils/PrivateRoute';
+import { AuthProvider } from '../context/AuthContext';
+
+//AuthProvider
+
+
 
 const AppRoutes=()=>{
 
-    // const { instance, accounts } = useMsal();
-    // //instance.clearCache();
-    // const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-    // const handleLogin = () => {
-    //     setIsLoggedIn(true);
-    //     instance.loginRedirect(loginRequest).catch(e => {
-    //     console.error(e);
-    //     });
-    // };
-
-    // const getUserDetails = () => {
-    //     if (accounts.length > 0) {
-    //     const account = accounts[0];
-    //     return (
-    //         <div>
-    //         <p style={{fontWeight: 'bold'}}>User Details</p>
-    //         <p>Username: {account.idTokenClaims.name}</p>
-    //         <p>Email: {account.username}</p>
-    //         </div>
-    //     );
-    //     }
-    //     return null;
-    // };
-
-
     return(
         <>
-            {/* <div>
-            <h3>OpenID works! I don't care if it's ugly {">:3"}</h3>
-            <button onClick= {handleLogin} show="false">OpenID connect</button>
-            {getUserDetails()}
-            
-            
-            </div> */}
          <BrowserRouter>
+         <AuthProvider>
              <Routes>
-                 <Route path="/" element={<HomePage/>}/>
-                 <Route path="/login" element={<LoginSignupPage/>}/>
-                 <Route path="/student/*" element={<StudentPage/>}/>
-                 <Route path="/professor/*" element={<ProfessorPage/>}/>
+                    <Route exact path="/" element={<HomePage/>}/>
+                    <Route path="/login" element={<LoginSignupPage/>}/>
+                    <Route path="/student/*" element={<PrivateRoute>   <StudentPage/>  </PrivateRoute>}/>
+                    <Route path="/professor/*" element={<PrivateRoute> <ProfessorPage/>    </PrivateRoute>}/>
+                    <Route path="/register/:token" element={<Register/>}/>
+
              </Routes>
-         </BrowserRouter>
+        </AuthProvider>
+        </BrowserRouter>
+         
         </>
     );
 };

@@ -20,11 +20,6 @@ import Sidebar from "./Sidebar";
 
 const LogOutFunction = () => {
     console.log("kliknut logout");
-    const postLogoutRedirectUri = "http://localhost:3000";
-    const logoutUrl = `https://login.microsoftonline.com/common/oauth2/v2.0/logout?post_logout_redirect_uri=${postLogoutRedirectUri}`;
-    console.log(logoutUrl);
-    //redirect(logoutUrl);
-    window.location.replace(logoutUrl);
     
 }
 

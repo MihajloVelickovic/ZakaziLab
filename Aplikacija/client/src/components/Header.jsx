@@ -3,9 +3,12 @@ import '../styles/Header.css';
 import '../styles/LoginButton.css';
 import { useState } from 'react';
 import Brand from "../images/favicon.ico";
+import React, {useContext} from 'react'
+//import AuthContext from '../context/AuthContext'
 
 const Header=()=>{
     const[menuOpen, setMenuOpen] = useState(false);
+    //let {user, logoutUser} = useContext(AuthContext)
 
     return(
         <header className="header-container">
