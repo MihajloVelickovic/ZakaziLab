@@ -17,11 +17,11 @@ import AuthContext from "../context/AuthContext";
 
 const LoginSignup = () => {
 
-    let {loginUser} = useContext(AuthContext);
+    let {loginUser, registerUser} = useContext(AuthContext);
 
     //const [action, setAction] = useState("Sign Up");
 
-    const initialValues = {email: "", password: "", name:"",lastName:"", modul:"", index:"", DoB:"", Ddiplomiranja:"", Fdiplomiranja:"", Ddoktoriranja:"", Fdoktoriranja:""};
+    const initialValues = {name:"",lastName:"", email: "", password: "",privileges: "", module:"", gradDate:"", gradFaculty:"",birthDate:"",index:"",   phdGradDate:"", phdGradFaculty:""};
 
     const [formValues, setFormValues] = useState(initialValues);
     const [formErrors, setFormErrors] = useState({});
@@ -127,11 +127,16 @@ const LoginSignup = () => {
                 sendData.email = formValues.email;
                 sendData.password = formValues.password;
                 loginUser(e, sendData);
-
+            } else if (action == "Sign Up"){
+                var privilegije = typeOfUser;
+                console.log("tip usera je:", privilegije);
+                formValues.privileges = privilegije;
+                registerUser(e, formValues);
             }
         }
         else {
             console.log("submit failed, input fields")
+            console.log(errorList);
         };
     }
 
@@ -142,6 +147,7 @@ const LoginSignup = () => {
     const validate = (values) => {
         const errors = {};
         const regex = /^(?!\s)[A-Z0-9\s]+$/i;
+        values.privileges = "placeholder za privilegije";
 
         for (let key in values) {
 
@@ -152,19 +158,19 @@ const LoginSignup = () => {
                     }
             }
             else if (typeOfUser=="student"){
-                if (key != "Ddiplomiranja" && key != "Fdiplomiranja" && key != "Ddoktoriranja" && key != "Fdoktoriranja")
+                if (key != "gradDate" && key != "gradFaculty" && key != "phdGradDate" && key != "phdGradFaculty")
                     if (!values[key]) {
                         errors[key] = `${key} is required!`;
                     }
             }
             else if (typeOfUser=="assistant"){
-                if (key != "Dob" && key != "index" && key!="Ddoktoriranja" && key!="Fdoktoriranja")
+                if (key != "birthDate" && key != "index" && key!="phdGradDate" && key!="phdGradFaculty")
                     if (!values[key]) {
                         errors[key] = `${key} is required!`;
                     }
             }
             else if (typeOfUser=="professor"){
-                if (key != "Dob" && key != "index") {
+                if (key != "birthDate" && key != "index") {
                     if (!values[key]) {
                         errors[key] = `${key} is required!`;
                     }
@@ -210,9 +216,9 @@ const LoginSignup = () => {
                     {typeOfUser=="admin"? <></>: <>
                         <div className='input'>
                             <img src={userImg} alt='' ></img>
-                            <input type='text' name='modul' placeholder='modul' value = {formValues.modul} onChange={handleChange}></input>                        
+                            <input type='text' name='module' placeholder='module' value = {formValues.module} onChange={handleChange}></input>                        
                         </div>
-                        <p>{formErrors.modul}</p>
+                        <p>{formErrors.module}</p>
 
                         {typeOfUser=="student"? <>
                             <div className='input'>
@@ -224,38 +230,38 @@ const LoginSignup = () => {
                             <div className='input'>
                                 <img src={userImg} alt='' ></img>
                                 <input className="textbox-n" type="text" onFocus={(e) => (e.target.type = "date")}
-                                        onBlur={(e) => (e.target.type = "text")} name='DoB' placeholder='datum rodjenja' value = {formValues.DoB} onChange={handleChange}></input>                        
+                                        onBlur={(e) => (e.target.type = "text")} name='birthDate' placeholder='datum rodjenja' value = {formValues.birthDate} onChange={handleChange}></input>                        
                             </div>
-                            <p>{formErrors.DoB}</p>
+                            <p>{formErrors.birthDate}</p>
                         </>:
                         <>
                             <div className='input'>
                                 <img src={userImg} alt='' ></img>
                                 <input className="textbox-n" type="text" onFocus={(e) => (e.target.type = "date")}
-                                        onBlur={(e) => (e.target.type = "text")} name='Ddiplomiranja' placeholder='datum diplomiranja' value = {formValues.Ddiplomiranja} onChange={handleChange}></input>                        
+                                        onBlur={(e) => (e.target.type = "text")} name='gradDate' placeholder='datum diplomiranja' value = {formValues.gradDate} onChange={handleChange}></input>                        
                             </div>
-                            <p>{formErrors.Ddiplomiranja}</p>
+                            <p>{formErrors.gradDate}</p>
 
                             <div className='input'>
                                 <img src={userImg} alt='' ></img>
-                                <input type="text" name='Fdiplomiranja' placeholder='fakultet diplomiranja' value = {formValues.Fdiplomiranja} onChange={handleChange}></input>                        
+                                <input type="text" name='gradFaculty' placeholder='fakultet diplomiranja' value = {formValues.gradFaculty} onChange={handleChange}></input>                        
                             </div>
-                            <p>{formErrors.Fdiplomiranja}</p>
+                            <p>{formErrors.gradFaculty}</p>
 
                             {typeOfUser!="professor"?<></> :
                             <>
                                 <div className='input'>
                                 <img src={userImg} alt='' ></img>
                                 <input className="textbox-n" type="text" onFocus={(e) => (e.target.type = "date")}
-                                        onBlur={(e) => (e.target.type = "text")} placeholder="datum doktoriranja" name='Ddoktoriranja' value = {formValues.Ddoktoriranja} onChange={handleChange}></input>                        
+                                        onBlur={(e) => (e.target.type = "text")} placeholder="datum doktoriranja" name='phdGradDate' value = {formValues.phdGradDate} onChange={handleChange}></input>                        
                                 </div>
-                                <p>{formErrors.Ddoktoriranja}</p>
+                                <p>{formErrors.phdGradDate}</p>
 
                                 <div className='input'>
                                 <img src={userImg} alt='' ></img>
-                                <input type="text" name='Fdoktoriranja' placeholder='fakultet doktoriranja' value = {formValues.Fdoktoriranja} onChange={handleChange}></input>                        
+                                <input type="text" name='phdGradFaculty' placeholder='fakultet doktoriranja' value = {formValues.phdGradFaculty} onChange={handleChange}></input>                        
                                 </div>
-                                <p>{formErrors.Fdoktoriranja}</p>
+                                <p>{formErrors.phdGradFaculty}</p>
                             </>}
                         </>}
                     </>}

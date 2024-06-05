@@ -45,6 +45,28 @@ export const AuthProvider = ({children}) => {
         
     }
 
+    let registerUser = async (e, registerInfo ) => {
+        e.preventDefault()
+        console.log("entered register function");
+        console.log("data passed here is: ", registerInfo);
+        let response = await fetch('http://127.0.0.1:1738/user/register', {
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify(registerInfo)      //you can add {}
+        })
+        if (response.status == 200){
+            console.log("server je uspesno poslao mail koji redirektuje na register page");
+
+        }else {
+            console.log("server nije uspesno poslao mail");
+        }
+        
+        //window.location.href = `/${user.privileges}`;
+        
+    }
+
 
     // let logoutUser = () => {
     //     setAuthTokens(null)
@@ -83,6 +105,7 @@ export const AuthProvider = ({children}) => {
         // user:user,
         // authTokens:authTokens,
         loginUser:loginUser,
+        registerUser:registerUser,
         // logoutUser:logoutUser,
     }
 
