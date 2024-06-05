@@ -7,7 +7,7 @@ import Admin from "../models/admin";
 import Student from "../models/student";
 import Professor from "../models/professor";
 import nm from "nodemailer";
-import { emailParams, transporer } from "../config/config";
+import { emailParams, transporer, strongPassword } from "../config/config";
 import subjectRouter from "./subjectRouter";
 
 const userRouter = Router();
@@ -151,9 +151,16 @@ userRouter.post("/register", async (req:any, res) => {
         return res.status(400).json({ message: 'All fields are required' });
     
     try {
-        const userExists = await User.findOne({ email });
+        let userExists = await User.findOne({ email });
         if (userExists) 
-        return res.status(400).json({ message: 'Email already exists' });
+            return res.status(400).json({ message: 'Email already exists' });
+        
+        userExists = await User.findOne({ index: parseInt(index) });
+        if(userExists)
+            return res.status(400).send({message: "Index already registered"});
+
+        if(!strongPassword.test(password))
+            return res.status(400).send({message: "Weak password"});
         
         const hashedPassword = await bcrypt.hash(password, 10);
         let newUser;
@@ -222,7 +229,6 @@ userRouter.post("/register/confirm", async (req, res) => {
                                 }, {});
             let dbUser;
             const type = data.privileges;
-            console.log(type);
             switch(type){
                 case "student": 
                     dbUser = new Student(data);

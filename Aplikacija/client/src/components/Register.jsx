@@ -7,12 +7,12 @@ const sendConfirmToken = async (confirmToken) => {
         body: JSON.stringify(confirmToken),
         headers: {"Content-Type": "application/json"}
     });
-    if (response.status == 200) {
+    if (response.status === 200) {
         const receivedUser = await response.json();
         console.log("vracen user:", receivedUser);
         window.location.href = `/${receivedUser.privileges}`;
     }else {
-        console.log("status responsa nije bio ok, server nije prizao taj token, mozda je proslo previse vremena");
+        console.log(`${response.status}`);
     }
     
     //return data;
