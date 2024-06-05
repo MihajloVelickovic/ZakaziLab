@@ -1,11 +1,10 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import { IComputer } from "./computer";
 
 
 
 export interface IClassroom extends mongoose.Document {
     name: string;
-    computerNum: number;
     rows: number;
     cols: number;
     computers: mongoose.Types.ObjectId[][];
@@ -14,10 +13,6 @@ export interface IClassroom extends mongoose.Document {
 export const ClassroomSchema = new mongoose.Schema<IClassroom>({
     name: { 
         type:String,
-        required:true 
-    },
-    computerNum: {
-        type:Number,
         required:true 
     },
     rows: { 
@@ -29,9 +24,8 @@ export const ClassroomSchema = new mongoose.Schema<IClassroom>({
         required:true 
     },
     computers: {
-        type: [[mongoose.Types.ObjectId]],
+        type: [[Schema.Types.ObjectId]],
         ref: 'Computer',
-        default: []
     }
 });
 
