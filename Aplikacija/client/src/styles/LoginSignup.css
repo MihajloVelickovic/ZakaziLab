@@ -50,7 +50,7 @@ body {
 }
 
 .inputs {
-    margin-top: 55px;
+    margin-top: 35px;
     display: flex;
     flex-direction: column;
     /* gap: 25px; */
@@ -61,13 +61,15 @@ body {
     align-items: center;
     margin:auto;
     width: 440px;
-    height: 60px;
+    height: 50px;
     background: whitesmoke;
+    margin-bottom: 10px;
     border-radius: 6px;    
 }
 
 .inputs p{
     color: brown;
+    margin-bottom: 0;
 }
 
 .input img{
@@ -75,7 +77,7 @@ body {
 }
 
 .input input{
-    height: 50px;
+    height: 30px;
     width: 400px;
     background: transparent;
     border: none;
@@ -103,7 +105,7 @@ body {
 .submit-container {
     display: flex;
     gap: 30px;
-    margin-top: 40px;
+    margin-top: 20px;
     margin-bottom: 20px;
     justify-content: space-around;
     /* margin: 60px auto; */

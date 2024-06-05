@@ -21,8 +21,6 @@ export const Banner = () => {
       };
     }, []);
 
-    let {name} = useContext(AuthContext);
-
     return (
       <div className="page home-page">
         <section

@@ -9,11 +9,19 @@ export default AuthContext;
 
 
 export const AuthProvider = ({children}) => {
-    let [authTokens, setAuthTokens] = useState(null)//()=> localStorage.getItem('authTokens') ? JSON.parse(localStorage.getItem('authTokens')) : null)
-    let [user, setUser] = useState(null)//()=> localStorage.getItem('authTokens') ? jwt_decode(localStorage.getItem('authTokens')) : null)
+    
+    let [authToken, setAuthToken] = useState(()=> localStorage.getItem('authToken') ? localStorage.getItem('authToken') : null)
+    let [refreshToken, setRefreshToken] = useState(()=> localStorage.getItem('refreshToken') ? localStorage.getItem('refreshToken') : null)
+    //let [user, setUser] = useState(()=> localStorage.getItem('user') ? JSON.parse(localStorage.getItem('authTokens')) : null)
     // let [loading, setLoading] = useState(true)
 
-    // const navigate = useNavigate()
+    // useEffect(() => {
+    //     console.log("Auth context initialized");
+    //     console.log("authToken:", authToken);
+    //     console.log("refreshToken:", refreshToken);
+    // }, []);
+
+    const navigate = useNavigate()
 
     let loginUser = async (e, loginInfo )=> {
         e.preventDefault()
@@ -28,20 +36,33 @@ export const AuthProvider = ({children}) => {
         })
         let data = await response.json()
         console.log("response: ", data);
-        const token = data.token;
-        const refreshToken = data.refreshToken;
-        var decodedToken = jwt_decode(token);
-        var user = data.user;
-        console.log("decoded: ", decodedToken);
 
-        console.log("setting tokens with useState");
+        if (response.status === 200){
+            var tokenReceived = data.token;
+            var refreshTokenReceived = data.refreshToken;
+            var userReceived = data.user;
 
-        const nesto = {token: token, refreshToken: refreshToken};
-        setAuthTokens(JSON.stringify(nesto.token, nesto.refreshToken));
-        console.log("authTokens now has value: ", authTokens);
-        console.log("user: ", user);
-        console.log(user.privileges);
-        window.location.href = `/${user.privileges}`;
+            console.log("setting tokens with useState");
+            console.log("response is: ", data);
+            console.log("user is from data: ", data.user);
+            setAuthToken(tokenReceived);
+            setRefreshToken(refreshTokenReceived);
+            //setUser(userReceived);
+            
+            console.log("authToken: ", tokenReceived);
+            console.log("refreshToken: ", refreshTokenReceived);
+            console.log("user: ", userReceived);
+            console.log(userReceived.privileges);
+
+            localStorage.setItem('authToken', tokenReceived);
+            localStorage.setItem('refreshToken', refreshTokenReceived);
+            localStorage.setItem('user', JSON.stringify(userReceived));
+            window.location.href = `/${userReceived.privileges}`;
+            
+        }
+        else {
+            console.log("something went wrong, here's the error message: ", data.message);
+        }
         
     }
 
@@ -56,43 +77,52 @@ export const AuthProvider = ({children}) => {
             },
             body:JSON.stringify(registerInfo)      //you can add {}
         })
-        if (response.status == 200){
-            console.log("server je uspesno poslao mail koji redirektuje na register page");
+        let jsonResponse = await response.json();
+        let message = jsonResponse.message;
 
-        }else {
-            console.log("server nije uspesno poslao mail");
-            
+        if (response.status == 200){
+            console.log("server je uspesno poslao mail koji redirektuje na register page", message);
+
+        }else if (response.status == 400) {
+            console.log("server nije uspesno poslao mail, error 400", message);
+            alert(message);
         }
+        
         
         //window.location.href = `/${user.privileges}`;
         
     }
 
 
-    // let logoutUser = () => {
-    //     setAuthTokens(null)
-    //     setUser(null)
-    //     localStorage.removeItem('authTokens')
-    //     navigate.push('/login')
-    // }
+    let logoutUser = () => {
+        console.log("strting logout");
+        setAuthToken(null);
+        setRefreshToken(null);
+        localStorage.removeItem('authToken'); 
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('user');
+        window.location.href = `/login`;
+    }
 
 
     // let updateToken = async ()=> {
 
-    //     let response = await fetch('http://127.0.0.1:8000/api/token/refresh/', {
+    //     let response = await fetch('http://127.0.0.1:1738/user/refresh/', {
     //         method:'POST',
     //         headers:{
     //             'Content-Type':'application/json'
     //         },
-    //         body:JSON.stringify({'refresh':authTokens?.refresh})
+    //         body:JSON.stringify({'token':refreshToken})
     //     })
 
     //     let data = await response.json()
         
     //     if (response.status === 200){
-    //         setAuthTokens(data)
-    //         setUser(jwt_decode(data.access))
-    //         localStorage.setItem('authTokens', JSON.stringify(data))
+    //         setAuthToken(data.token);
+    //         setRefreshToken(data.refreshToken);
+    //         //setUser(jwt_decode(data.access))
+    //         localStorage.setItem('authToken', data.token);
+    //         localStorage.setItem('refreshToken', data.refreshToken);
     //     }else{
     //         logoutUser()
     //     }
@@ -103,11 +133,11 @@ export const AuthProvider = ({children}) => {
     // }
 
     let contextData = {
-        // user:user,
-        // authTokens:authTokens,
+        authToken:authToken,
+        refreshToken:refreshToken,
         loginUser:loginUser,
         registerUser:registerUser,
-        // logoutUser:logoutUser,
+        logoutUser:logoutUser,
     }
 
 

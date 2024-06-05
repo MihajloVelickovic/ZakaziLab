@@ -127,6 +127,7 @@ const LoginSignup = () => {
                 sendData.email = formValues.email;
                 sendData.password = formValues.password;
                 loginUser(e, sendData);
+                
             } else if (action == "Sign Up"){
                 var privilegije = typeOfUser;
                 console.log("tip usera je:", privilegije);
@@ -214,7 +215,7 @@ const LoginSignup = () => {
                     <p>{formErrors.lastName}</p>
 
                     {typeOfUser=="admin"? <></>: <>
-                        <div className='input'>
+                        <div className='input' style={{marginBottom: formErrors.module?"0px":"10px"}}>
                             <img src={userImg} alt='' ></img>
                             <input type='text' name='module' placeholder='module' value = {formValues.module} onChange={handleChange}></input>                        
                         </div>
@@ -285,7 +286,7 @@ const LoginSignup = () => {
             </div>
             <div className='submit-container'>
                 <Button variant="primary" onClick={()=>{setAction("Login")}}>Login</Button>
-                <DropdownButton id="dropdown-basic-button" title="Dropdown button">
+                <DropdownButton id="dropdown-basic-button" title="Register as">
                     <Dropdown.Item onClick={()=>{setAction("Sign Up"); setTypeOfUser("student")}}>student</Dropdown.Item>
                     <Dropdown.Item onClick={()=>{setAction("Sign Up"); setTypeOfUser("assistant")}}>assistant</Dropdown.Item>
                     <Dropdown.Item onClick={()=>{setAction("Sign Up"); setTypeOfUser("professor")}}>professor</Dropdown.Item>

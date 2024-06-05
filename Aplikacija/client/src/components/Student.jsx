@@ -13,19 +13,19 @@ import LaboratorijskaVezba from "./LaboratorijskaVezba";
 import OsvojeniPoeni from "./OsvojeniPoeni";
 import KalendarAktivnosti from "./KalendarAktivnosti";
 
+import { useContext } from 'react';
+import AuthContext from '../context/AuthContext';
+
 import { redirect } from 'react-router-dom';
+
 
 
 import Sidebar from "./Sidebar";
 
-const LogOutFunction = () => {
-    console.log("kliknut logout");
-    
-}
-
 const Student = () => {
 
     const [showSidebar, setShowSidebar] = useState(false);
+    let {authToken, logoutUser} = useContext(AuthContext);
 
     const toggleSidebar = () => {
         setShowSidebar(!showSidebar);
@@ -42,7 +42,7 @@ const Student = () => {
             <div>
              <Link to='/' className="title"><img src={Brand} alt="" style={{width:"40px"}} className="rounded-pill"/> ZakažiLab <span className="version">alpha0.0</span></Link>
             </div>
-            <button onClick={LogOutFunction} className="login-button" style={{position: "absolute", right: "40px"}} >Log Out
+            <button onClick={logoutUser} className="login-button" style={{position: "absolute", right: "40px"}} >Log Out
             {/* <i className="bi bi-box-arrow-right"></i> */}
             <i className = "fa-solid fa-right-from-bracket"></i>
             </button>
