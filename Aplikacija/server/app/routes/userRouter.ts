@@ -240,7 +240,7 @@ userRouter.post("/register/confirm", async (req, res) => {
                     return res.status(400).json({ message: "Invalid privileges" });
             }
             try{
-                const savedUser = dbUser.save();
+                const savedUser = await dbUser.save();
                 res.status(200).send(savedUser);
             }
             catch(err){
