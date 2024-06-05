@@ -6,11 +6,24 @@ import Assistant from "../models/assistant";
 import Admin from "../models/admin";
 import Student from "../models/student";
 import Professor from "../models/professor";
-
+import nm from "nodemailer";
+import { emailParams } from "../config/config";
+import subjectRouter from "./subjectRouter";
 
 const userRouter = Router();
 
 let mainRefreshToken: string = "";
+
+const transporer = nm.createTransport({
+    service: emailParams.service,
+    auth: {
+        user: emailParams.email,
+        pass: Buffer.from(emailParams.password, "base64").toString()
+    },
+    secure: false,
+    port: 465,
+    host: "smtp.gmail.com"
+});
 
 //dodavanje
 userRouter.post("/add", authorizeToken, async (req: any, res) => {
@@ -83,6 +96,7 @@ userRouter.get('/findAll', authorizeToken, async (req: any, res) => {
     }
 });
 
+
 //find one
 userRouter.get(
     "/filteredFind",
@@ -134,57 +148,79 @@ userRouter.delete(
         }
 });
 
-userRouter.post("/register", authorizeToken, async (req:any, res) => {
-    if(!verifyToken(req.token)) 
-        res.status(403).send({message: "Invalid token"});
-    else {
-            const { 
-                name, lastName, email,
-                password, privileges, module,
-                gradDate, gradFaculty, birthDate, index 
-            } = req.body;
+userRouter.post("/register", async (req:any, res) => {
+    
+
+    const { 
+            name, lastName, email,
+            password, privileges, module,
+            gradDate, gradFaculty, birthDate, index 
+        } = req.body;
+    
+    if (!name || !lastName || !email || !password || !privileges) 
+        return res.status(400).json({ message: 'All fields are required' });
+    
+    try {
+        const userExists = await User.findOne({ email });
+        if (userExists) 
+        return res.status(400).json({ message: 'Email already exists' });
         
-        if (!name || !lastName || !email || !password || !privileges) 
-            return res.status(400).json({ message: 'All fields are required' });
-        
-        try {
-            const userExists = await User.findOne({ email });
-            if (userExists) 
-            return res.status(400).json({ message: 'Email already exists' });
-            
-            const hashedPassword = await bcrypt.hash(password, 10);
-            let newUser;
-        
-            switch (privileges) {
-            case 'assistant':
-                newUser = new Assistant({ name, lastName, email, password: hashedPassword, privileges, module, gradDate, gradFaculty });
-                break;
-            case 'admin':
-                newUser = new Admin({ name, lastName, email, password: hashedPassword, privileges, FoG: true });
-                break;
-            case 'student':
-                newUser = new Student({ name, lastName, email, password: hashedPassword, privileges, birthDate, index, module });
-                break;
-            default:
-                return res.status(400).json({ message: 'Invalid privileges' });
-            }
-        
-            const addedUser = await newUser.save();
-        
-            const tokenObject = {id: addedUser._id, email: addedUser.email};
-        
-            const token = signToken(tokenObject);
-        
-            addedUser.password = "";
-        
-            res.status(201).json({ token: token, message: 'User registered successfully', addedUser});
-        } 
-        catch (error:any) {
-            res.status(500).json({ message: 'Error registering user', error:`${error.message}}`});
+        const hashedPassword = await bcrypt.hash(password, 10);
+        let newUser;
+    
+        switch (privileges) {
+        case 'assistant':
+            newUser = new Assistant({ name, lastName, email, password: hashedPassword, privileges, module, gradDate, gradFaculty });
+            break;
+        case 'admin':
+            newUser = new Admin({ name, lastName, email, password: hashedPassword, privileges, FoG: true });
+            break;
+        case 'student':
+            newUser = new Student({ name, lastName, email, password: hashedPassword, privileges, birthDate, index, module });
+            break;
+        default:
+            return res.status(400).json({ message: 'Invalid privileges' });
         }
+    
+        const token = signToken(JSON.parse(JSON.stringify(newUser)), "15m");
+
+        const mailOptions = {
+            from: emailParams.email,
+            to: email,
+            subject: "Finish registering your account",
+            text: `http://localhost:3000/register/${token}`,
+            html: `<p>http://localhost:3000/register/${token}</p>`
+        };
+
+        transporer.sendMail(mailOptions, (err, info) => {
+            err ?
+            console.log(err) :
+            console.log(`Email sent to ${email}`);
+        });
+
+        res.status(200).json({message: `Email sent succesfully to ${email}`});
+    } 
+    catch (error:any) {
+        res.status(500).json({ message: 'Error registering user', error:`${error.message}}`});
     }
     
+    
 });
+
+userRouter.get("/register/confirm", (req, res) => {
+    if(!req.body.confirmToken)
+        res.status(422).send({message: "Unprocessable request"});
+    else{
+        const data = verifyToken(req.body.confirmToken);
+        if(!data)
+            res.status(400).send({message: "Couldn't validate token"});
+        else{
+            const dataToken = verifyToken(req.body.confirmToken);
+            console.log(dataToken);
+        }
+    }
+});
+
 
 userRouter.post("/login", async (req, res) => {
     

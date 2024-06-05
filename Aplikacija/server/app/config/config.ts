@@ -14,4 +14,10 @@ const URI = `mongodb+srv://${process.env.MONGO_USER}:` +
                            "w=majority&" +
                            "appName=Zakazi-Lab-Cluster";
 
-export {URI};
+const emailParams: any = {
+    service: process.env.SERVICE,
+    email: process.env.EMAIL,
+    password: process.env.PASSWORD
+};
+
+export {URI, emailParams};

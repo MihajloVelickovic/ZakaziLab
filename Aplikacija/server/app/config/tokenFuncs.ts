@@ -8,18 +8,37 @@ const publicKey = fs.readFileSync(path.resolve(__dirname, "../keys/key.pem.pub")
 const refreshPrivateKey = fs.readFileSync(path.resolve(__dirname, "../keys/refreshkey.pem"), "utf-8");
 const refreshPublicKey = fs.readFileSync(path.resolve(__dirname, "../keys/refreshkey.pem.pub"), "utf-8");
 
-function signToken(payload: any){
-    return jwt.sign(payload, privateKey, {expiresIn: "1m", algorithm: "RS256"});
+
+function signToken(payload: any): any;
+function signToken(payload: any, expiration: string): any;
+
+function signToken(payload: any, expiration?: string){
+
+    let exp;
+    if(typeof expiration === "undefined")
+        exp = "1m";
+    else
+        exp = expiration;
+
+    return jwt.sign(payload, privateKey, {expiresIn: exp, algorithm: "RS256"});
 }
 
-function verifyToken(token: string){
+function verifyToken(token: string): any;
+function verifyToken(token: string, truefalse: boolean): any;
+
+function verifyToken(token: string, truefalse? : boolean){
 
     let valid;
+    let saveData;
+    if(typeof truefalse === "undefined")
+        saveData = false;
+    else
+        saveData = true;
 
     jwt.verify(token, publicKey, {algorithms: ["RS256"]}, (err, data) => {
         err ?
         valid = false :
-        valid = true;
+        valid = saveData ? truefalse : data;
     });
    
     return valid;
