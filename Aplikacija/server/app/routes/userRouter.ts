@@ -246,8 +246,8 @@ userRouter.post("/register/confirm", async (req, res) => {
                     return res.status(400).json({ message: "Invalid privileges" });
             }
             try{
-                const savedUser = await dbUser.save();
-                res.status(200).send(savedUser);
+                await dbUser.save();
+                res.status(200).send({message: "Registration complete"});
             }
             catch(err){
                 res.status(400).send({message: "Failed to save user to database"});
