@@ -84,7 +84,7 @@ computerRouter.patch('/update/:id', authorizeToken, async (req:any, res) => {
   
 });
 
-computerRouter.get('/filteredFind', authorizeToken,async (req:any, res) => {
+computerRouter.post('/filteredFind', authorizeToken,async (req:any, res) => {
     if(!verifyToken(req.token)) 
         res.status(403).send({message: "Invalid authentication"});
     else {

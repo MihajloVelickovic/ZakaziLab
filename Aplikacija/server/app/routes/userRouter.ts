@@ -87,7 +87,7 @@ userRouter.get('/findAll', authorizeToken, async (req: any, res) => {
 
 
 //find one
-userRouter.get(
+userRouter.post(
     "/filteredFind",
     authorizeToken,
     async (req:any, res) => {
@@ -298,7 +298,7 @@ userRouter.post("/login", async (req, res) => {
     }
 });
 
-userRouter.get("/refresh", (req, res) => {
+userRouter.post("/refresh", (req, res) => {
     if (!req.body.token)
         res.status(422).send({message: "Unprocessable request"});
     else{
