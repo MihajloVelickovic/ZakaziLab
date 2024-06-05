@@ -7,23 +7,12 @@ import Admin from "../models/admin";
 import Student from "../models/student";
 import Professor from "../models/professor";
 import nm from "nodemailer";
-import { emailParams } from "../config/config";
+import { emailParams, transporer } from "../config/config";
 import subjectRouter from "./subjectRouter";
 
 const userRouter = Router();
 
 let mainRefreshToken: string = "";
-
-const transporer = nm.createTransport({
-    service: emailParams.service,
-    auth: {
-        user: emailParams.email,
-        pass: Buffer.from(emailParams.password, "base64").toString()
-    },
-    secure: false,
-    port: 465,
-    host: "smtp.gmail.com"
-});
 
 //dodavanje
 userRouter.post("/add", authorizeToken, async (req: any, res) => {
@@ -154,7 +143,8 @@ userRouter.post("/register", async (req:any, res) => {
     const { 
             name, lastName, email,
             password, privileges, module,
-            gradDate, gradFaculty, birthDate, index 
+            gradDate, gradFaculty, birthDate, index,
+            phdGradDate, phdGradFaculty
         } = req.body;
     
     if (!name || !lastName || !email || !password || !privileges) 
@@ -170,13 +160,16 @@ userRouter.post("/register", async (req:any, res) => {
     
         switch (privileges) {
         case 'assistant':
-            newUser = new Assistant({ name, lastName, email, password: hashedPassword, privileges, module, gradDate, gradFaculty });
+            newUser = { name, lastName, email, password: hashedPassword, privileges, module, gradDate, gradFaculty };
             break;
         case 'admin':
-            newUser = new Admin({ name, lastName, email, password: hashedPassword, privileges, FoG: true });
+            newUser = { name, lastName, email, password: hashedPassword, privileges, FoG: true };
             break;
         case 'student':
-            newUser = new Student({ name, lastName, email, password: hashedPassword, privileges, birthDate, index, module });
+            newUser =  {name, lastName, email, password: hashedPassword, privileges, birthDate, index, module };
+            break;
+        case 'professor':
+            newUser = {name, lastName, email, password: hashedPassword, privileges, module, gradDate, gradFaculty, phdGradDate, phdGradFaculty }
             break;
         default:
             return res.status(400).json({ message: 'Invalid privileges' });
@@ -207,16 +200,47 @@ userRouter.post("/register", async (req:any, res) => {
     
 });
 
-userRouter.get("/register/confirm", (req, res) => {
-    if(!req.body.confirmToken)
+userRouter.post("/register/confirm", async (req, res) => {
+    if(!req.body.token)
         res.status(422).send({message: "Unprocessable request"});
     else{
-        const data = verifyToken(req.body.confirmToken);
+        const data = verifyToken(req.body.token);
         if(!data)
             res.status(400).send({message: "Couldn't validate token"});
         else{
-            const dataToken = verifyToken(req.body.confirmToken);
-            console.log(dataToken);
+            let userObject = verifyToken(req.body.token);
+            userObject = Object.keys(userObject)
+                               .filter(objectKey => objectKey !== "iat" && objectKey !== "exp")
+                               .reduce((newObject: any, key) => {
+                                    newObject[key] = userObject[key];
+                                    return newObject;
+                               }, {});
+            let dbUser;
+            const type = userObject.privileges;
+            console.log(type);
+            switch(type){
+                case "student": 
+                    dbUser = new Student(userObject);
+                    break;
+                case "assistant": 
+                    dbUser = new Assistant(userObject);
+                    break;
+                case "admin": 
+                    dbUser = new Admin(userObject);
+                    break;
+                case "professor": 
+                    dbUser = new Professor(userObject);
+                    break;
+                default: 
+                    return res.status(400).json({ message: "Invalid privileges" });
+            }
+            try{
+                const savedUser = dbUser.save();
+                res.status(200).send(savedUser);
+            }
+            catch(err){
+                res.status(400).send({message: "Failed to save user to database"});
+            }
         }
     }
 });

@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 import path from "path";
+import nm from "nodemailer";
 
 const envFilePath = process.platform.startsWith("win") ?
                     path.join(__dirname, "../config.env") : 
@@ -20,4 +21,15 @@ const emailParams: any = {
     password: process.env.PASSWORD
 };
 
-export {URI, emailParams};
+const transporer = nm.createTransport({
+    service: emailParams.service,
+    auth: {
+        user: emailParams.email,
+        pass: Buffer.from(emailParams.password, "base64").toString()
+    },
+    secure: false,
+    port: 465,
+    host: "smtp.gmail.com"
+});
+
+export {URI, emailParams, transporer};
