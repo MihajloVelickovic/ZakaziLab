@@ -32,6 +32,6 @@ const transporer = nm.createTransport({
     host: "smtp.gmail.com"
 });
 
-const strongPassword: RegExp =  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+const strongPassword: RegExp =  /^(?=.*[A-Z])(?=.*[!@#$%^&*()_+{}\[\]:;"'<>,.?/~`-])(?=.*\d)[A-Za-z\d!@#$%^&*()_+{}\[\]:;"'<>,.?/~`-]{8,}$/;
 
 export {URI, emailParams, transporer, strongPassword};
