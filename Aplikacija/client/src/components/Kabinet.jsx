@@ -13,6 +13,8 @@ const Kabinet = () => {
     const [malfunctionStatus, setMalfunctionStatus] = useState(false);
     const [malfunctionDesc, setMalfunctionDesc] = useState('');
 
+    const [isHovered, setIsHovered] = useState(null);
+
     useEffect(() => {
         if (showCabinets) {
             fetchCabinets();
@@ -27,6 +29,16 @@ const Kabinet = () => {
         } catch (error) {
             console.error('Error fetching cabinets:', error.response ? error.response.data : error.message);
         }
+    };
+
+    const handleMouseOver = (computer) => {
+        // Set isHovered to true when mouse is over the computer
+        setIsHovered(computer);
+    };
+    
+    const handleMouseOut = () => {
+        // Set isHovered to false when mouse moves out of the computer's area
+        //setIsHovered(null);
     };
 
     const handleShowHideCabinets = () => {
@@ -66,10 +78,15 @@ const Kabinet = () => {
     const handleFormSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axiosInstance.patch(`/computer/update/${selectedComputer._id}`, {
-                malfunctioned: malfunctionStatus,
-                malfunctionDesc: malfunctionDesc
-            });
+            //modifying computer and sending it
+            var modifiedComputer = selectedComputer;
+            console.log("selected computer is: ", modifiedComputer);
+            modifiedComputer.malfunctioned = malfunctionStatus;
+            modifiedComputer.malfunctionDesc = malfunctionDesc;
+            const response = await axiosInstance.patch(`/classroom/updateComputer/${selectedCabinet._id}`, modifiedComputer);
+            console.log("izgleda da je uspesno. Response: ", response);
+            console.log("modifikovan kompjuter", modifiedComputer);
+
             setSelectedComputer(null);
             setShowManageForm(false);
             fetchCabinets();
@@ -106,7 +123,7 @@ const Kabinet = () => {
             <button onClick={handleAddCabinetClick}>Add a cabinet</button>
             <button onClick={() => setShowCabinets(true)}>Delete cabinet</button>
             <button onClick={handleManageButtonClick} disabled={!selectedComputer}>      
-                Manage malfunctioning computer
+                Manage computer
             </button>
 
             {showCabinets && (
@@ -145,8 +162,16 @@ const Kabinet = () => {
                                 className={`${selectedComputer && selectedComputer._id === computer._id ? 'computer selected' :              //computer-box
                                         computer.malfunctioned? "computer malfunctionedComputer" : "computer workingComputer"}`}
                                 onClick={() => handleComputerClick(computer)}
-                            >
+                                onMouseOver={() => handleMouseOver(computer)}
+                                onMouseOut={() => handleMouseOut()}
+                            >   
+                            {isHovered==computer && computer.malfunctioned && (
+                                    <div className="malfunctionDescription">
+                                        {computer.malfunctionDesc}
+                                    </div>
+                                )}
                             </div>
+                            
                         ))}
                     </div>
                 </div>
