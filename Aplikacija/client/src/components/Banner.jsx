@@ -30,7 +30,9 @@ export const Banner = () => {
           className="banner bannerContainer"
         >
           <h2>ZakažiLab</h2>
-          <button className="main-button" onClick={() => console.log("useless button")}>Prijavi se</button>
+          <Link to="/login">
+            <button to="/login" className="main-button" onClick={() => console.log("useless button")}>Prijavi se</button>
+          </Link>
           {/* <button className="main-button">Prijavi se</button> */}
         </section>
         <section>

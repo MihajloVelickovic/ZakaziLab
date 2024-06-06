@@ -38,6 +38,43 @@
     align-items: center;
 }
 
+.malfunctionedComputer {
+    background-color: black;
+}
+
+.workingComputer {
+    background-color: green;
+}
+
+.computer-box {                 /*I'm not using this for now*/
+    border: 1px solid #000;
+    padding: 10px;
+    margin: 5px;
+    cursor: pointer;
+}
+
+.computer-box.selected {        /*I'm not using this for now*/
+    background-color: #aaf;
+}
+.selected {
+    background-color: #aaf;
+}
+
+.manage-form {
+    margin-top: 20px;
+    border: 1px solid #000;
+    padding: 10px;
+}
+
+.manage-form label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.manage-form button {
+    margin-right: 10px;
+}
+
 .add-cabinet-form {
     margin-top: 20px;
 }

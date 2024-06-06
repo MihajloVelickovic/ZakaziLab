@@ -22,6 +22,7 @@ import { redirect } from 'react-router-dom';
 
 
 import Sidebar from "./Sidebar";
+import Footer from './Footer';
 
 const Student = () => {
 
@@ -61,7 +62,7 @@ const Student = () => {
                     <Route path="aktivnosti" element={<KalendarAktivnosti role="student"/>} />
                 </Routes>
             </main>
-            
+            <Footer/>
         </div>
         </>
     )
