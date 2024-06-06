@@ -60,6 +60,18 @@
     background-color: #aaf;
 }
 
+.malfunctionDescription {
+    margin-left: 150px;
+    width: 350px;
+    min-width: 100px;
+    max-width: 200px;
+    height: 75px;
+    float: left;
+    background-color: #03A9F4;
+    border: 2px solid blue;
+    color: white;
+}
+
 .manage-form {
     margin-top: 20px;
     border: 1px solid #000;

@@ -58,11 +58,11 @@ export const AuthProvider = ({children}) => {
             localStorage.setItem('refreshToken', refreshTokenReceived);
             localStorage.setItem('user', JSON.stringify(userReceived));
             window.location.href = `/${userReceived.privileges}`;
-            
         }
         else {
             console.log("something went wrong, here's the error message: ", data.message);
         }
+        return data.message;
         
     }
 
@@ -85,8 +85,9 @@ export const AuthProvider = ({children}) => {
 
         }else if (response.status == 400) {
             console.log("server nije uspesno poslao mail, error 400", message);
-            alert(message);
         }
+
+        return message;
         
         
         //window.location.href = `/${user.privileges}`;
