@@ -25,7 +25,8 @@ export const ClassroomSchema = new mongoose.Schema<IClassroom>({
         required:true 
     },
     computers: {
-        type: [[ComputerSchema]]
+        type: [[ComputerSchema]],
+        required:true
     }
 });
 

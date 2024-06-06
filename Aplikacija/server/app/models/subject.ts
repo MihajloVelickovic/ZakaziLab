@@ -7,7 +7,7 @@ export interface ISubject extends mongoose.Document {
     date: Date;
     sessions:IClassSession[];
     maxPoints: Number;
-    lab: mongoose.Types.ObjectId;
+    lab: string;
 }
 
 export const TemaSchema = new mongoose.Schema<ISubject>({
@@ -32,8 +32,8 @@ export const TemaSchema = new mongoose.Schema<ISubject>({
         required:true
     },
     lab: {
-        type: Schema.Types.ObjectId,
-        ref: 'Lab'
+        type:String,
+        required:true
     }
 });
 

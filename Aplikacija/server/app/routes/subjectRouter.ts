@@ -1,23 +1,59 @@
 import { Router } from "express";
 import Subject from "../models/subject";
 import { authorizeToken, verifyToken } from "../config/tokenFuncs";
+import Classroom from "../models/classroom";
+import ClassSession, { IClassSession } from "../models/classSession";
+import Computer, { IComputer } from "../models/computer";
 
 const subjectRouter = Router();
 
-subjectRouter.post("/add", async (req, res) => {
-    const { ordNum, desc, date, sessions, maxPoints, studentList } = req.body;
+subjectRouter.post("/add", authorizeToken, async (req:any, res) => {
+    let{ ordNum, desc, date, sessions, maxPoints, name,rows,cols, time } = req.body;
 
-    const subject = new Subject({ 
-                                    ordNum, desc, date, 
-                                    sessions, maxPoints, studentList
-                                 });
+    if (!verifyToken(req.token))
+        return res.status(403).send({ message: "Invalid token" });
+    else {
+        try {
+           
+            if (!name || !rows || !cols || !time) {
+                return res.status(400).json({ message: "Classroom name, rows, cols, and time are required" });
+            }
 
-    try {
-        const savedSubject = await subject.save();
+            // Create computers for the classroom
+            const computers: IComputer[][] = [];
+            name = `${name}_${time}`;
 
-        res.status(201).json(savedSubject);
-    } catch (err) {
-        res.status(500).json({ message: "Could not find subjects"});
+            for (let i = 0; i < rows; ++i) {
+                const rowComputers: IComputer[] = [];
+                for (let j = 0; j < cols; ++j) {
+                    const computer = new Computer({
+                        name: `${name}_${i}_${j}`
+                    });
+                    
+                    rowComputers.push(computer);
+                }
+                computers.push(rowComputers);
+            }
+            const classroom = new Classroom({name, rows, cols, computers});
+            // Create class session
+            let sessions:IClassSession[] = [];
+            sessions.push(new ClassSession({
+                classroom: classroom,
+                time: time
+            }));
+
+
+            const subject = new Subject({ 
+                ordNum, desc, date, 
+                sessions, maxPoints, classSession: sessions
+             });
+
+             const savedSubject = await subject.save();
+
+            res.status(201).json(savedSubject);
+        } catch (err: any) {
+            res.status(500).json({ message: "Could not find subjects"});
+        }
     }
 });
 

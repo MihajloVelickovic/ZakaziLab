@@ -17,7 +17,8 @@ export interface ILab extends mongoose.Document{
 export const LabScheme = new mongoose.Schema<ILab> ({
     name: {
         type: String,
-        required:true
+        required:true,
+        unique: true
     },
     desc: {
         type: String,

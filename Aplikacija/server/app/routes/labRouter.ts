@@ -5,6 +5,7 @@ import Lab from "../models/lab";
 import { authorizeToken, verifyToken } from "../config/tokenFuncs";
 import Tema from "../models/subject";
 import mongoose from "mongoose";
+import Classroom from "../models/classroom";
 
 const labRouter = Router();
 
@@ -26,28 +27,33 @@ labRouter.post("/add", authorizeToken, async (req:any, res) => {
         res.status(403).send({message: "Invalid token"});
     
     else {
-        const { name, desc, mandatory, subjectNum, maxPoints, classroom,
-             subjects, studentList, timeSlots } = req.body;
+        let { labName, desc, mandatory, subjectNum, maxPoints, classroom, rows, cols, crName,
+             subjects, studentList, dates, timeSlots, subjectDescs} = req.body;
 
         try {
-            const { name, desc, mandatory, subjectNum, maxPoints, classroom, subjects, studentList, timeSlots } = req.body;
 
+            const currentYear = new Date().getFullYear();
+            const nextYear = currentYear + 1;
+
+            const name = `${labName}_${currentYear}/${nextYear}`;
             try {
                 if (!Array.isArray(subjects)) {
                     return res.status(400).send({ error: 'Subjects must be an array' });
                 }
-        
-                const updatedSubjects: any[] = subjects.map((subject: any) => {
-                    if (!subject.timeSlots || subject.timeSlots.length === 0) {
-                        subject.timeSlots = timeSlots;
+                 
+                // O(n^4) ??!?!?!?!!??!?!!??!!?!?!? !!!!
+                for(let i=0;i<subjectNum;++i) {
+                    for(let j=0;j < timeSlots.length;++j) {
+                        for(let k=0; rows;++k) {
+                            for(let l=0;l<cols;++l) {
+                                
+                            }
+                        }
                     }
-                    return subject;
-                });
-        
-                const insertedSubjects: any = await Tema.insertMany(updatedSubjects, { ordered: false });
-        
-                const subjectIds: any[] = insertedSubjects.map((subject: any) => subject._id);
-        
+                }
+
+
+
                 const newLab: any = new Lab({
                     name,
                     desc,
@@ -55,9 +61,8 @@ labRouter.post("/add", authorizeToken, async (req:any, res) => {
                     subjectNum,
                     maxPoints,
                     classroom,
-                    subjects: subjectIds,
+                    subjects,
                     studentList,
-                    timeSlots
                 });
         
                 await newLab.save();
