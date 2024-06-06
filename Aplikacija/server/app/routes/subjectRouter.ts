@@ -5,11 +5,11 @@ import { authorizeToken, verifyToken } from "../config/tokenFuncs";
 const subjectRouter = Router();
 
 subjectRouter.post("/add", async (req, res) => {
-    const { ordNum, desc, date, timeSlots, maxPoints, studentList } = req.body;
+    const { ordNum, desc, date, sessions, maxPoints, studentList } = req.body;
 
     const subject = new Subject({ 
                                     ordNum, desc, date, 
-                                    timeSlots, maxPoints, studentList
+                                    sessions, maxPoints, studentList
                                  });
 
     try {
@@ -17,7 +17,7 @@ subjectRouter.post("/add", async (req, res) => {
 
         res.status(201).json(savedSubject);
     } catch (err) {
-        res.status(500).json( { message: "Could not find subjects"});
+        res.status(500).json({ message: "Could not find subjects"});
     }
 });
 
@@ -26,7 +26,7 @@ subjectRouter.patch("/update/:id", authorizeToken, async (req:any, res) => {
         res.status(403).send({message: "Invalid token"});
     else {
         const subjectId = req.params.id;
-        const { ordNum, desc, date, timeSlots, maxPoints, studentList } = req.body;
+        const { ordNum, desc, date, sessions, maxPoints, studentList } = req.body;
 
         if (!subjectId) {
             return res.status(400).send({ message: "Subject ID is required for update" });
@@ -37,7 +37,7 @@ subjectRouter.patch("/update/:id", authorizeToken, async (req:any, res) => {
                 if (ordNum !== undefined) updateFields.ordNum = ordNum;
                 if (desc !== undefined) updateFields.desc = desc;
                 if (date !== undefined) updateFields.date = date;
-                if (timeSlots !== undefined) updateFields.timeSlots = timeSlots;
+                if (sessions !== undefined) updateFields.sessions = sessions;
                 if (maxPoints !== undefined) updateFields.maxPoints = maxPoints;
                 if (studentList !== undefined) updateFields.studentList = studentList;
 

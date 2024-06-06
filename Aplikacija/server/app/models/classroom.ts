@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { IComputer } from "./computer";
+import { ComputerSchema, IComputer } from "./computer";
 
 
 
@@ -7,7 +7,7 @@ export interface IClassroom extends mongoose.Document {
     name: string;
     rows: number;
     cols: number;
-    computers: mongoose.Types.ObjectId[][];
+    computers: IComputer[][];
 }
 
 export const ClassroomSchema = new mongoose.Schema<IClassroom>({
@@ -24,7 +24,7 @@ export const ClassroomSchema = new mongoose.Schema<IClassroom>({
         required:true 
     },
     computers: {
-        type: [[Schema.Types.ObjectId]],
+        type: [[ComputerSchema]],
         ref: 'Computer',
     }
 });

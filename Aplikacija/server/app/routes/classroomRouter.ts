@@ -26,12 +26,12 @@ classroomRouter.post("/add", authorizeToken, async (req:any, res) => {
                     iterComputers.push(dbComputers[j]._id);
                 }
                 computers.push(iterComputers);
-                try{
+                /*try{
                     await Computer.insertMany(dbComputers);
-                }
+                } ???????
                 catch(err: any){
                     console.log(`${err.message}`);
-                }
+                }*/
             }
             if(computers.length != rows)
                 return res.status(400).send({message: "Error creating classroom"});

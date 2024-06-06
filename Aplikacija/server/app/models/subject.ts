@@ -1,11 +1,11 @@
 import mongoose, { Schema } from "mongoose";
-import { IStudentEntry, StudentEntrySchema } from "./studentEntry";
+import { ClassSessionSchema, IClassSession } from "./classSession";
 
 export interface ISubject extends mongoose.Document {
     ordNum: Number;
     desc: string;
     date: Date;
-    timeSlots: Date[];
+    sessions:IClassSession[];
     maxPoints: Number;
     lab: mongoose.Types.ObjectId;
 }
@@ -23,8 +23,8 @@ export const TemaSchema = new mongoose.Schema<ISubject>({
         type: Date,
         required:true
     },
-    timeSlots: {
-        type: [Date],
+    sessions: {
+        type: [ClassSessionSchema],
         required:true
     },
     maxPoints: {
