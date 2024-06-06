@@ -10,7 +10,7 @@ const studentEntryRouter = Router();
 studentEntryRouter.get("/findAll", authorizeToken, async (req: any, res) => {
     
     if(!verifyToken(req.token)) 
-        res.status(403).send({message: "Invalid authentication"});
+        res.status(403).send({message: "Invalid token"});
     else{
         try {
             const found = await StudentEntry.find({}).populate('student');
@@ -94,7 +94,7 @@ studentEntryRouter.patch("/update/:id", async (req, res) => {
 studentEntryRouter.post("/filteredFind", authorizeToken, async (req: any, res: any) => {
     
     if(!verifyToken(req.token)) 
-        res.status(403).send({message: "Invalid authentication"});
+        res.status(403).send({message: "Invalid token"});
     else{
         const query = req.body;
         console.log(query);

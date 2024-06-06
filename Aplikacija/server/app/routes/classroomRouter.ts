@@ -9,7 +9,7 @@ const classroomRouter = Router();
 
 classroomRouter.post("/add", authorizeToken, async (req:any, res) => {
     if (!verifyToken(req.token))
-        return res.status(403).send({ message: "Invalid authentication" });
+        return res.status(403).send({ message: "Invalid token" });
     else {
         const { name, rows, cols } = req.body;
     
@@ -96,7 +96,7 @@ classroomRouter.patch("/update/:id", authorizeToken, async (req:any, res) => {
 
 classroomRouter.get("/findAll", authorizeToken, async (req: any, res) => {
     if (!verifyToken(req.token)) {
-        return res.status(403).send({ message: "Invalid authentication" });
+        return res.status(403).send({ message: "Invalid token" });
     }
     else {
         try {
@@ -120,7 +120,7 @@ classroomRouter.get("/findAll", authorizeToken, async (req: any, res) => {
 
 classroomRouter.post("/filteredFind", authorizeToken, async (req: any, res) => {
     if (!verifyToken(req.token))
-        return res.status(403).send({ message: "Invalid authentication" });
+        return res.status(403).send({ message: "Invalid token" });
     else {
         try {
             const query = req.body;
@@ -145,7 +145,7 @@ classroomRouter.post("/filteredFind", authorizeToken, async (req: any, res) => {
 
 classroomRouter.delete("/delete/:id", authorizeToken, async (req:any, res) => {
     if (!verifyToken(req.token))
-        return res.status(403).send({ message: "Invalid authentication" });
+        return res.status(403).send({ message: "Invalid token" });
     else {
         try {
             const { id } = req.params;

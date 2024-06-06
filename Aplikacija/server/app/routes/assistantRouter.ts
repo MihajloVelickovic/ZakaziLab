@@ -8,7 +8,7 @@ const assistantRouter = Router();
 assistantRouter.get("/findAll", authorizeToken, async (req: any, res) => {
     
     if(!verifyToken(req.token)) 
-        res.status(403).send({message: "Invalid authentication"});
+        res.status(403).send({message: "Invalid token"});
 
     const found = await Assistant.find({});
 
@@ -80,7 +80,7 @@ assistantRouter.patch("/update/:id", async (req, res) => {
 assistantRouter.post("/filteredFind", authorizeToken, async (req: any, res) => {
     
     if(!verifyToken(req.token)) 
-        res.status(403).send({message: "Invalid authentication"});
+        res.status(403).send({message: "Invalid token"});
     else{
         const query = req.body;
         const assistants = await Assistant.find(query);

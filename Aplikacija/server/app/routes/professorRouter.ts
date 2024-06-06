@@ -8,7 +8,7 @@ const professorRouter = Router();
 professorRouter.get("/findAll", authorizeToken, async (req: any, res) => {
     
     if(!verifyToken(req.token)) 
-        res.status(403).send({message: "Invalid authentication"});
+        res.status(403).send({message: "Invalid token"});
     else {
         const found = await Professor.find({});
         found != null ? 
@@ -42,7 +42,7 @@ professorRouter.post("/add", async (req, res) => {
 
 professorRouter.patch("/update/:id", authorizeToken,async (req:any, res) => {
     if(!verifyToken(req.token)) 
-        res.status(403).send({message: "Invalid authentication"});
+        res.status(403).send({message: "Invalid token"});
     else {
             const professorId = req.params.id;
         const {
@@ -87,7 +87,7 @@ professorRouter.patch("/update/:id", authorizeToken,async (req:any, res) => {
 
 professorRouter.post("/filteredFind", authorizeToken, async (req: any, res) => {
     if(!verifyToken(req.token)) 
-        res.status(403).send({message: "Invalid authentication"});
+        res.status(403).send({message: "Invalid token"});
     
    else {
         const query = req.body;
@@ -101,7 +101,7 @@ professorRouter.post("/filteredFind", authorizeToken, async (req: any, res) => {
 
 professorRouter.delete("/delete/:id", authorizeToken,async (req:any, res) => {
     if(!verifyToken(req.token)) 
-        res.status(403).send({message: "Invalid authentication"});
+        res.status(403).send({message: "Invalid token"});
     else {
         try{
             const {id} = req.params;

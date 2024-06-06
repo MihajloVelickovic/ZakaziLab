@@ -31,7 +31,7 @@ userRouter.post("/add", authorizeToken, async (req: any, res) => {
             res.status(201).json(saveduser);
         } 
         catch(error) {
-            res.status(400).json( {message: "greska"} );
+            res.status(400).json( {message: "Error adding user", error} );
         }
     }
 });
@@ -45,7 +45,7 @@ userRouter.patch("/update/:id", authorizeToken, async (req: any, res) => {
     const { name, lastName, email, privileges } = req.body;
 
     if (!userId) {
-        return res.status(400).send({ message: "User ID is required for update" });
+        return res.status(400).send({ message: "User Id needed for update" });
     }
 
     try {
@@ -81,7 +81,7 @@ userRouter.get('/findAll', authorizeToken, async (req: any, res) => {
             res.json(users);
         }
     } catch(error) {
-        res.status(500).json({ message: "Could not find users"});
+        res.status(500).json({ message: "Error finding one of the users", error});
     }
 });
 
@@ -101,7 +101,7 @@ userRouter.get(
                 const user = await User.findOne(query);
                 
                 if(!user) 
-                    return res.status(404).json({ error: "user not found" });
+                    return res.status(404).json({ error: "User not found" });
 
                 res.status(200).json(user);
             }
@@ -119,17 +119,17 @@ userRouter.delete(
     async (req: any, res) => {
         try {
             if(!verifyToken(req.token)) 
-                res.status(403).send({message: "Invalid token"});
+                res.status(403).send({message: ""});
             else{
                 const userId = req.params.id;
 
                 const user = await User.findByIdAndDelete(userId);
 
                 if (!user) {
-                    return res.status(404).json({ error: "user not found" });
+                    return res.status(404).json({ error: "User not found" });
                 }
-
-                res.json({ message: "user deleted successfully" });
+                
+                res.json({ message: "User successfully deleted" });
             }
         } catch (error) {
             console.error('Error deleting user: ', error);
@@ -148,12 +148,12 @@ userRouter.post("/register", async (req:any, res) => {
         } = req.body;
     
     if (!name || !lastName || !email || !password || !privileges) 
-        return res.status(400).json({ message: 'All fields are required' });
+        return res.status(400).json({ message: 'All of the fields are necessary' });
     
     try {
         let userExists = await User.findOne({ email });
         if (userExists) 
-            return res.status(400).json({ message: 'Email already exists' });
+            return res.status(400).json({ message: 'Email already registered' });
         
         userExists = await User.findOne({ index: parseInt(index) });
         if(userExists)
@@ -181,7 +181,7 @@ userRouter.post("/register", async (req:any, res) => {
         default:
             return res.status(400).json({ message: 'Invalid privileges' });
         }
-    
+        
         const token = signToken(JSON.parse(JSON.stringify(newUser)), "15m");
 
         const mailOptions = {
@@ -199,7 +199,7 @@ userRouter.post("/register", async (req:any, res) => {
             console.log(`Email sent to ${email}`);
         });
 
-        res.status(200).json({message: `Email sent succesfully to ${email}`});
+        res.status(200).json({message: `Email successfully sent to ${email}`});
     } 
     catch (error:any) {
         res.status(500).json({ message: 'Error registering user', error:`${error.message}}`});
@@ -218,9 +218,9 @@ userRouter.post("/register/confirm", async (req, res) => {
         else{
 
             const invalidateTokens = await User.findOne({email: data.email});
-
+            
             if(invalidateTokens != null)
-                return res.status(400).send({message: `User with email ${data.email} already registered`});
+                return res.status(400).send({message: `Korisnik sa email adresom ${data.email} je već registrovan`});
 
             data =  Object.keys(data)
                           .filter(objectKey => objectKey !== "iat" && objectKey !== "exp")
@@ -248,10 +248,10 @@ userRouter.post("/register/confirm", async (req, res) => {
             }
             try{
                 await dbUser.save();
-                res.status(200).send({message: "Registration complete"});
+                res.status(200).send({message: "Završena registracija"});
             }
             catch(err){
-                res.status(400).send({message: "Failed to save user to database"});
+                res.status(400).send({message: "Error saving user to database"});
             }
         }
     }
@@ -262,18 +262,18 @@ userRouter.post("/login", async (req, res) => {
     
     const { email, password } = req.body;
     if (!email || !password) 
-      return res.status(400).json({ message: 'Email and password are required' });
+      return res.status(400).json({ message: 'Email and password are necessary' });
     
     try {
         const user = await User.findOne({ email });
     
         if (!user)
-            return res.status(400).json({ message: 'Invalid email or password' });
+            return res.status(400).json({ message: 'Wrong email or password' });
     
         const isMatch = await bcrypt.compare(password, user.password);
     
         if (!isMatch) 
-            return res.status(400).json({ message: 'Invalid password or password' });
+            return res.status(400).json({ message: 'Wrong email or password' });
         
         let userType = 'User';
     
@@ -291,7 +291,7 @@ userRouter.post("/login", async (req, res) => {
   
         mainRefreshToken = refreshToken;
 
-        res.status(200).json({token, refreshToken, user, message: 'Login successful'});
+        res.status(200).json({token, refreshToken, user, message: 'Successfull log-in'});
     } 
     catch (error) {
       res.status(500).json({ message: 'Error logging in', error });
@@ -303,7 +303,7 @@ userRouter.post("/refresh", (req, res) => {
         res.status(422).send({message: "Unprocessable request"});
     else{
         if(req.body.token !== mainRefreshToken)
-            return res.status(422).send({message: "Invalid refresh token"});
+            return res.status(422).send({message: "Invalid token"});
         const verified: any = verifyRefresh(req.body.token);
         if(!verified)
             res.status(400).send({message: "Invalid refresh token"}); //AKO SE OVO DESI TREBA DA SE IZLOGUJE KORISNIK
@@ -321,11 +321,11 @@ userRouter.post("/logout", authorizeToken, (req: any, res) => {
         res.status(403).send({message: "Invalid token"});
     else{
         if(!req.body.token)
-            return res.status(422).send({message: "Need refresh token"});
+            return res.status(422).send({message: "Refresh token necessary"});
         
         if(verifyRefresh(req.body.token) !== false){
             mainRefreshToken = "";
-            res.status(200).send({message: "Logged out successfully"});
+            res.status(200).send({message: "Successful log-out"});
         }
 
     }

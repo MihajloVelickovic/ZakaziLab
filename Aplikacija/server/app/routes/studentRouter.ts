@@ -62,7 +62,7 @@ studentRouter.patch("/update/:id", async (req, res) => {
 studentRouter.get('/findAll', authorizeToken, async (req: any, res) => {
     try {
         if(!verifyToken(req.token)) 
-            res.status(403).send({message: "Invalid authentication"});
+            res.status(403).send({message: "Invalid token"});
         else{
             const students = await Student.find({});
             res.json(students);
@@ -81,7 +81,7 @@ studentRouter.post(
         try {
 
             if(!verifyToken(req.token)) 
-                res.status(403).send({message: "Invalid authentication"});
+                res.status(403).send({message: "Invalid token"});
             else{
                 const query = req.body;
 
@@ -103,7 +103,7 @@ studentRouter.delete(
     async (req:any, res) => {
         try {
             if(!verifyToken(req.token)) 
-                res.status(403).send({message: "Invalid authentication"});
+                res.status(403).send({message: "Invalid token"});
             else {
                 const studentId = req.params.id;
 

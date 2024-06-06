@@ -23,7 +23,7 @@ subjectRouter.post("/add", async (req, res) => {
 
 subjectRouter.patch("/update/:id", authorizeToken, async (req:any, res) => {
     if(!verifyToken(req.token)) 
-        res.status(403).send({message: "Invalid authentication"});
+        res.status(403).send({message: "Invalid token"});
     else {
         const subjectId = req.params.id;
         const { ordNum, desc, date, timeSlots, maxPoints, studentList } = req.body;
@@ -61,7 +61,7 @@ subjectRouter.patch("/update/:id", authorizeToken, async (req:any, res) => {
 subjectRouter.get("/findAll", authorizeToken, async (req: any, res) => {
     try {
         if(!verifyToken(req.token))
-            res.status(403).send({message: "Invalid authentication"});
+            res.status(403).send({message: "Invalid token"});
         else{
             const subjects = await Subject.find({});
             res.json(subjects);
@@ -74,7 +74,7 @@ subjectRouter.get("/findAll", authorizeToken, async (req: any, res) => {
 subjectRouter.post("/filteredFind", authorizeToken, async (req: any, res) => {
     try {
         if(!verifyToken(req.token)) 
-            res.status(403).send({message: "Invalid authentication"});
+            res.status(403).send({message: "Invalid token"});
         else{
             const query = req.body;
             const subject = await Subject.find(query).populate('lab');
@@ -88,7 +88,7 @@ subjectRouter.post("/filteredFind", authorizeToken, async (req: any, res) => {
 subjectRouter.delete("/delete/:id", authorizeToken, async (req:any, res) => {
     try {
         if(!verifyToken(req.token)) 
-            res.status(403).send({message: "Invalid authentication"});
+            res.status(403).send({message: "Invalid token"});
         else {
             const subjectId = req.params.id;
 

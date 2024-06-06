@@ -11,7 +11,7 @@ const labRouter = Router();
 labRouter.get("/findAll", authorizeToken, async (req: any, res) => {
     
     if(!verifyToken(req.token)) 
-        res.status(403).send({message: "Invalid authentication"});
+        res.status(403).send({message: "Invalid token"});
     else{
         const found = await lab.find({});
         found != null ? 
@@ -23,7 +23,7 @@ labRouter.get("/findAll", authorizeToken, async (req: any, res) => {
 
 labRouter.post("/add", authorizeToken, async (req:any, res) => {
     if(!verifyToken(req.token)) 
-        res.status(403).send({message: "Invalid authentication"});
+        res.status(403).send({message: "Invalid token"});
     
     else {
         const { name, desc, mandatory, subjectNum, maxPoints, classroom,
@@ -76,7 +76,7 @@ labRouter.post("/add", authorizeToken, async (req:any, res) => {
 labRouter.post("/filteredFind", authorizeToken, async (req: any, res) => {
    
     if(!verifyToken(req.token)) 
-        res.status(403).send({message: "Invalid authentication"});
+        res.status(403).send({message: "Invalid token"});
     else{
         const query = req.body;
         const labs = await lab.find(query).populate('classroom') 
@@ -90,7 +90,7 @@ labRouter.post("/filteredFind", authorizeToken, async (req: any, res) => {
 
 labRouter.patch("/update/:id", authorizeToken,async (req:any, res) => {
     if(!verifyToken(req.token)) 
-        res.status(403).send({message: "Invalid authentication"});
+        res.status(403).send({message: "Invalid token"});
 
     else {
         const labId = req.params.id;
@@ -131,7 +131,7 @@ labRouter.patch("/update/:id", authorizeToken,async (req:any, res) => {
 
 labRouter.delete("/delete/:id", authorizeToken, async (req:any, res) => {
     if(!verifyToken(req.token)) 
-        res.status(403).send({message: "Invalid authentication"});
+        res.status(403).send({message: "Invalid token"});
 
     else {
         try{

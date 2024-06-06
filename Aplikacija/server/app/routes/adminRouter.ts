@@ -7,7 +7,7 @@ const adminRouter = Router();
 adminRouter.get("/findAll", authorizeToken, async (req: any, res) => {
     
     if(!verifyToken(req.token)) 
-        res.status(403).send({message: "Invalid authentication"});
+        res.status(403).send({message: "Invalid token"});
     else {       
         const found = await Admin.find({});
 
@@ -19,7 +19,7 @@ adminRouter.get("/findAll", authorizeToken, async (req: any, res) => {
 
 adminRouter.post("/add", authorizeToken,async (req:any, res) => {
     if(!verifyToken(req.token)) 
-        res.status(403).send({message: "Invalid authentication"});
+        res.status(403).send({message: "Invalid token"});
     else {
         const {
             name, lastName, email, password,
@@ -44,7 +44,7 @@ adminRouter.post("/add", authorizeToken,async (req:any, res) => {
 
 adminRouter.patch("/update/:id", authorizeToken,async (req:any, res) => {
     if(!verifyToken(req.token)) 
-        res.status(403).send({message: "Invalid authentication"});
+        res.status(403).send({message: "Invalid token"});
     else {
         const adminId = req.params.id;
         const updateData = req.body;
@@ -66,7 +66,7 @@ adminRouter.patch("/update/:id", authorizeToken,async (req:any, res) => {
 adminRouter.post("/filteredFind", authorizeToken, async (req: any, res) => {
     
     if(!verifyToken(req.token)) 
-        res.status(403).send({message: "Invalid authentication"});
+        res.status(403).send({message: "Invalid token"});
     else {
         const query = req.body;
 
@@ -79,7 +79,7 @@ adminRouter.post("/filteredFind", authorizeToken, async (req: any, res) => {
 
 adminRouter.delete("/delete/:id", authorizeToken, async (req:any, res) => {
     if(!verifyToken(req.token)) 
-        res.status(403).send({message: "Invalid authentication"});
+        res.status(403).send({message: "Invalid token"});
     else {
         try{
             const {id} = req.params;

@@ -7,7 +7,7 @@ const computerRouter = express.Router();
 // POST route to add a new computer
 computerRouter.post('/add', async (req:any, res) => {
     if(!verifyToken(req.token)) 
-        res.status(403).send({message: "Invalid authentication"});
+        res.status(403).send({message: "Invalid token"});
     else {
         try {
             // Extract computer data from request body
@@ -34,7 +34,7 @@ computerRouter.post('/add', async (req:any, res) => {
 
 computerRouter.post('/findAll', authorizeToken,async (req:any, res) => {
     if(!verifyToken(req.token)) 
-        res.status(403).send({message: "Invalid authentication"});
+        res.status(403).send({message: "Invalid token"});
     else {
         try {
             const computers = await Computer.find().populate('student');
@@ -51,7 +51,7 @@ computerRouter.post('/findAll', authorizeToken,async (req:any, res) => {
 
 computerRouter.patch('/update/:id', authorizeToken, async (req:any, res) => {
     if(!verifyToken(req.token)) 
-        res.status(403).send({message: "Invalid authentication"});
+        res.status(403).send({message: "Invalid token"});
 
     else {
         try {
@@ -86,7 +86,7 @@ computerRouter.patch('/update/:id', authorizeToken, async (req:any, res) => {
 
 computerRouter.post('/filteredFind', authorizeToken,async (req:any, res) => {
     if(!verifyToken(req.token)) 
-        res.status(403).send({message: "Invalid authentication"});
+        res.status(403).send({message: "Invalid token"});
     else {
 
         try {
@@ -106,7 +106,7 @@ computerRouter.post('/filteredFind', authorizeToken,async (req:any, res) => {
 
 computerRouter.delete('/delete/:id', authorizeToken, async (req:any, res) => {
     if(!verifyToken(req.token)) 
-        res.status(403).send({message: "Invalid authentication"});
+        res.status(403).send({message: "Invalid token"});
     else {
         const computerId = req.params.id;
 
