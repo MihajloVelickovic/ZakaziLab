@@ -16,7 +16,7 @@ function signToken(payload: any, expiration?: string){
 
     let exp;
     if(typeof expiration === "undefined")
-        exp = "1m";
+        exp = "20m";    //temporary
     else
         exp = expiration;
 

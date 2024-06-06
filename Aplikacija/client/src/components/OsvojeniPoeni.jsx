@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../styles/OsvojeniPoeni.css";
 import axiosInstance from '../utils/axiosInstance'
-import useAxios from "../utils/useAxios";
+//import useAxios from "../utils/useAxios";
 
 
 var user = null;

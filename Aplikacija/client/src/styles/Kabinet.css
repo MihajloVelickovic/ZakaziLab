@@ -1,0 +1,52 @@
+.kabinet-container {
+    padding: 20px;
+}
+
+.cabinet-list,
+.delete-cabinet-list {
+    margin-top: 20px;
+}
+
+.cabinet-list div,
+.delete-cabinet-list div {
+    padding: 10px;
+    border: 1px solid #ccc;
+    margin-bottom: 5px;
+    cursor: pointer;
+}
+
+.cabinet-detail {
+    margin-top: 20px;
+}
+
+.computer-matrix {
+    display: flex;
+    flex-direction: column;
+}
+
+.row {
+    display: flex;
+}
+
+.computer {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #000;
+    margin: 2px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.add-cabinet-form {
+    margin-top: 20px;
+}
+
+.add-cabinet-form input {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.add-cabinet-form button {
+    margin-right: 10px;
+}

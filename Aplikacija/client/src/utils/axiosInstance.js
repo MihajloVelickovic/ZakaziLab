@@ -15,7 +15,7 @@ const axiosInstance = axios.create({
 
 
 axiosInstance.interceptors.request.use(async req => {
-    if(!authToken){
+    if(!authToken || authToken===undefined){
         console.log("ulazi ovde");
         authToken = localStorage.getItem('authToken') ? localStorage.getItem('authToken') : null
         refreshToken = localStorage.getItem('refreshToken') ? localStorage.getItem('refreshToken') : null
@@ -28,6 +28,7 @@ axiosInstance.interceptors.request.use(async req => {
     
 
     console.log("ulazi ovde drugde");
+    console.log("authToken je: ", authToken);
     const user = jwt_decode(authToken)
     const isExpired = dayjs.unix(user.exp).diff(dayjs()) < 1;
 
@@ -48,7 +49,7 @@ axiosInstance.interceptors.request.use(async req => {
         },
         body:JSON.stringify({token})//JSON.stringify({'token':refreshToken})
     })
-    console.log(response);
+    console.log("odgovor servera za refresh", response);
 
       //body:JSON.stringify({token})//JSON.stringify({'token':refreshToken})
     let data = await response.json();

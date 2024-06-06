@@ -95,10 +95,12 @@ classroomRouter.patch("/update/:id", authorizeToken, async (req:any, res) => {
 });
 
 classroomRouter.get("/findAll", authorizeToken, async (req: any, res) => {
+    console.log("doslo je do servera");
     if (!verifyToken(req.token)) {
         return res.status(403).send({ message: "Invalid token" });
     }
     else {
+        console.log("dobar je token");
         try {
             const classrooms = await Classroom.find({}).populate({
                 path: 'computers',
@@ -106,11 +108,14 @@ classroomRouter.get("/findAll", authorizeToken, async (req: any, res) => {
                     path: 'student'
                 }
             });
+            console.log("potrazio je classroom-e");
     
             if (classrooms.length > 0) {
                 res.status(200).json(classrooms);
             } else {
+                console.log("nije naso classroom");
                 res.status(400).json({ message: "Could not find classrooms" });
+                console.log("ovo ne vidis");
             }
         } catch (err: any) {
             res.status(500).json({ message: `Error retrieving classrooms: ${err.message}` });
