@@ -187,9 +187,10 @@ userRouter.post("/register", async (req:any, res) => {
         const mailOptions = {
             from: emailParams.email,
             to: email,
-            subject: "Finish registering your account",
+            subject: "Završite registraciju",
             text: `http://localhost:3000/register/${token}`,
-            html: `<p>http://localhost:3000/register/${token}</p>`
+            html: `<p>Ovaj link je validan 15 minuta</p>
+                   <a href="http://localhost:3000/register/${token}" target="_blank"><p>Potvridte registraciju!</p></a>`
         };
 
         transporer.sendMail(mailOptions, (err, info) => {
