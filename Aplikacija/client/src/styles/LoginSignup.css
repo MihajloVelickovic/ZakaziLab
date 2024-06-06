@@ -17,10 +17,10 @@ body {
     margin: auto;
     /* margin-top: 200px; */
     /* padding-top: 200px; */
-    width: 600px;
+    width: 540px;
     /* height: 800px; */
     background: white;
-    padding-bottom: 30px;
+    /* padding-bottom: 30px; */
     align-items: center;
     justify-content: center;
 }
@@ -32,7 +32,7 @@ body {
     gap: 9px;
     width: 400px;
     /* width: 100%; */
-    margin-top: 30px;
+    margin-top: 10px;
 }
 
 .text {

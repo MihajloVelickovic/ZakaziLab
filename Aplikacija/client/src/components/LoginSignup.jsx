@@ -190,25 +190,25 @@ const LoginSignup = () => {
     const showInputFields = () => {
         return (
             <div className='inputs'>
-                <div className='input'>
+                <div className='input' style={{marginBottom: formErrors.email?"0px":"10px"}}>
                     <img src={emailImg} alt=''></img>
                     <input type='email' name='email' placeholder='Email' value = {formValues.email} onChange={handleChange}></input>
                 </div>
                 <p>{formErrors.email}</p>
-                <div className='input'>
+                <div className='input' style={{marginBottom: formErrors.password?"0px":"10px"}}>
                     <img src={passwordImg} alt='' ></img>
                     <input type='password' name='password' placeholder='Password' value = {formValues.password} onChange={handleChange}></input>
                 </div>
                 <p>{formErrors.password}</p>
 
                 {action!="Sign Up"? <></> : <>
-                    <div className='input'>
+                    <div className='input' style={{marginBottom: formErrors.name?"0px":"10px"}}>
                         <img src={userImg} alt='' ></img>
                         <input type='text' name='name' placeholder='Name' value = {formValues.name} onChange={handleChange}></input>                        
                     </div>
                     <p>{formErrors.name}</p>
 
-                    <div className='input'>
+                    <div className='input' style={{marginBottom: formErrors.lastName?"0px":"10px"}}>
                         <img src={userImg} alt='' ></img>
                         <input type='text' name='lastName' placeholder='LastName' value = {formValues.lastName} onChange={handleChange}></input>                        
                     </div>
@@ -222,13 +222,13 @@ const LoginSignup = () => {
                         <p>{formErrors.module}</p>
 
                         {typeOfUser=="student"? <>
-                            <div className='input'>
+                            <div className='input'style={{marginBottom: formErrors.index?"0px":"10px"}}>
                                 <img src={userImg} alt='' ></img>
                                 <input type="number" name='index' placeholder='index' value = {formValues.index} onChange={handleChange}></input>                        
                             </div>
                             <p>{formErrors.index}</p>
 
-                            <div className='input'>
+                            <div className='input' style={{marginBottom: formErrors.birthDate?"0px":"10px"}}>
                                 <img src={userImg} alt='' ></img>
                                 <input className="textbox-n" type="text" onFocus={(e) => (e.target.type = "date")}
                                         onBlur={(e) => (e.target.type = "text")} name='birthDate' placeholder='datum rodjenja' value = {formValues.birthDate} onChange={handleChange}></input>                        
@@ -236,14 +236,14 @@ const LoginSignup = () => {
                             <p>{formErrors.birthDate}</p>
                         </>:
                         <>
-                            <div className='input'>
+                            <div className='input' style={{marginBottom: formErrors.gradDate?"0px":"10px"}}>
                                 <img src={userImg} alt='' ></img>
                                 <input className="textbox-n" type="text" onFocus={(e) => (e.target.type = "date")}
                                         onBlur={(e) => (e.target.type = "text")} name='gradDate' placeholder='datum diplomiranja' value = {formValues.gradDate} onChange={handleChange}></input>                        
                             </div>
                             <p>{formErrors.gradDate}</p>
 
-                            <div className='input'>
+                            <div className='input' style={{marginBottom: formErrors.gradFaculty?"0px":"10px"}}>
                                 <img src={userImg} alt='' ></img>
                                 <input type="text" name='gradFaculty' placeholder='fakultet diplomiranja' value = {formValues.gradFaculty} onChange={handleChange}></input>                        
                             </div>
@@ -251,14 +251,14 @@ const LoginSignup = () => {
 
                             {typeOfUser!="professor"?<></> :
                             <>
-                                <div className='input'>
+                                <div className='input' style={{marginBottom: formErrors.phdGradDate?"0px":"10px"}}>
                                 <img src={userImg} alt='' ></img>
                                 <input className="textbox-n" type="text" onFocus={(e) => (e.target.type = "date")}
                                         onBlur={(e) => (e.target.type = "text")} placeholder="datum doktoriranja" name='phdGradDate' value = {formValues.phdGradDate} onChange={handleChange}></input>                        
                                 </div>
                                 <p>{formErrors.phdGradDate}</p>
 
-                                <div className='input'>
+                                <div className='input' style={{marginBottom: formErrors.phdGradFaculty?"0px":"10px"}}>
                                 <img src={userImg} alt='' ></img>
                                 <input type="text" name='phdGradFaculty' placeholder='fakultet doktoriranja' value = {formValues.phdGradFaculty} onChange={handleChange}></input>                        
                                 </div>

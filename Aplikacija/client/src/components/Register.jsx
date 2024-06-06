@@ -39,8 +39,7 @@ const Register = () => {
     }, [message]); // Adding message and history as dependencies to useEffect
     
     return (
-        <h2>
-            Register page
+        <h2 style={{textAlign:"center", marginTop:"40px"}}>
             {message?<p>{message}</p>: <p>Jos se nije primila poruka</p>}
         </h2>
     )
