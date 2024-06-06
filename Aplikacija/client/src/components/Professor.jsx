@@ -16,10 +16,15 @@ import IzvestajOPoenima from "./IzvestajOPoenima";
 import KalendarAktivnosti from "./KalendarAktivnosti";
 import Kabinet from './Kabinet';
 
+import { useContext } from 'react';
+import AuthContext from '../context/AuthContext';
+
 import Sidebar from "./Sidebar";
+import Footer from './Footer';
 
 const Professor = () => {
     const [showSidebar, setShowSidebar] = useState(false);
+    let {authToken, logoutUser} = useContext(AuthContext);
 
     const toggleSidebar = () => {
         setShowSidebar(!showSidebar);
@@ -35,6 +40,10 @@ const Professor = () => {
             <div>
              <Link to='/' className="title"><img src={Brand} alt="" style={{width:"40px"}} className="rounded-pill"/> ZakažiLab <span className="version">alpha0.0</span></Link>
             </div>
+            <button onClick={logoutUser} className="login-button" style={{position: "absolute", right: "40px"}} >Log Out
+            {/* <i className="bi bi-box-arrow-right"></i> */}
+            <i className = "fa-solid fa-right-from-bracket"></i>
+            </button>
         </header>
         <div className="pageContainer">            
             <aside className="pageAside" style={{left: showSidebar ? '0' : '-250px', position:"fixed"}}> 
@@ -50,7 +59,7 @@ const Professor = () => {
                     <Route path="Kabinet" element={<Kabinet />} />
                 </Routes>
             </main>
-            
+        <Footer/>
         </div>
         </>
     )
