@@ -13,7 +13,8 @@ export interface IClassroom extends mongoose.Document {
 export const ClassroomSchema = new mongoose.Schema<IClassroom>({
     name: { 
         type:String,
-        required:true 
+        required:true,
+        unique: true
     },
     rows: { 
         type:Number,
