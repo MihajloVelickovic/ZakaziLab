@@ -1,0 +1,30 @@
+.calendar-container {
+    margin: 150px auto; /* Center horizontally */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column; /* Align calendar vertically */
+}
+
+.react-calendar {
+    background: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 20px;
+    width: 400px;
+}
+
+.react-calendar__tile--active {
+    background: #007bff;
+    color: #fff !important;
+}
+
+
+.highlighted-date {
+    background-color: red;
+    color: white;
+}
+
+
+
+

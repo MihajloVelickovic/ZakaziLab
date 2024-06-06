@@ -99,3 +99,18 @@
 .add-cabinet-form button {
     margin-right: 10px;
 }
+
+.kabinet-container button {
+    background-color: #007bff;
+    padding: 5px;
+    margin: 10px;
+    color: #ffffff;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+
+
+
+
