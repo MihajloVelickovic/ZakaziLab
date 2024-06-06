@@ -55,6 +55,43 @@ classroomRouter.post("/add", authorizeToken, async (req:any, res) => {
     }
 });
 
+classroomRouter.patch("/updateComputer/:id", authorizeToken, async (req:any, res)=> {
+    if (!verifyToken(req.token))
+        return res.status(403).send({ message: "Invalid token" });
+    else {
+        try {
+            const classroomId = req.params.id;
+            
+            const classroom = await Classroom.findById(classroomId);
+
+            if (!classroom) {
+                return res.status(404).send({ message: "Classroom not found" });
+            }
+
+            const updatedComputerData = req.body;
+
+            const [className, row, col] = updatedComputerData.name.split('_');
+
+            const rowIndex = parseInt(row);
+            const colIndex = parseInt(col);
+
+            if (isNaN(rowIndex) || isNaN(colIndex)) {
+                return res.status(400).send({ message: "Invalid row or column index" });
+            }
+
+            classroom.computers[rowIndex][colIndex] = updatedComputerData;
+
+            const updatedClassroom = await classroom.save();
+
+            res.status(200).send(updatedClassroom);
+        } catch (error) {
+            console.error(error);
+            res.status(500).send({ message: "Internal server error" });
+        }
+    }
+    
+});
+
 classroomRouter.patch("/update/:id", authorizeToken, async (req:any, res) => {
     const classroomId = req.params.id;
     const { name, computerNum, rows, cols, computers } = req.body;
