@@ -2,7 +2,7 @@
 import { Router } from "express";
 import Classroom from "../models/classroom";
 import { authorizeToken, verifyToken } from "../config/tokenFuncs";
-import Computer from "../models/computer";
+import Computer, { IComputer } from "../models/computer";
 import mongoose, { Schema } from "mongoose";
 
 const classroomRouter = Router();
@@ -15,15 +15,15 @@ classroomRouter.post("/add", authorizeToken, async (req:any, res) => {
     
         try {
             
-            const computers: mongoose.Types.ObjectId[][] = [];
+            const computers: IComputer[][] = [];
 
             for(let i=0; i<rows; ++i){
-                const iterComputers: mongoose.Types.ObjectId[] = [];
+                const iterComputers: IComputer[] = [];
                 const dbComputers: any[] = []
                 for(let j=0; j<cols; ++j){
                     const computerToAdd = new Computer({name: `${name}_${i}_${j}`})
                     dbComputers.push(computerToAdd);
-                    iterComputers.push(dbComputers[j]._id);
+                    iterComputers.push(computerToAdd);
                 }
                 computers.push(iterComputers);
                 /*try{
