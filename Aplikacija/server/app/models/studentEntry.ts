@@ -19,10 +19,6 @@ export const StudentEntrySchema = new mongoose.Schema<IStudentEntry>({
         type: [Boolean],
         required: true
     },
-    timeSlot: {
-        type: Date,
-        required: true
-    },
     points: {
         type: [Number],
         required: true

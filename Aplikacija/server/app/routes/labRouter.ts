@@ -8,6 +8,7 @@ import mongoose from "mongoose";
 import Classroom from "../models/classroom";
 import Computer, { IComputer } from "../models/computer";
 import ClassSession, { IClassSession } from "../models/classSession";
+import StudentEntry from "../models/studentEntry";
 
 const labRouter = Router();
 
@@ -29,7 +30,8 @@ labRouter.post("/add", authorizeToken, async (req: any, res) => {
         return res.status(403).send({ message: "Invalid token" });
     }
 
-    let { labName, desc, mandatory, subjectNum, maxPoints, classroom, rows, cols, crName, studentList, dates, timeSlots, subjectDescs } = req.body;
+    let { labName, desc, mandatory, subjectNum, maxPoints, classroom, rows, cols,
+         crName, studentList, dates, timeSlots, subjectDescs, autoSchedule } = req.body;
 
     console.log(req.body);
 
@@ -38,9 +40,28 @@ labRouter.post("/add", authorizeToken, async (req: any, res) => {
     
 
     const name = `${labName}_${currentYear}/${nextYear}`;
-
+    
     try {
         let subjects: mongoose.Types.ObjectId[] = [];
+        const attendances = Array(subjectNum).fill(false);
+        const points = Array(subjectNum).fill(0);
+
+        let studentEntryPromises = studentList.map(async (student:any) => {
+            const entrytoAdd:any = new StudentEntry({student, attendance:attendances,points, labName:name})
+            let savedEntry:any;
+            try{
+                savedEntry = await entrytoAdd.save();        
+            }
+            catch(err){
+                console.log(err);
+                return res.status(400).send({ message: "Error adding studentEntry" });
+            }
+            return savedEntry?._id;
+        });
+
+        const classroomRef:any = await Classroom.find(classroom);
+
+        const studentEntryList = await Promise.all(studentEntryPromises);
 
         for (let i = 0; i < subjectNum; ++i) {
             let sessions: any[] = [];
@@ -58,7 +79,20 @@ labRouter.post("/add", authorizeToken, async (req: any, res) => {
                 for (let r = 0; r < rows; ++r) {
                     const rowComputers: IComputer[] = [];
                     for (let c = 0; c < cols; ++c) {
-                        const computer = new Computer({ name: `${sname}_${r}_${c}` });
+                        let computer;
+                        if(autoSchedule) {
+                            if((!classroomRef.compters[r][c].malfunctioned &&
+                                ((r*cols+c+j*(rows*cols))) < studentEntryList.length)) {
+                                computer = new Computer({ name: `${sname}_${r}_${c}`
+                            , free:false,student:studentEntryList[r*cols+c]});   
+                            }
+                            else {
+                                computer = new Computer({ name: `${sname}_${r}_${c}`});
+                            }                        
+                        }
+                        else {
+                            computer = new Computer({ name: `${sname}_${r}_${c}`});
+                        }
                         rowComputers.push(computer);
                     }
                     computers.push(rowComputers);
