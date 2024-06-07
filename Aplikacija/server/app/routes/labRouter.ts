@@ -40,7 +40,7 @@ labRouter.post("/add", authorizeToken, async (req: any, res) => {
     const name = `${labName}_${currentYear}/${nextYear}`;
 
     try {
-        let subjects: ISubject[] = [];
+        let subjects: mongoose.Types.ObjectId[] = [];
 
         for (let i = 0; i < subjectNum; ++i) {
             let sessions: any[] = [];
@@ -48,10 +48,14 @@ labRouter.post("/add", authorizeToken, async (req: any, res) => {
                 let datum = dates[i].split('T')[0];
                 let computers: IComputer[][] = [];
                 let sname = `${crName}_${datum}/${timeSlots[j]}`;
-                console.log("sname",sname)
-                // Check for existing classroom with the same name
+                console.log("sname",sname);
+                
                 const existingClassroom = await Classroom.findOne({ name: sname });
+                console.log("Provera postojanja imena classroom-a");
                 if (existingClassroom) {
+                    console.log("postoji classroom");
+
+                    
                     return res.status(400).send({ message: `Classroom with name ${sname} already exists` });
                 }
 
@@ -71,15 +75,19 @@ labRouter.post("/add", authorizeToken, async (req: any, res) => {
             const subDesc = subjectDescs[i];
             const date = dates[i];
             const subject = new Tema({
-                ordNum: i, desc: subDesc, date, sessions, maxPoints, lab: name,
+                ordNum: (i+1), desc: subDesc, date, sessions, maxPoints, lab: name,
             });
-
+            
             try {
                 const savedSubject = await subject.save();
                 subjects.push(savedSubject._id);
             } catch (err) {
                 console.log(err);
-                return res.status(500).json({ message: "Error saving subject" });
+                subjects.forEach(async _id => {
+                    const deleted = await Tema.findOneAndDelete({_id});
+                    console.log("Deleted subjects Id: ", _id)
+                });
+                return res.status(400).send({ message: `Preklapanje termina ${date}`});     
             }
         }
 
