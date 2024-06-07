@@ -59,8 +59,8 @@ labRouter.post("/add", authorizeToken, async (req: any, res) => {
             return savedEntry?._id;
         });
 
-        const classroomRef:any = await Classroom.find(classroom);
-
+        const classroomRef:any = await Classroom.findOne({_id:classroom});
+        console.log("classroom",classroomRef);
         const studentEntryList = await Promise.all(studentEntryPromises);
 
         for (let i = 0; i < subjectNum; ++i) {
@@ -81,7 +81,7 @@ labRouter.post("/add", authorizeToken, async (req: any, res) => {
                     for (let c = 0; c < cols; ++c) {
                         let computer;
                         if(autoSchedule) {
-                            if((!classroomRef.compters[r][c].malfunctioned &&
+                            if((!classroomRef.computers[r][c].malfunctioned &&
                                 ((r*cols+c+j*(rows*cols))) < studentEntryList.length)) {
                                 computer = new Computer({ name: `${sname}_${r}_${c}`
                             , free:false,student:studentEntryList[r*cols+c]});   
@@ -97,7 +97,8 @@ labRouter.post("/add", authorizeToken, async (req: any, res) => {
                     }
                     computers.push(rowComputers);
                 }
-                let time = new Date(`${datum}T${timeSlots[j]}:00`);
+                const dateTime = `${datum}T${timeSlots[j]}:00Z`;
+                let time = new Date(dateTime);
                 const classroom = new Classroom({ name: sname, rows, cols, computers });
                 sessions.push(new ClassSession({ classroom: classroom, time }));
             }
@@ -105,7 +106,8 @@ labRouter.post("/add", authorizeToken, async (req: any, res) => {
             const subDesc = subjectDescs[i];
             const date = dates[i];
             const subject = new Tema({
-                ordNum: (i+1), desc: subDesc, date, sessions, maxPoints, lab: name,
+                ordNum: (i+1), desc: subDesc, date, sessions, maxPoints:
+                (maxPoints/subjectNum), lab: name,
             });
             
             try {
