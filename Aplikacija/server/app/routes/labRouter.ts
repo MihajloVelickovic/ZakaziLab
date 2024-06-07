@@ -97,9 +97,9 @@ labRouter.post("/add", authorizeToken, async (req: any, res) => {
                     }
                     computers.push(rowComputers);
                 }
-
+                let time = new Date(`${datum}T${timeSlots[j]}:00`);
                 const classroom = new Classroom({ name: sname, rows, cols, computers });
-                sessions.push(new ClassSession({ classroom: classroom, time: timeSlots[j] }));
+                sessions.push(new ClassSession({ classroom: classroom, time }));
             }
 
             const subDesc = subjectDescs[i];

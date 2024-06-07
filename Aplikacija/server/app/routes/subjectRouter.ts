@@ -4,6 +4,7 @@ import { authorizeToken, verifyToken } from "../config/tokenFuncs";
 import Classroom from "../models/classroom";
 import ClassSession, { IClassSession } from "../models/classSession";
 import Computer, { IComputer } from "../models/computer";
+import Tema from "../models/subject";
 
 const subjectRouter = Router();
 
@@ -113,7 +114,7 @@ subjectRouter.post("/filteredFind", authorizeToken, async (req: any, res) => {
             res.status(403).send({message: "Invalid token"});
         else{
             const query = req.body;
-            const subject = await Subject.find(query).populate('lab');
+            const subject = await Tema.find(query);
             res.json(subject);
         }
     } catch (err) {
