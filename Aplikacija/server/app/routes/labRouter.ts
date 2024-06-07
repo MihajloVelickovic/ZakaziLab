@@ -17,7 +17,18 @@ labRouter.get("/findAll", authorizeToken, async (req: any, res) => {
     if(!verifyToken(req.token)) 
         res.status(403).send({message: "Invalid token"});
     else{
-        const found = await lab.find({});
+        const found = await Lab.find({})
+        .populate({
+            path: 'subjects',
+            populate: {
+                path: 'sessions',
+                populate: {
+                    path: 'computers',
+                    populate: { path: 'student' }
+                }
+            }
+        }).exec();
+        
         found != null ? 
         res.status(200).send(found) : 
         res.status(404).send({message: "labs not found"});
