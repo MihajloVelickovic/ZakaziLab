@@ -165,13 +165,13 @@ userRouter.post("/register", async (req:any, res) => {
         })
 
         if(!foundStudent && !foundProfessor)
-            return res.status(400).send({message: VALID_DOMAINS.forEach(domainList => domainList.reduce((full, current) => full += (" " + current), "Invalid email, valid emails are:" ))});
+            return res.status(400).send({message: "This domain isn't accepted"});
 
         if(foundStudent && privileges !== "student")
-            return res.status(400).send({message: "This email can only be for students"});
+            return res.status(400).send({message: "This domain can only be for students"});
         
         if(foundProfessor && privileges === "student")
-            return res.status(400).send({message: "This email cannot be for a student"});
+            return res.status(400).send({message: "This domain cannot be for students"});
 
         let userExists = await User.findOne({ email });
         if (userExists) 
