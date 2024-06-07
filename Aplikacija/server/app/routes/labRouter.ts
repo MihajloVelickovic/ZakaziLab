@@ -51,11 +51,7 @@ labRouter.post("/add", authorizeToken, async (req: any, res) => {
                 console.log("sname",sname);
                 
                 const existingClassroom = await Classroom.findOne({ name: sname });
-                console.log("Provera postojanja imena classroom-a");
-                if (existingClassroom) {
-                    console.log("postoji classroom");
-
-                    
+                if (existingClassroom) {                  
                     return res.status(400).send({ message: `Classroom with name ${sname} already exists` });
                 }
 
@@ -81,13 +77,14 @@ labRouter.post("/add", authorizeToken, async (req: any, res) => {
             try {
                 const savedSubject = await subject.save();
                 subjects.push(savedSubject._id);
-            } catch (err) {
+            } catch (err:any) {
                 console.log(err);
-                subjects.forEach(async _id => {
-                    const deleted = await Tema.findOneAndDelete({_id});
+                const overlap = err.keyValue['sessions.classroom.name'].split('_')[1];
+                subjects.forEach(async (_id) => {
+                    const deleted = await Tema.findOneAndDelete({_id});                  
                     console.log("Deleted subjects Id: ", _id)
                 });
-                return res.status(400).send({ message: `Preklapanje termina ${date}`});     
+                return res.status(400).send({ message: `Preklapanje termina ${overlap}`});     
             }
         }
 
