@@ -18,17 +18,19 @@ labRouter.get("/findAll", authorizeToken, async (req: any, res) => {
         res.status(403).send({message: "Invalid token"});
     else{
         const found = await Lab.find({})
-        .populate({
-            path: 'subjects',
-            populate: {
-                path: 'sessions',
+         .populate({
+                path: 'subjects',
                 populate: {
-                    path: 'computers',
-                    populate: { path: 'student' }
+                    path: 'sessions',
+                    populate: {
+                        path: 'classroom',
+                        populate: {
+                            path: 'computers.student'
+                        }
+                    }
                 }
-            }
-        }).exec();
-        
+            }).exec();
+
         found != null ? 
         res.status(200).send(found) : 
         res.status(404).send({message: "labs not found"});
@@ -240,9 +242,19 @@ labRouter.post("/filteredFind", authorizeToken, async (req: any, res) => {
         res.status(403).send({message: "Invalid token"});
     else{
         const query = req.body;
-        const labs = await lab.find(query).populate('classroom') 
-                                          .populate('subjects')  
-                                          .populate('studentList'); 
+        const labs = await lab.find(query).populate({
+            path: 'subjects',
+            populate: {
+                path: 'sessions',
+                populate: {
+                    path: 'classroom',
+                    populate: {
+                        path: 'computers.student'
+                    }
+                }
+            }
+        }).exec();
+        
         labs != null ?
         res.status(200).send(labs) :
         res.status(404).send({message: "labs with filter not found"});

@@ -42,7 +42,7 @@ export const LabScheme = new mongoose.Schema<ILab> ({
     },
     subjects: {
         type: [Schema.Types.ObjectId],
-        ref: 'Subject',
+        ref: 'Tema',
     },
     studentList: {
         type: [Schema.Types.ObjectId],
