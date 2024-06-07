@@ -346,13 +346,12 @@ const LoginSignup = () => {
     birthDate: "",
     index: "",
     phdGradDate: "",
-    phdGradFaculty: "",
+    phdGradFaculty: ""
   };
   const [formValues, setFormValues] = useState(initialValues);
   const [formErrors, setFormErrors] = useState({});
   const [action, setAction] = useState("Login");
   const [typeOfUser, setTypeOfUser] = useState("student");
-  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -368,6 +367,28 @@ const LoginSignup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     var errorList = validate(formValues);
+
+    if (Object.keys(errorList).length === 0) {
+      console.log("success! pressed submit and input fields are adequate");
+      if (action == "Login") {
+        let sendData = {};
+        sendData.email = formValues.email;
+        sendData.password = formValues.password;
+        var response = await loginUser(e, sendData);
+        errorList["serverResponse"] = `${response}`;
+      } else if (action == "Sign Up") {
+        var privilegije = typeOfUser;
+        console.log("tip usera je:", privilegije);
+        formValues.privileges = privilegije;
+        var response = await registerUser(e, formValues);
+        errorList["serverResponse"] = `${response}`;
+      }
+    } else {
+      console.log("submit failed, input fields");
+      console.log(errorList);
+
+      setFormErrors(errorList);
+    }
 
     if (Object.keys(errorList).length === 0) {
       console.log("success! pressed submit and input fields are adequate");
@@ -395,29 +416,46 @@ const LoginSignup = () => {
   }, [formErrors]);
 
   const validate = (values) => {
-    const errors = {};
-    const fieldNames = {
-      name: "Name",
-      lastName: "Last Name",
-      email: "Email",
-      password: "Password",
-      module: "Module",
-      gradDate: "Graduation Date",
-      gradFaculty: "Graduation Faculty",
-      birthDate: "Birth Date",
-      index: "Index",
-      phdGradDate: "PhD Graduation Date",
-      phdGradFaculty: "PhD Graduation Faculty",
-    };
-
-    for (let key in values) {
-      if (!values[key]) {
-        errors[key] = `${fieldNames[key]} is required!`;
-      }
-    }
-
-    return errors;
-  };
+            const errors = {};
+            const regex = /^(?!\s)[A-Z0-9\s]+$/i;
+            values.privileges = "placeholder za privilegije";
+    
+            for (let key in values) {
+    
+                if (action=="Login"){
+                    if (key == "email" || key == "password")
+                        if (!values[key]) {
+                            errors[key] = `${key} is required!`;
+                        }
+                }
+                else if (typeOfUser=="student"){
+                    if (key != "gradDate" && key != "gradFaculty" && key != "phdGradDate" && key != "phdGradFaculty")
+                        if (!values[key]) {
+                            errors[key] = `${key} is required!`;
+                        }
+                }
+                else if (typeOfUser=="assistant"){
+                    if (key != "birthDate" && key != "index" && key!="phdGradDate" && key!="phdGradFaculty")
+                        if (!values[key]) {
+                            errors[key] = `${key} is required!`;
+                        }
+                }
+                else if (typeOfUser=="professor"){
+                    if (key != "birthDate" && key != "index") {
+                        if (!values[key]) {
+                            errors[key] = `${key} is required!`;
+                        }
+                    }
+                }else if (typeOfUser=="admin"){
+                    if (key == "email" || key == "password" || key=="name" || key=="lastName")
+                        if (!values[key]) {
+                            errors[key] = `${key} is required!`;
+                        }
+                }
+            }
+    
+            return errors;
+        }
 
   const showInputFields = () => {
     return (
@@ -651,54 +689,80 @@ const LoginSignup = () => {
   return (
     <div className="login-signup-form">
       <div className="container p-3 p-lg-5 mt-5 mb-5 col-md-8 col-lg-5 col-sm-8 col-10">
-        <div className="col-lg-10 offset-lg-1">  
-        <div className="row">
-  <div className="col-sm-6">
-    <h2
-      className={`text-center mb-3 ${
-        action === "Login" ? "highlighted login-signup-title" : "not-highlighted login-signup-title"
-      }`}
-      onClick={() => setAction("Login")}
-    >
-      Login 
-    </h2>
-  </div>
+        <div className="col-lg-10 offset-lg-1">
+          <div className="row">
+            <div className="col-sm-6">
+              <h2
+                className={`text-center mb-3 ${
+                  action === "Login"
+                    ? "highlighted login-signup-title"
+                    : "not-highlighted login-signup-title"
+                }`}
+                onClick={() => setAction("Login")}
+              >
+                Login
+              </h2>
+            </div>
 
-  <div className="col-sm-6">
-    <h2
-      className={`text-center mb-3 ${
-        action === "Sign Up" ? "highlighted login-signup-title" : "not-highlighted login-signup-title"
-      }`}
-      onClick={() => setAction("Sign Up")}
-    >
-      Signup
-    </h2>
-  </div>
-</div>
-
+            <div className="col-sm-6">
+              <h2
+                className={`text-center mb-3 ${
+                  action === "Sign Up"
+                    ? "highlighted login-signup-title"
+                    : "not-highlighted login-signup-title"
+                }`}
+                onClick={() => setAction("Sign Up")}
+              >
+                Signup
+              </h2>
+            </div>
+          </div>
 
           <form className="login-fields" onSubmit={handleSubmit}>
             {showInputFields()}
             <div className="d-flex justify-content-between mt-3">
-              <Button type="submit" className="login-signup-btn btn btn-primary  w-100">
+              <Button
+                type="submit"
+                className="login-signup-btn btn btn-primary  w-100"
+              >
                 {action}
               </Button>
             </div>
             {action === "Sign Up" && (
               <div className="mt-3">
-                <label htmlFor="userType">Register as:</label>
-                <DropdownButton
-                  id="userType"
-                  title={typeOfUser}
-                  onSelect={(eventKey) => {
-                    setTypeOfUser(eventKey);
-                    setFormErrors({});
-                  }}
-                >
-                  <Dropdown.Item eventKey="student">Student</Dropdown.Item>
-                  <Dropdown.Item eventKey="assistant">Assistant</Dropdown.Item>
-                  <Dropdown.Item eventKey="professor">Professor</Dropdown.Item>
-                  <Dropdown.Item eventKey="admin">Admin</Dropdown.Item>
+                <DropdownButton id="dropdown-basic-button" title="Register as">
+                  <Dropdown.Item
+                    onClick={() => {
+                      setAction("Sign Up");
+                      setTypeOfUser("student");
+                    }}
+                  >
+                    student
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    onClick={() => {
+                      setAction("Sign Up");
+                      setTypeOfUser("assistant");
+                    }}
+                  >
+                    assistant
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    onClick={() => {
+                      setAction("Sign Up");
+                      setTypeOfUser("professor");
+                    }}
+                  >
+                    professor
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    onClick={() => {
+                      setAction("Sign Up");
+                      setTypeOfUser("admin");
+                    }}
+                  >
+                    admin
+                  </Dropdown.Item>
                 </DropdownButton>
               </div>
             )}
