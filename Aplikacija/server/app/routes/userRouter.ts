@@ -165,24 +165,24 @@ userRouter.post("/register", async (req:any, res) => {
         })
 
         if(!foundStudent && !foundProfessor)
-            return res.status(400).send({message: "This domain isn't accepted"});
+            return res.status(400).send({message: "Ovaj domen nije validan"});
 
         if(foundStudent && privileges !== "student")
-            return res.status(400).send({message: "This domain can only be for students"});
+            return res.status(400).send({message: "Ovaj domen mogu imati samo studentske email adrese"});
         
         if(foundProfessor && privileges === "student")
-            return res.status(400).send({message: "This domain cannot be for students"});
+            return res.status(400).send({message: "Ovaj domen mogu imati samo profesorske email adrese"});
 
         let userExists = await User.findOne({ email });
         if (userExists) 
-            return res.status(400).json({ message: 'Email already registered' });
+            return res.status(400).json({ message: 'Korisnik sa ovom email adresom već postoji' });
         
         userExists = await User.findOne({ index: parseInt(index) });
         if(userExists)
-            return res.status(400).send({message: "Index already registered"});
+            return res.status(400).send({message: "Korisnik sa ovim brojem indeksa već postoji"});
 
         if(!strongPassword.test(password))
-            return res.status(400).send({message: "Weak password"});
+            return res.status(400).send({message: `Slaba šifra. Šifra mora imati: - Makar 8 karaktera - Makar jedan specijalni karakter - Makar jedan broj - Makar jedno veliko slovo`});
         
         const hashedPassword = await bcrypt.hash(password, 10);
         let newUser;
@@ -221,7 +221,7 @@ userRouter.post("/register", async (req:any, res) => {
             console.log(`Email sent to ${email}`);
         });
 
-        res.status(200).json({message: `Email successfully sent to ${email}`});
+        res.status(200).json({message: `Email poslat na adresu ${email}. Ako niste primili mejl, proverite da nema grešaka u adresi koju ste naveli`});
     } 
     catch (error:any) {
         res.status(500).json({ message: 'Error registering user', error:`${error.message}}`});
