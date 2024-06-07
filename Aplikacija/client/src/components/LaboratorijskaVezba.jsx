@@ -60,7 +60,9 @@ const LaboratorijskaVezba = ({ role }) => {
         //     console.error('There was an error fetching the computers!', error);
         // });
         setSelectedSession(session);
-        setComputers(session.classroom);
+        console.log("selected session: ", session);
+        setComputers(session.classroom.computers);
+        console.log("computers: ", session.classroom.computers);
     };
 
     const handleComputerClick = (computer) => {
