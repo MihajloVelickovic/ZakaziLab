@@ -284,18 +284,18 @@ userRouter.post("/login", async (req, res) => {
     
     const { email, password } = req.body;
     if (!email || !password) 
-      return res.status(400).json({ message: 'Email and password are necessary' });
+      return res.status(400).json({ message: 'Email i šifra su obavezna polja' });
     
     try {
         const user = await User.findOne({ email });
     
         if (!user)
-            return res.status(400).json({ message: 'Wrong email or password' });
+            return res.status(400).json({ message: 'Pogrešan email ili šifra' });
     
         const isMatch = await bcrypt.compare(password, user.password);
     
         if (!isMatch) 
-            return res.status(400).json({ message: 'Wrong email or password' });
+            return res.status(400).json({ message: 'Pogrešan email ili šifra' });
         
         let userType = 'User';
     
