@@ -34,4 +34,6 @@ const transporer = nm.createTransport({
 
 const strongPassword: RegExp =  /^(?=.*[A-Z])(?=.*[!@#$%^&*()_+{}\[\]:;"'<>,.?/~`-])(?=.*\d)[A-Za-z\d!@#$%^&*()_+{}\[\]:;"'<>,.?/~`-]{8,}$/;
 
-export {URI, emailParams, transporer, strongPassword};
+const TOKEN_LENGTH = process.env.TOKEN_LENGTH;
+
+export {URI, emailParams, transporer, strongPassword, TOKEN_LENGTH};

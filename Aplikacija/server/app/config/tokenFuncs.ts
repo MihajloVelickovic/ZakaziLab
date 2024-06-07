@@ -2,6 +2,7 @@ import * as jwt from "jsonwebtoken"
 import fs from "fs";
 import path from "path";
 import {Response, Request, NextFunction} from "express";
+import { TOKEN_LENGTH } from "./config";
 
 const privateKey = fs.readFileSync(path.resolve(__dirname, "../keys/key.pem"), "utf-8");
 const publicKey = fs.readFileSync(path.resolve(__dirname, "../keys/key.pem.pub"), "utf-8");
@@ -16,7 +17,7 @@ function signToken(payload: any, expiration?: string){
 
     let exp;
     if(typeof expiration === "undefined")
-        exp = "1d";    //temporary
+        exp = TOKEN_LENGTH;    //temporary
     else
         exp = expiration;
 
