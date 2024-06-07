@@ -57,7 +57,8 @@ const Kabinet = () => {
     };
 
     const handleAddCabinetClick = () => {       //if it's already selected deselect it here
-        setAddCabinet(true);
+
+        setAddCabinet(!addCabinet);
     };
 
     const handleCancelAdd = () => {
@@ -121,6 +122,9 @@ const Kabinet = () => {
             try {
                 await axiosInstance.delete(`/classroom/delete/${id}`);
                 fetchCabinets();
+                setSelectedCabinet(null);
+                setSelectedComputer(null);
+                setShowCabinets(false);
             } catch (error) {
                 console.error('Error deleting cabinet:', error);
             }
@@ -131,7 +135,11 @@ const Kabinet = () => {
     };
 
     const handleShowDeleteCabinets = () => {
-        setShowDeleteCabinets(!showDeleteCabinets);
+        //setShowDeleteCabinets(!showDeleteCabinets);
+        if (selectedCabinet)
+            handleDeleteCabinet(selectedCabinet);
+        else
+            console.log("nije selektovan kabinet");
     }
     
 
@@ -141,7 +149,7 @@ const Kabinet = () => {
                 {showCabinets ? 'Hide cabinets' : 'Show cabinets'}
             </button>
             <button onClick={handleAddCabinetClick}>Add a cabinet</button>
-            <button onClick={handleShowDeleteCabinets}>Delete cabinet</button>
+            <button onClick={handleShowDeleteCabinets} disabled={!selectedCabinet}>Delete cabinet</button>
             <button onClick={handleManageButtonClick} disabled={!selectedComputer}>      
                 Manage computer
             </button>
@@ -172,7 +180,7 @@ const Kabinet = () => {
                 </div>
             )} */}
 
-            {selectedCabinet && (
+            {showCabinets && selectedCabinet && (
                 <div className='showingCabinetContainer'>
                     <h3>{selectedCabinet.name}</h3>
                     <div className="cabinetGridContainer" style={{  gridTemplateColumns: `repeat(${selectedCabinet.cols}, 1fr)` , paddingTop: '25px'}}>
