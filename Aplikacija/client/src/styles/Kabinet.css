@@ -9,10 +9,19 @@
 
 .cabinet-list div,
 .delete-cabinet-list div {
-    padding: 10px;
+    padding: 9px;
     border: 1px solid #ccc;
     margin-bottom: 5px;
     cursor: pointer;
+    margin-left: 15px;
+    font-weight: bold;
+}
+
+.cabinet-list div {
+    width: 100px;
+}
+.delete-cabinet-list div {
+    width: 350px;
 }
 
 .cabinet-detail {
@@ -109,6 +118,27 @@
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
+
+.showingCabinetContainer {
+    width: fit-content;
+    margin-left: 20px;
+    border: 2px solid blue;
+    padding: 20px;
+    border-radius: 20px;
+}
+.showingCabinetContainer h3{
+    color: black;
+}
+
+.cabinetGridContainer {
+    display: inline-grid;
+}
+
+.cabinetGridItem{
+    margin-right: 115px;
+    margin-bottom: 20px;
+}
+
 
 
 

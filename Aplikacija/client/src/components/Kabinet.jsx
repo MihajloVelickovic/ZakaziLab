@@ -5,6 +5,7 @@ import '../styles/Kabinet.css';
 const Kabinet = () => {
     const [cabinets, setCabinets] = useState([]);
     const [showCabinets, setShowCabinets] = useState(false);
+    const [showDeleteCabinets, setShowDeleteCabinets] = useState(false);
     const [selectedCabinet, setSelectedCabinet] = useState(null);
     const [addCabinet, setAddCabinet] = useState(false);
     const [cabinetForm, setCabinetForm] = useState({ name: '', rows: '', cols: '' });
@@ -19,7 +20,10 @@ const Kabinet = () => {
         if (showCabinets) {
             fetchCabinets();
         }
-    }, [showCabinets]);
+        else if (showDeleteCabinets){
+            fetchCabinets();
+        }
+    }, [showCabinets, showDeleteCabinets]);
 
     const fetchCabinets = async () => {
         try {
@@ -38,7 +42,7 @@ const Kabinet = () => {
     
     const handleMouseOut = () => {
         // Set isHovered to false when mouse moves out of the computer's area
-        //setIsHovered(null);
+        setIsHovered(null);
     };
 
     const handleShowHideCabinets = () => {
@@ -46,7 +50,10 @@ const Kabinet = () => {
     };
 
     const handleCabinetClick = (cabinet) => {
-        setSelectedCabinet(cabinet);
+        if (selectedCabinet != cabinet)
+            setSelectedCabinet(cabinet);
+        else 
+            setSelectedCabinet(null);
     };
 
     const handleAddCabinetClick = () => {       //if it's already selected deselect it here
@@ -106,14 +113,27 @@ const Kabinet = () => {
         }
     };
 
-    const handleDeleteCabinet = async (id) => {
-        try {
-            await axiosInstance.delete(`/classroom/delete/${id}`);
-            fetchCabinets();
-        } catch (error) {
-            console.error('Error deleting cabinet:', error);
-        }
+    const handleDeleteCabinet = async (cabinet) => {
+        var id = cabinet._id;   
+        var name = cabinet.name;
+        if (window.confirm(`Da li ste sigurni da zelite da obrisete kabinet ${name}?`)) {
+            console.log('picked to delete cabinet');
+            try {
+                await axiosInstance.delete(`/classroom/delete/${id}`);
+                fetchCabinets();
+            } catch (error) {
+                console.error('Error deleting cabinet:', error);
+            }
+          } else {
+            console.log('picked to cancel cabinet deletion');
+          }
+        
     };
+
+    const handleShowDeleteCabinets = () => {
+        setShowDeleteCabinets(!showDeleteCabinets);
+    }
+    
 
     return (
         <div className="kabinet-container">
@@ -121,7 +141,7 @@ const Kabinet = () => {
                 {showCabinets ? 'Hide cabinets' : 'Show cabinets'}
             </button>
             <button onClick={handleAddCabinetClick}>Add a cabinet</button>
-            <button onClick={() => setShowCabinets(true)}>Delete cabinet</button>
+            <button onClick={handleShowDeleteCabinets}>Delete cabinet</button>
             <button onClick={handleManageButtonClick} disabled={!selectedComputer}>      
                 Manage computer
             </button>
@@ -153,13 +173,13 @@ const Kabinet = () => {
             )} */}
 
             {selectedCabinet && (
-                <div>
+                <div className='showingCabinetContainer'>
                     <h3>{selectedCabinet.name}</h3>
-                    <div style={{ display: 'grid', gridTemplateColumns: `repeat(${selectedCabinet.cols}, 1fr)` }}>
+                    <div className="cabinetGridContainer" style={{  gridTemplateColumns: `repeat(${selectedCabinet.cols}, 1fr)` , paddingTop: '25px'}}>
                         {selectedCabinet.computers.flat().map((computer) => (
                             <div
                                 key={computer._id}
-                                className={`${selectedComputer && selectedComputer._id === computer._id ? 'computer selected' :              //computer-box
+                                className={`cabinetGridItem ${selectedComputer && selectedComputer._id === computer._id ? 'computer selected' :              //computer-box
                                         computer.malfunctioned? "computer malfunctionedComputer" : "computer workingComputer"}`}
                                 onClick={() => handleComputerClick(computer)}
                                 onMouseOver={() => handleMouseOver(computer)}
@@ -202,12 +222,12 @@ const Kabinet = () => {
                 </div>
             )}
 
-            {showCabinets && (
+            {showDeleteCabinets && (
                 <div className="delete-cabinet-list">
                     {cabinets.map((cabinet) => (
                         <div key={cabinet._id}>
                             {cabinet.name}
-                            <button onClick={() => handleDeleteCabinet(cabinet._id)}>Delete</button>
+                            <button onClick={() => handleDeleteCabinet(cabinet)}>Delete</button>
                         </div>
                     ))}
                 </div>
