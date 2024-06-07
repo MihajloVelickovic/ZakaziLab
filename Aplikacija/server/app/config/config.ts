@@ -9,7 +9,7 @@ const envFilePath = process.platform.startsWith("win") ?
 dotenv.config({path: envFilePath});
 
 const URI = `mongodb+srv://${process.env.MONGO_USER}:` +
-                           `${process.env.MONGO_PASSWORD}@` +
+                           `${Buffer.from(process.env.MONGO_PASSWORD!, "base64").toString()}@` +
                            "zakazi-lab-cluster.bt5bepa.mongodb.net/?" +
                            "retryWrites=true&" +
                            "w=majority&" +
@@ -36,4 +36,11 @@ const strongPassword: RegExp =  /^(?=.*[A-Z])(?=.*[!@#$%^&*()_+{}\[\]:;"'<>,.?/~
 
 const TOKEN_LENGTH = process.env.TOKEN_LENGTH;
 
-export {URI, emailParams, transporer, strongPassword, TOKEN_LENGTH};
+
+
+const VALID_DOMAINS = [
+                        [process.env.STUDENT_DOMAINS!.split(",")],
+                        [process.env.PROFESSOR_DOMAINS!.split(",")]
+                      ];
+
+export {URI, emailParams, transporer, strongPassword, TOKEN_LENGTH, VALID_DOMAINS};

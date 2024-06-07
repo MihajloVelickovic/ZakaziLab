@@ -7,7 +7,7 @@ import Admin from "../models/admin";
 import Student from "../models/student";
 import Professor from "../models/professor";
 import nm from "nodemailer";
-import { emailParams, transporer, strongPassword } from "../config/config";
+import { emailParams, transporer, strongPassword, VALID_DOMAINS } from "../config/config";
 import subjectRouter from "./subjectRouter";
 
 const userRouter = Router();
@@ -151,6 +151,28 @@ userRouter.post("/register", async (req:any, res) => {
         return res.status(400).json({ message: 'All of the fields are necessary' });
     
     try {
+
+        const foundStudent = VALID_DOMAINS[0].some(domain => {
+            if(email.includes(domain))
+                return true;
+            return false;
+        });
+
+        const foundProfessor = VALID_DOMAINS[1].some(domain => {
+            if(email.includes(domain))
+                return true;
+            return false;
+        })
+
+        if(!foundStudent && !foundProfessor)
+            return res.status(400).send({message: VALID_DOMAINS.forEach(domainList => domainList.reduce((full, current) => full += (" " + current), "Invalid email, valid emails are:" ))});
+
+        if(foundStudent && privileges !== "student")
+            return res.status(400).send({message: "This email can only be for students"});
+        
+        if(foundProfessor && privileges === "student")
+            return res.status(400).send({message: "This email cannot be for a student"});
+
         let userExists = await User.findOne({ email });
         if (userExists) 
             return res.status(400).json({ message: 'Email already registered' });
