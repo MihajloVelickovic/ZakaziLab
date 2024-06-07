@@ -18,7 +18,7 @@ export const LabScheme = new mongoose.Schema<ILab> ({
     name: {
         type: String,
         required:true,
-        unique: true
+        unique:true
     },
     desc: {
         type: String,

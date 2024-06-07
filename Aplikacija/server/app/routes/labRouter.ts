@@ -3,9 +3,11 @@ import lab from "../models/lab";
 import Student from "../models/student";
 import Lab from "../models/lab";
 import { authorizeToken, verifyToken } from "../config/tokenFuncs";
-import Tema from "../models/subject";
+import Tema, { ISubject } from "../models/subject";
 import mongoose from "mongoose";
 import Classroom from "../models/classroom";
+import Computer, { IComputer } from "../models/computer";
+import ClassSession, { IClassSession } from "../models/classSession";
 
 const labRouter = Router();
 
@@ -22,61 +24,163 @@ labRouter.get("/findAll", authorizeToken, async (req: any, res) => {
 
 }); 
 
-labRouter.post("/add", authorizeToken, async (req:any, res) => {
-    if(!verifyToken(req.token)) 
-        res.status(403).send({message: "Invalid token"});
+labRouter.post("/add", authorizeToken, async (req: any, res) => {
+    if (!verifyToken(req.token)) {
+        return res.status(403).send({ message: "Invalid token" });
+    }
+
+    let { labName, desc, mandatory, subjectNum, maxPoints, classroom, rows, cols, crName, studentList, dates, timeSlots, subjectDescs } = req.body;
+
+    console.log(req.body);
+
+    const currentYear = new Date().getFullYear();
+    const nextYear = currentYear + 1;
     
-    else {
-        let { labName, desc, mandatory, subjectNum, maxPoints, classroom, rows, cols, crName,
-             subjects, studentList, dates, timeSlots, subjectDescs} = req.body;
+
+    const name = `${labName}_${currentYear}/${nextYear}`;
+
+    try {
+        let subjects: ISubject[] = [];
+
+        for (let i = 0; i < subjectNum; ++i) {
+            let sessions: any[] = [];
+            for (let j = 0; j < timeSlots.length; ++j) {
+                let datum = dates[i].split('T')[0];
+                let computers: IComputer[][] = [];
+                let sname = `${crName}_${datum}/${timeSlots[j]}`;
+                console.log("sname",sname)
+                // Check for existing classroom with the same name
+                const existingClassroom = await Classroom.findOne({ name: sname });
+                if (existingClassroom) {
+                    return res.status(400).send({ message: `Classroom with name ${sname} already exists` });
+                }
+
+                for (let r = 0; r < rows; ++r) {
+                    const rowComputers: IComputer[] = [];
+                    for (let c = 0; c < cols; ++c) {
+                        const computer = new Computer({ name: `${sname}_${r}_${c}` });
+                        rowComputers.push(computer);
+                    }
+                    computers.push(rowComputers);
+                }
+
+                const classroom = new Classroom({ name: sname, rows, cols, computers });
+                sessions.push(new ClassSession({ classroom: classroom, time: timeSlots[j] }));
+            }
+
+            const subDesc = subjectDescs[i];
+            const date = dates[i];
+            const subject = new Tema({
+                ordNum: i, desc: subDesc, date, sessions, maxPoints, lab: name,
+            });
+
+            try {
+                const savedSubject = await subject.save();
+                subjects.push(savedSubject._id);
+            } catch (err) {
+                console.log(err);
+                return res.status(500).json({ message: "Error saving subject" });
+            }
+        }
+
+        const newLab = new Lab({
+            name, desc, mandatory, subjectNum,maxPoints, classroom, subjects, studentList
+        });
 
         try {
-
-            const currentYear = new Date().getFullYear();
-            const nextYear = currentYear + 1;
-
-            const name = `${labName}_${currentYear}/${nextYear}`;
-            try {
-                if (!Array.isArray(subjects)) {
-                    return res.status(400).send({ error: 'Subjects must be an array' });
-                }
-                 
-                // O(n^4) ??!?!?!?!!??!?!!??!!?!?!? !!!!
-                for(let i=0;i<subjectNum;++i) {
-                    for(let j=0;j < timeSlots.length;++j) {
-                        for(let k=0; rows;++k) {
-                            for(let l=0;l<cols;++l) {
-                                
-                            }
-                        }
-                    }
-                }
-
-
-
-                const newLab: any = new Lab({
-                    name,
-                    desc,
-                    mandatory,
-                    subjectNum,
-                    maxPoints,
-                    classroom,
-                    subjects,
-                    studentList,
-                });
-        
-                await newLab.save();
-        
-                res.status(201).send(newLab);
-            } 
-            catch (error:any) {
-                res.status(400).send({ error: error.message });
-            }
-        } catch (error:any) {
-            res.status(400).send({ error: error.message });
+            const savedLab = await newLab.save();
+            return res.status(200).send(savedLab);
+        } catch (err) {
+            console.error("Error saving lab:", err);
+            return res.status(500).json({ message: "Error saving lab" });
         }
+
+    } catch (err: any) {
+        console.error("Error:", err);
+        return res.status(500).json({ message: "Internal server error" });
     }
 });
+
+
+
+
+// labRouter.post("/add", authorizeToken, async (req:any, res) => {
+//     if(!verifyToken(req.token)) 
+//         res.status(403).send({message: "Invalid token"});
+    
+//     else {
+//         let { labName, desc, mandatory, subjectNum, maxPoints, classroom, rows, cols, crName
+//             , studentList, dates, timeSlots, subjectDescs} = req.body;
+
+//         //console.log(subjectNum, rows, cols,crName);
+//         const currentYear = new Date().getFullYear();
+//         const nextYear = currentYear + 1;
+//         let sessions:any[] = [];
+
+//         const name = `${labName}_${currentYear}/${nextYear}`;
+//         //console.log(subjectNum);
+//         try {               
+//             // O(n^4) ??!?!?!?!!??!?!!??!!?!?!? !!!!
+//             let subjects:ISubject[] = [];
+           
+//             for(let i=0;i<subjectNum;++i) {             
+//                 for(let j=0;j < timeSlots.length;++j) {
+//                     let datum = dates[i].split('T')[0];
+//                     //console.log("date ", datum, " / time ",timeSlots[j]);
+
+//                     let computers: IComputer[][] = [];
+//                     let sname = `${crName}_${datum}/${timeSlots[j]}`;
+//                     console.log("Naziv: ", sname);
+//                     for (let r = 0; r < rows; ++r) {
+//                         const rowComputers: IComputer[] = [];
+//                         for (let c = 0; c < cols; ++c) {
+//                             const computer = new Computer({
+//                                 name: `${sname}_${r}_${c}`
+//                             });
+                            
+//                             rowComputers.push(computer);
+//                         }
+//                         computers.push(rowComputers);
+//                     }
+//                     console.log("Computers: ", computers);
+//                    const classroom = new Classroom({name:sname, rows, cols, computers});                    
+//                    sessions.push(new ClassSession({
+//                         classroom: classroom,
+//                         time: timeSlots[j]
+//                     }));
+
+//                 }
+
+//                 const subDesc = subjectDescs[i];
+//                 const date = dates[i];
+//                 const subject = new Tema({ 
+//                     ordNum:i, desc:subDesc, date, 
+//                     sessions, maxPoints, lab:name,
+//                 });
+//                 try {
+//                     const savedSubject = await subject.save();
+//                     subjects.push(savedSubject._id);
+//                 }
+//                 catch(err) {
+//                     console.log(err);
+//                 }
+                
+//             }
+//             const newLab = new Lab({name, desc, mandatory, maxPoints,
+//                 classroom, subjects, studentList
+//             }) 
+
+//             const savedLab = await newLab.save();
+
+//             res.status(200).send(savedLab);
+
+//         } 
+//         catch (err: any) {
+//             res.status(500).json({ message: "Could not find subjects"});
+//         }
+//     }
+        
+// });
 
 labRouter.post("/filteredFind", authorizeToken, async (req: any, res) => {
    

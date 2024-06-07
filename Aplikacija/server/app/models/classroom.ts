@@ -14,7 +14,7 @@ export const ClassroomSchema = new mongoose.Schema<IClassroom>({
     name: { 
         type:String,
         required:true,
-        unique: true
+  
     },
     rows: { 
         type:Number,

@@ -8,7 +8,7 @@ import Computer, { IComputer } from "../models/computer";
 const subjectRouter = Router();
 
 subjectRouter.post("/add", authorizeToken, async (req:any, res) => {
-    let{ ordNum, desc, date, sessions, maxPoints, name,rows,cols, time } = req.body;
+    let{ ordNum, desc, date, maxPoints, name,rows,cols, time,lab  } = req.body;
 
     if (!verifyToken(req.token))
         return res.status(403).send({ message: "Invalid token" });
@@ -35,7 +35,7 @@ subjectRouter.post("/add", authorizeToken, async (req:any, res) => {
                 computers.push(rowComputers);
             }
             const classroom = new Classroom({name, rows, cols, computers});
-            // Create class session
+           
             let sessions:IClassSession[] = [];
             sessions.push(new ClassSession({
                 classroom: classroom,
@@ -45,7 +45,7 @@ subjectRouter.post("/add", authorizeToken, async (req:any, res) => {
 
             const subject = new Subject({ 
                 ordNum, desc, date, 
-                sessions, maxPoints, classSession: sessions
+                sessions, maxPoints, lab
              });
 
              const savedSubject = await subject.save();
