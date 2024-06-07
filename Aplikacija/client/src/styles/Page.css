@@ -62,12 +62,12 @@ body {
 }
 
 .navbar a {
-
     border-radius: 30px;
     width: 100%;
     color: white;
-    font-family: "Georgia", serif;
     padding: 15px;
+    font-family: "JetBrains Mono", "Georgia", serif;
+    font-size: 10pt;
 }
 .navbar a:hover {
     /* border-radius: 30px; */
