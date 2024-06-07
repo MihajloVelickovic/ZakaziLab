@@ -13,7 +13,7 @@ const Header=()=>{
     return(
         <header className="header-container">
             <nav className="header-nav">
-                <Link to='/' className="title"><img src={Brand} alt="" style={{width:"40px"}} className="rounded-pill"/> ZakažiLab <span className="version">alpha0.0</span></Link>
+                <Link to='/' className="title"><img src={Brand} alt="" style={{width:"40px"}} className="rounded-pill"/> ZakažiLab </Link>
                 <div className="menu" onClick={()=>{
                     setMenuOpen(!menuOpen);
                 }}>

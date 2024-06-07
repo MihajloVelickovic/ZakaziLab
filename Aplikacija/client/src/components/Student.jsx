@@ -42,7 +42,7 @@ const Student = () => {
             </button>
             </div>
             <div>
-             <Link to='/' className="title"><img src={Brand} alt="" style={{width:"40px"}} className="rounded-pill"/> ZakažiLab <span className="version">alpha0.0</span></Link>
+             <Link to='/' className="title"><img src={Brand} alt="" style={{width:"40px"}} className="rounded-pill"/> ZakažiLab </Link>
             </div>
             <button onClick={logoutUser} className="login-button" style={{position: "absolute", right: "40px"}} >Log Out
             {/* <i className="bi bi-box-arrow-right"></i> */}

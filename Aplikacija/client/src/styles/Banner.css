@@ -14,11 +14,12 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    background-image: url("../images/computer.jpg");
-    background-size: cover;
+    /* background-image: url("../images/computer.jpg"); */
+    background-image: url("../images/computerLabBlur.jpg");
+    background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-    height: 800px;
+    height: 813px;
     width: 100vw;
     transition: 0.05s linear;
   }
