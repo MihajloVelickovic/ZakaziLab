@@ -27,7 +27,7 @@ const KalendarAktivnosti = () => {
     const handleDateChange = (date) => {
         setSelectedDate(date);
         const subject = labSchedule.find(item => new Date(item.date).toDateString() === date.toDateString());
-        setHoveredSubject(subject ? subject.desc : null);
+        setHoveredSubject(subject ? subject.lab.split("_")[0] + " / " + subject.desc : null);
     };
 
     const getTileClassNames = ({ date }) => {

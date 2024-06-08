@@ -30,7 +30,8 @@ labRouter.get("/findAll", authorizeToken, async (req: any, res) => {
                         model: 'StudentEntry',
                         populate: {
                             path: 'student',
-                            model: 'Student'
+                            model: 'Student',
+                            select: "-password"
                         }
                     }
                 }
@@ -250,18 +251,27 @@ labRouter.post("/filteredFind", authorizeToken, async (req: any, res) => {
         res.status(403).send({message: "Invalid token"});
     else{
         const query = req.body;
-        const labs = await lab.find(query).populate({
+        const labs = await lab.find(query)
+        .populate({
             path: 'subjects',
+            model: 'Tema',
             populate: {
                 path: 'sessions',
                 populate: {
                     path: 'classroom',
                     populate: {
-                        path: 'computers.student'
+                        path: 'computers.student',
+                        model: 'StudentEntry',
+                        populate: {
+                            path: 'student',
+                            model: 'Student',
+                            select: "-password"
+                        }
                     }
                 }
             }
-        }).exec();
+        })
+        .exec();
         
         labs != null ?
         res.status(200).send(labs) :

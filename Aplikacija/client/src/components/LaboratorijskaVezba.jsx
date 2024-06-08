@@ -24,19 +24,44 @@ const LaboratorijskaVezba = ({ role }) => {
         console.log("not student clicked", actionModal);
     }, [actionModal]);
 
+    useEffect(() => {
+        if (actionModal.action === 'grade' && actionModal.computer && actionModal.computer.student) {
+            const ordNum = selectedSubject.ordNum;
+            const initialGrade = actionModal.computer.student.points[ordNum-1];
+            setActionModal(prevModal => ({ ...prevModal, grade: initialGrade }));
+        }
+    }, [actionModal.action]);
+
     const handleLabClick = async (labName) => {
+        setActionModal({ visible: false, computer: null, action: '', grade: '' });
         // Fetch subjects when a lab is clicked
-        var lab = labName;
-        console.log(lab);
-        await axiosInstance.post(`/subject/filteredFind`, {lab}).then(response => {
-            setSelectedLab(labName);
-            setSubjects(response.data);
-        }).catch(error => {
-            console.error('There was an error fetching the subjects!', error);
-        });
+        if (selectedLab){
+            setComputers(null);
+            setSelectedSession(null);
+            setSessions(null);
+            setSelectedSubject(null);
+            setSubjects(null);
+        }
+        if (selectedLab && selectedLab == labName) {
+            setSelectedLab(null);
+        }
+        else {
+            setSelectedLab(null);
+            var lab = labName;
+            console.log(lab);
+            await axiosInstance.post(`/subject/filteredFind`, {lab}).then(response => {
+                setSelectedLab(labName);
+                setSubjects(response.data);
+                console.log("vracene teme: ", response.data)
+            }).catch(error => {
+                console.error('There was an error fetching the subjects!', error);
+            });
+        }
+        
     };
 
     const handleSubjectClick = (subject) => {
+        setActionModal({ visible: false, computer: null, action: '', grade: '' });
         // Fetch sessions when a subject is clicked
         // axiosInstance.get(`/api/subject/${subjectId}/sessions`).then(response => {
         //     setSelectedSubject(subjectId);
@@ -44,19 +69,37 @@ const LaboratorijskaVezba = ({ role }) => {
         // }).catch(error => {
         //     console.error('There was an error fetching the sessions!', error);
         // });
-        console.log(subject);
-        setSelectedSubject(subject);
-        setSessions(subject.sessions);
+        if (selectedSubject){
+            setSessions(null);
+            setSelectedSession(null);
+            setComputers(null);
+        }
+        if (selectedSubject && subject == selectedSubject){
+            setSelectedSubject(null);
+        }
+        else {
+            setSelectedSubject(subject);
+            setSessions(subject.sessions);
+        }
     };
 
     const handleSessionClick = (session) => {
-        setSelectedSession(session);
-        console.log("selected session: ", session);
-        setComputers(session.classroom.computers);
-        console.log("computers: ", session.classroom.computers);
+        setActionModal({ visible: false, computer: null, action: '', grade: '' });
+        if (session == selectedSession){
+            setSelectedSession(null);
+            setComputers(null);
+        }
+        else {
+            setSelectedSession(session);
+            console.log("selected session: ", session);
+            setComputers(session.classroom.computers);
+            console.log("computers: ", session.classroom.computers);
+        }
+        
     };
 
     const handleComputerClick = (computer) => {
+        setActionModal({ visible: false, computer: null, action: '', grade: '' });
         if (role === 'student') {
             handleStudentComputerClick(computer);
         } else {
@@ -92,6 +135,19 @@ const LaboratorijskaVezba = ({ role }) => {
             occupyComputer(computer);
         }
     };
+
+    const rerenderSubject = () => {
+        var savedComputers = computers;
+        var savedSelectedSession = selectedSession;
+        var savedSelectedSubject = selectedSubject;        
+
+        setSelectedSubject(null);
+        handleSubjectClick(savedSelectedSubject);
+        handleSessionClick(savedSelectedSession);
+        handleComputerClick(savedComputers);
+        console.log('rerendered');
+
+    }
 
     const occupyComputer = async (computer) => {
         // try {
@@ -133,13 +189,17 @@ const LaboratorijskaVezba = ({ role }) => {
     };
 
     const gradeStudent = async (computer, grade) => {
-        // const ordNum = selectedSubject.ordNum;
-        // try {
-        //     await axiosInstance.post(`/student/grade`, { studentId: computer.student.id, ordNum, grade });
-        //     setGradeModal({ visible: false, computer: null, grade: '' });
-        // } catch (error) {
-        //     console.error('There was an error grading the student!', error);
-        // }
+        const ordNum = selectedSubject.ordNum - 1;
+        const studentEntryId = computer.student._id;
+        const modifiedStudentEntry = computer.student;
+        modifiedStudentEntry.points[ordNum] = grade;
+        modifiedStudentEntry.attendance[ordNum] = true;
+        try {
+            const response = await axiosInstance.patch(`/studentEntry/update/${studentEntryId}`, modifiedStudentEntry);
+            setActionModal({ visible: false, computer: null, action: '', grade: '' });
+        } catch (error) {
+            console.error('There was an error grading the student!', error);
+        }
     };
 
     const setMalfunctioned = async (computer) => {
@@ -214,9 +274,9 @@ const LaboratorijskaVezba = ({ role }) => {
         </div>
     );
 
-    const renderComputers = () => (
+    const renderComputers = () => (     // Ovde mozda nece da se stampa student index, jer iako je lab populated, mozda subjects nije kada se fetchuje nesto
         <div>
-            <h3>Computers</h3>
+            <h3>Computers</h3>              
             {computers.map((row, rowIndex) => (
                 <div key={rowIndex} style={{ display: 'flex', padding: '10px' }} >
                     {row.map((computer, colIndex) => (
@@ -230,7 +290,8 @@ const LaboratorijskaVezba = ({ role }) => {
                             disabled={computer.malfunctioned}
                         >
                             {/* {computer.taken == true && computer.student.index} */}
-                            {computer.malfunctioned? "malfunctioned": computer.free? "free" : "taken"}
+                            
+                            {computer.malfunctioned? "malfunctioned": computer.free? "free" : computer.student? computer.student.student.index : "taken"}
                         </button>
                     ))}
                 </div>
@@ -238,13 +299,11 @@ const LaboratorijskaVezba = ({ role }) => {
         </div>
     );
 
-    const renderActionModal = () => {
-        
-        console.log("something");
+    const renderActionModal = () => {       //onSubmit={(e) => e.preventDefault()}
         return (
         <div className="computerClickOptions">
             <h3>Computer Actions</h3>
-            <form onSubmit={(e) => e.preventDefault()}>
+            <form onSubmit={handleSubmitAction}>
                 {!actionModal.computer.free && (
                     <>
                         <label>
@@ -264,6 +323,7 @@ const LaboratorijskaVezba = ({ role }) => {
                                 value="grade" 
                                 checked={actionModal.action === 'grade'} 
                                 onChange={() => setActionModal({ ...actionModal, action: 'grade' })}
+                                
                             />
                             Grade Student
                         </label>
@@ -293,13 +353,15 @@ const LaboratorijskaVezba = ({ role }) => {
                         </label>
                     </div>
                 )}
-                <button onClick={() => handleSubmitAction()}>Submit</button>
+                {/* <button onClick={() => handleSubmitAction()}>Submit</button> */}
+                <button type="submit">Submit</button>
                 <button onClick={() => setActionModal({ visible: false, computer: null, action: '', grade: '' })}>Cancel</button>
             </form>
         </div>        
     )};
 
-    const handleSubmitAction = () => {
+    const handleSubmitAction = (e) => {
+        e.preventDefault()
         const { computer, action, grade } = actionModal;
         switch (action) {
             case 'free':

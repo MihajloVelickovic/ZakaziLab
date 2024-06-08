@@ -143,7 +143,23 @@ subjectRouter.get("/findAll", authorizeToken, async (req: any, res) => {
         if(!verifyToken(req.token))
             res.status(403).send({message: "Invalid token"});
         else{
-            const subjects = await Subject.find({});
+            const subjects = await Subject.find({})
+            .populate({
+                path: 'sessions',
+                populate: {
+                    path: 'classroom',
+                    populate: {
+                        path: 'computers.student',
+                        model: 'StudentEntry',
+                        populate: {
+                            path: 'student',
+                            model: 'Student',
+                            select: "-password"
+                        }
+                    }
+                }
+            })
+            .exec();
             res.json(subjects);
         }
     } catch (err) {
@@ -157,7 +173,23 @@ subjectRouter.post("/filteredFind", authorizeToken, async (req: any, res) => {
             res.status(403).send({message: "Invalid token"});
         else{
             const query = req.body;
-            const subject = await Subject.find(query);
+            const subject = await Subject.find(query)
+            .populate({
+                path: 'sessions',
+                populate: {
+                    path: 'classroom',
+                    populate: {
+                        path: 'computers.student',
+                        model: 'StudentEntry',
+                        populate: {
+                            path: 'student',
+                            model: 'Student',
+                            select: "-password"
+                        }
+                    }
+                }
+            })
+            .exec();
             res.json(subject);
         }
     } catch (err) {
