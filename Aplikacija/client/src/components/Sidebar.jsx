@@ -5,8 +5,8 @@ import React from "react";
 const Sidebar = ({ show, role }) => {
     const renderStudentLinks = () => (
         <>
-        <NavLink className="sidebar-buttons nav-item bi bi-house" eventKey="1" as={Link} to="home"> Home</NavLink>
-        <NavLink className="sidebar-buttons" eventKey="2" as={Link} to="lab"><i className="fa fa-flask" ></i> Laboratorijske vezbe</NavLink>
+        <NavLink className="sidebar-buttons nav-item bi bi-house" eventKey="1" as={Link} to="home"> Početna</NavLink>
+        <NavLink className="sidebar-buttons" eventKey="2" as={Link} to="lab"><i className="fa fa-flask" ></i> Laboratorijske vežbe</NavLink>
         <NavLink className="sidebar-buttons bi bi-card-checklist" eventKey="3" as={Link} to="poeni" > Osvojeni poeni</NavLink>
         <NavLink className="sidebar-buttons bi bi-calendar3" eventKey="4" as={Link} to="aktivnosti" > Kalendar aktivnosti</NavLink>
         </>
@@ -14,16 +14,16 @@ const Sidebar = ({ show, role }) => {
 
     const renderAdminLinks = () => (
         <>
-            <NavLink className="bi bi-person-plus" eventKey="1" as={Link} to="manage-users"> Manage Users</NavLink>
-            <NavLink className="bi bi-trash" eventKey="2" as={Link} to="delete-users"> Delete Users</NavLink>
+            <NavLink className="bi bi-person-plus" eventKey="1" as={Link} to="manage-users"> Upravljaj korisnicima</NavLink>
+            <NavLink className="bi bi-trash" eventKey="2" as={Link} to="delete-users"> Obriši korisnike</NavLink>
             {/* Add more admin specific links here */}
         </>
     );
 
     const renderProfessorLinks = () => (
         <>
-        <NavLink className="sidebar-buttons nav-item bi bi-house" eventKey="1" as={Link} to="home"> Home</NavLink>
-        <NavLink className="sidebar-buttons" eventKey="2" as={Link} to="lab"><i className="fa fa-flask" ></i> Laboratorijske vezbe</NavLink>
+        <NavLink className="sidebar-buttons nav-item bi bi-house" eventKey="1" as={Link} to="home"> Početna</NavLink>
+        <NavLink className="sidebar-buttons" eventKey="2" as={Link} to="lab"><i className="fa fa-flask" ></i> Laboratorijske vežbe</NavLink>
         <NavLink className="sidebar-buttons bi bi-card-checklist" eventKey="3" as={Link} to="IzvestajOPoenima" > Izveštaj o poenima</NavLink>
         <NavLink className="sidebar-buttons bi bi-calendar3" eventKey="4" as={Link} to="aktivnosti" > Kalendar aktivnosti</NavLink>
         <NavLink className="sidebar-buttons" eventKey="5" as={Link} to="kabinet" ><i class="fa-solid fa-display"></i> Kabineti</NavLink>

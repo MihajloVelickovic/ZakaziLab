@@ -146,12 +146,12 @@ const Kabinet = () => {
     return (
         <div className="kabinet-container">
             <button onClick={handleShowHideCabinets}>
-                {showCabinets ? 'Hide cabinets' : 'Show cabinets'}
+                {showCabinets ? 'Sakrij kabinete' : 'Prikaži kabinete'}
             </button>
-            <button onClick={handleAddCabinetClick}>Add a cabinet</button>
-            <button onClick={handleShowDeleteCabinets} disabled={!selectedCabinet}>Delete cabinet</button>
+            <button onClick={handleAddCabinetClick}>Dodaj kabinet</button>
+            <button onClick={handleShowDeleteCabinets} disabled={!selectedCabinet}>Obriši kabinet</button>
             <button onClick={handleManageButtonClick} disabled={!selectedComputer}>      
-                Manage computer
+                Upravljaj kvarom
             </button>
 
             {showCabinets && (
@@ -225,8 +225,8 @@ const Kabinet = () => {
                         value={cabinetForm.cols}
                         onChange={(e) => setCabinetForm({ ...cabinetForm, cols: e.target.value })}
                     />
-                    <button onClick={handleCancelAdd}>Cancel</button>
-                    <button onClick={handleSubmitAdd}>Submit</button>
+                    <button onClick={handleCancelAdd}>Otkaži</button>
+                    <button onClick={handleSubmitAdd}>Prosledi</button>
                 </div>
             )}
 
@@ -235,7 +235,7 @@ const Kabinet = () => {
                     {cabinets.map((cabinet) => (
                         <div key={cabinet._id}>
                             {cabinet.name}
-                            <button onClick={() => handleDeleteCabinet(cabinet)}>Delete</button>
+                            <button onClick={() => handleDeleteCabinet(cabinet)}>Obriši</button>
                         </div>
                     ))}
                 </div>
@@ -245,7 +245,7 @@ const Kabinet = () => {
                 <div className="manage-form">
                     <form onSubmit={handleFormSubmit}>
                         <label>
-                            Malfunctioned:
+                            U kvaru:
                             <input
                                 type="checkbox"
                                 checked={malfunctionStatus}
@@ -253,14 +253,14 @@ const Kabinet = () => {
                             />
                         </label>
                         <label>
-                            Malfunction Description:
+                            Opis kvara:
                             <textarea
                                 value={malfunctionDesc}
                                 onChange={(e) => setMalfunctionDesc(e.target.value)}
                             />
                         </label>
-                        <button type="submit">Submit</button>
-                        <button type="button" onClick={() => setShowManageForm(false)}>Cancel</button>
+                        <button type="submit">Prosledi</button>
+                        <button type="button" onClick={() => setShowManageForm(false)}>Otkaži</button>
                     </form>
                 </div>
             )}

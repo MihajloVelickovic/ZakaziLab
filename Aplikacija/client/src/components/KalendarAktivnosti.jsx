@@ -45,7 +45,7 @@ const KalendarAktivnosti = () => {
                 />
             </div>
             <div className="hovered-subject">
-                {hoveredSubject && <p>Clicked subject: {hoveredSubject}</p>}
+                {hoveredSubject && <p>Odabrana tema: {hoveredSubject}</p>}
             </div>
         </div>
     );

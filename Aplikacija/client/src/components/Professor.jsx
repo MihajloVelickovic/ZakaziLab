@@ -40,7 +40,7 @@ const Professor = () => {
             <div>
              <Link to='/' className="title"><img src={Brand} alt="" style={{width:"40px"}} className="rounded-pill"/> ZakažiLab </Link>
             </div>
-            <button onClick={logoutUser} className="login-button" style={{position: "absolute", right: "40px"}} >Log Out
+            <button onClick={logoutUser} className="login-button" style={{position: "absolute", right: "40px"}} >Odjavi se
             {/* <i className="bi bi-box-arrow-right"></i> */}
             <i className = "fa-solid fa-right-from-bracket"></i>
             </button>

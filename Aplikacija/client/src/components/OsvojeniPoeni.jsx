@@ -106,7 +106,7 @@ const OsvojeniPoeni = () => {
                             <table className="custom-table">
                                 <thead>
                                     <tr>
-                                        <th>Redni broj vezbe</th>
+                                        <th>Redni broj vežbe</th>
                                         <th>Broj poena</th>
                                     </tr>
                                 </thead>
@@ -135,7 +135,7 @@ const OsvojeniPoeni = () => {
             {entries.length > 0 ? (
                 renderTables()
             ) : (
-                <p>No data available</p>
+                <p>Nema podataka</p>
             )}
         </div>
     );

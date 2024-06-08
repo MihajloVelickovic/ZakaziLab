@@ -35,7 +35,7 @@ const Header=()=>{
                     </NavLink></li>
                     <li><NavLink to="/student">
                         <button className="login-button">
-                            Student page
+                            Studentska stranica
                         <div class="arrow-wrapper">
                             <div class="arrow"></div>
                         </div>
@@ -43,7 +43,7 @@ const Header=()=>{
                     </NavLink></li>
                     <li><NavLink to="/professor">
                         <button className="login-button">
-                            Professor page
+                            Profesorska stranica
                         <div class="arrow-wrapper">
                             <div class="arrow"></div>
                         </div>
