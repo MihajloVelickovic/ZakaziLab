@@ -230,53 +230,51 @@ userRouter.post("/register", async (req:any, res) => {
     
 });
 
-userRouter.post("/register/confirm", async (req, res) => {
-    if(!req.body.token)
-        res.status(422).send({message: "Unprocessable request"});
+userRouter.post("/register/confirm", authorizeToken, async (req, res) => {
+   
+    let data = verifyToken(req.body.token);
+    if(!data)
+        res.status(400).send({message: "Expired token"});
     else{
-        let data = verifyToken(req.body.token);
-        if(!data)
-            res.status(400).send({message: "Expired token"});
-        else{
 
-            const invalidateTokens = await User.findOne({email: data.email});
-            
-            if(invalidateTokens != null)
-                return res.status(400).send({message: `Korisnik sa email adresom ${data.email} je već registrovan`});
+        const invalidateTokens = await User.findOne({email: data.email});
+        
+        if(invalidateTokens != null)
+            return res.status(400).send({message: `Korisnik sa email adresom ${data.email} je već registrovan`});
 
-            data =  Object.keys(data)
-                          .filter(objectKey => objectKey !== "iat" && objectKey !== "exp")
-                          .reduce((newObject: any, key) => {
-                                    newObject[key] = data[key];
-                                    return newObject;
-                                }, {});
-            let dbUser;
-            const type = data.privileges;
-            switch(type){
-                case "student": 
-                    dbUser = new Student(data);
-                    break;
-                case "assistant": 
-                    dbUser = new Assistant(data);
-                    break;
-                case "admin": 
-                    dbUser = new Admin(data);
-                    break;
-                case "professor": 
-                    dbUser = new Professor(data);
-                    break;
-                default: 
-                    return res.status(400).json({ message: "Invalid privileges" });
-            }
-            try{
-                await dbUser.save();
-                res.status(200).send({message: "Završena registracija"});
-            }
-            catch(err){
-                res.status(400).send({message: "Error saving user to database"});
-            }
+        data =  Object.keys(data)
+                        .filter(objectKey => objectKey !== "iat" && objectKey !== "exp")
+                        .reduce((newObject: any, key) => {
+                                newObject[key] = data[key];
+                                return newObject;
+                            }, {});
+        let dbUser;
+        const type = data.privileges;
+        switch(type){
+            case "student": 
+                dbUser = new Student(data);
+                break;
+            case "assistant": 
+                dbUser = new Assistant(data);
+                break;
+            case "admin": 
+                dbUser = new Admin(data);
+                break;
+            case "professor": 
+                dbUser = new Professor(data);
+                break;
+            default: 
+                return res.status(400).json({ message: "Invalid privileges" });
+        }
+        try{
+            await dbUser.save();
+            res.status(200).send({message: "Završena registracija"});
+        }
+        catch(err){
+            res.status(400).send({message: "Error saving user to database"});
         }
     }
+    
 });
 
 
@@ -351,6 +349,80 @@ userRouter.post("/logout", authorizeToken, (req: any, res) => {
         }
 
     }
+});
+
+userRouter.post("/resetPasswordEmail", async (req, res) => {
+    if(!req.body.email)
+        return res.status(400).send({message: "Email je obavezno polje"});
+    const email = req.body.email;
+    let existingUser;
+    try{
+        existingUser = await User.findOne({email});
+        if(existingUser === null)
+            return res.status(400).send({message:"Korisnik sa ovom email adresom ne postoji" });
+    }
+    catch(err){
+        console.log(err);
+        return res.status(500).send({message: `Error finding student: ${err}`});
+    }
+    
+    const token = signToken({id: existingUser._id}, "15m");
+
+    const mailOptions = {
+        from: emailParams.email,
+        to: email,
+        subject: "Resetovanje šifre",
+        text: `http://localhost:3000/resetPassword/${token}`,
+        html: `<p>Ovaj link je validan 15 minuta</p>
+               <a href="http://localhost:3000/resetPassword/${token}" target="_blank"><p>Resetujte šifru!</p></a>`
+    };
+
+    transporer.sendMail(mailOptions, (err, info) => {
+        err ?
+        console.log(err) :
+        console.log(info);
+    });
+
+    return res.status(200).send({message: `Email poslat na adresu ${email}`});
+
+});
+
+userRouter.post("/resetPassword", authorizeToken, async (req: any, res) => {
+    let data;
+    if(!(data = verifyToken(req.token)))
+        return res.status(403).send({message: "Invalid token"});
+
+    if(!req.body.password || !req.body.confirmPassword)
+        return res.status(400).send({message: "Šifra i potvrda šifre su obavezna polja"});
+    
+    if(req.body.password !== req.body.confirmPassword)
+        return res.status(400).send({message: "Šifre se ne poklapaju"});
+    
+    if(!strongPassword.test(req.body.password))
+        return res.status(400).send({message: "Slaba šifra"});
+
+    const user = await User.findById({_id: data.id});
+
+    if(user === null)
+        return res.status(500).send({message: "Greška pri pronalaski korisnika u bazi"});
+
+
+    const checkOld = await bcrypt.compare(user.password, req.body.password);
+    if(checkOld)
+        return res.status(400).send({message: "Nova šifra ne može biti ista kao trenutna"});
+
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
+    user.password = hashedPassword;
+    try{
+        await user.save();
+        return res.status(200).send({message: "Uspešno resetovana šifra"});
+    }
+    catch(err){
+        console.log(err);
+        return res.status(500).send({message: "Error updating password"});
+    }
+
 });
 
 export default userRouter;

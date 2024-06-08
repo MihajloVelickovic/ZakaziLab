@@ -79,6 +79,10 @@ labRouter.post("/add", authorizeToken, async (req: any, res) => {
         console.log("classroom",classroomRef);
         const studentEntryList = await Promise.all(studentEntryPromises);
 
+        /* 
+         * Da imam dinar za svaku O(n^4) funkciju na backendu imao bih 2 dinara
+         * sto nije puno ali je cudno da se desilo dvaput
+         */ 
         for (let i = 0; i < subjectNum; ++i) {
             let sessions: any[] = [];
             for (let j = 0; j < timeSlots.length; ++j) {
