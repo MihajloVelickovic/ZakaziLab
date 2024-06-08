@@ -28,7 +28,7 @@ axiosInstance.interceptors.request.use(async req => {
     
 
     console.log("ulazi ovde drugde");
-    console.log("authToken je: ", authToken);
+    //console.log("authToken je: ", authToken);
     const user = jwt_decode(authToken)
     const isExpired = dayjs.unix(user.exp).diff(dayjs()) < 1;
 

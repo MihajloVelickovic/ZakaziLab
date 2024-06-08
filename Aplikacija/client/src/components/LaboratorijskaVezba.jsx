@@ -34,17 +34,20 @@ const LaboratorijskaVezba = ({ role }) => {
     const handleLabClick = async (labName) => {
         setActionModal({ visible: false, computer: null, action: '', grade: '' });
         if (selectedLab){
+            console.log("uso je u prvo");
             setComputers(null);
             setSelectedSession(null);
             setSessions(null);
             setSelectedSubject(null);
-            setSubjects(null);
         }
         if (selectedLab && selectedLab == labName) {
+            console.log("uso je u drugo");
+            setSubjects(null);
             setSelectedLab(null);
         }
         else {
-            setSelectedLab(labName);
+            console.log("uso je u trece");
+            //setSelectedLab(labName);
             var lab = labName;
             console.log(lab);
             await axiosInstance.post(`/subject/filteredFind`, {lab}).then(response => {
@@ -296,7 +299,6 @@ const LaboratorijskaVezba = ({ role }) => {
     const renderSubjects = () => (
         <div>
             <h3>Teme</h3>
-            
             {subjects.map(subject => (
                 <button key={subject._id} onClick={() => handleSubjectClick(subject)}>{subject.desc}</button>
             ))}
