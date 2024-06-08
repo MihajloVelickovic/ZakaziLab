@@ -178,14 +178,21 @@ const LaboratorijskaVezba = ({ role }) => {
     };
 
     const freeComputer = async (computer) => {
-        // try {
-        //     await axiosInstance.post(`/computer/free`, { computerId: computer._id });
-        //     setComputers(computers.map(row => row.map(comp => 
-        //         comp._id === computer._id ? { ...comp, taken: false, student: null } : comp
-        //     )));
-        // } catch (error) {
-        //     console.error('There was an error freeing the computer!', error);
-        // }
+
+        var subjectId = selectedSubject._id;
+        var sessionId = selectedSession._id;
+        var updatedComputer = computer;
+        updatedComputer.student = null;
+        updatedComputer.free = true;
+        try {
+            const response = await axiosInstance.patch(`/subject/updateComputer`, {subjectId, sessionId, computer: updatedComputer});
+            setActionModal({ visible: false, computer: null, action: '', grade: '' });
+            // setComputers(computers.map(row => row.map(comp => 
+            //     comp._id === computer._id ? { ...comp, taken: false, student: null } : comp
+            // )));
+        } catch (error) {
+            console.error('There was an error freeing the computer!', error);
+        }
     };
 
     const gradeStudent = async (computer, grade) => {
@@ -284,7 +291,9 @@ const LaboratorijskaVezba = ({ role }) => {
                             key={colIndex} 
                             className='laboratoryGridItem'
                             style={{
-                                padding: '10px',backgroundColor: computer.malfunctioned ? 'red' : computer.free ? 'green' : 'yellow'
+                                padding: '10px',backgroundColor: computer.malfunctioned ? 'red' : computer.free ? 'green' : 
+                                console.log(computer.student.attendance)
+                                //computer.student.attendance[selectedSubject.ordNum-1]? 'darkorange' : 'yellow'
                             }}
                             onClick={() => handleComputerClick(computer)}
                             disabled={computer.malfunctioned}
