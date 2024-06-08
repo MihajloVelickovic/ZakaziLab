@@ -44,7 +44,7 @@ const LaboratorijskaVezba = ({ role }) => {
             setSelectedLab(null);
         }
         else {
-            setSelectedLab(null);
+            setSelectedLab(labName);
             var lab = labName;
             console.log(lab);
             await axiosInstance.post(`/subject/filteredFind`, {lab}).then(response => {
@@ -100,17 +100,38 @@ const LaboratorijskaVezba = ({ role }) => {
         }
     }
 
-    const handleStudentComputerClick = (computer) => {
-        var user = null;
-        if (localStorage.getItem('user')){
-            user = JSON.parse(localStorage.getItem('user'));
+    const handleStudentComputerClick = async (computer) => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        const currentUserIndex = user ? user.index : null;
+        console.log(currentUserIndex);
+
+        if (!currentUserIndex) {
+            console.error("No user found!");
+            return;
         }
-        var Index = user? user.index : -1;
-        const userIsOccupying = sessions.flatMap(session => session.classroom.computers)
-            .find(comp => comp.student && comp.student.student === user);
+
+        var userIsOccupying = false;
+        var computerUserIsOccupying;
+        var sessionIsOccupying;
+        for (const sessionIteration of selectedSubject.sessions) {
+            sessionIteration.classroom.computers.map(r => r.map(
+                comp => {
+                    if (comp.free)
+                        return comp;
+                    if (comp.student && comp.student.student.index == currentUserIndex) {
+                        userIsOccupying = true;
+                        sessionIsOccupying = sessionIteration;
+                        computerUserIsOccupying = comp;
+                    }
+                    return comp;
+                }
+            ));
+        }
+
         const occupiedComputer = computer.student?true:false;
         if (occupiedComputer) {
             console.log("that computer is taken >:3");
+            console.log(computer);
             alert("that computer is taken >:3");
         }
         else if (userIsOccupying) {
@@ -118,12 +139,16 @@ const LaboratorijskaVezba = ({ role }) => {
             const confirmSwitch = window.confirm('You are already using a computer. Do you want to switch?');
             if (confirmSwitch) {
                 // Update backend to switch computers
-                switchComputer(occupiedComputer, computer);
+                //switchComputer(computerUserIsOccupying, computer, user);
+                console.log("computer clicked", computer);
+                console.log("currently occupied comptuer", computerUserIsOccupying);
+                await freeComputer(computerUserIsOccupying, sessionIsOccupying);
+                await occupyComputer(computer, user);
             }
         } else {
             // Occupy the new computer
             console.log("prazno je ovde, mozes ti!");
-            occupyComputer(computer);
+            occupyComputer(computer, user);
         }
     };
 
@@ -140,38 +165,58 @@ const LaboratorijskaVezba = ({ role }) => {
 
     }
 
-    const occupyComputer = async (computer) => {
-        // try {
-        //     await axiosInstance.post(`/computer/occupy`, { computerId: computer._id, studentId: currentStudentId });
-        //     setComputers(computers.map(row => row.map(comp => 
-        //         comp._id === computer._id ? { ...comp, taken: true, student: { id: currentStudentId } } : comp
-        //     )));
-        // } catch (error) {
-        //     console.error('There was an error occupying the computer!', error);
-        // }
-    };
-
-    const switchComputer = async (oldComputer, newComputer) => {
-        // try {
-        //     await axiosInstance.post(`/computer/switch`, { oldComputerId: oldComputer._id, newComputerId: newComputer._id, studentId: currentStudentId });
-        //     setComputers(computers.map(row => row.map(comp => {
-        //         if (comp._id === oldComputer._id) {
-        //             return { ...comp, taken: false, student: null };
-        //         } else if (comp._id === newComputer._id) {
-        //             return { ...comp, taken: true, student: { id: currentStudentId } };
-        //         } else {
-        //             return comp;
-        //         }
-        //     })));
-        // } catch (error) {
-        //     console.error('There was an error switching computers!', error);
-        // }
-    };
-
-    const freeComputer = async (computer) => {
-
+    const occupyComputer = async (computer, student) => {
+        console.log("occupying computer");
         var subjectId = selectedSubject._id;
         var sessionId = selectedSession._id;
+        var updatedComputer = computer;
+        try {
+            let studentEntryOfUser = await axiosInstance.post('/studentEntry/filteredFind', {student: student._id, labName : selectedLab});
+            console.log("ok for now");
+            updatedComputer.student = studentEntryOfUser.data[0];
+            console.log("ok even now");
+            updatedComputer.free = false;
+            console.log("updated computer", updatedComputer);
+
+            const response = await axiosInstance.patch(`/subject/updateComputer`, {subjectId, sessionId, computer: updatedComputer});
+            setActionModal({ visible: false, computer: null, action: '', grade: '' });
+            // setComputers(computers.map(row => row.map(comp => 
+            //     comp._id === computer._id ? { ...comp, taken: false, student: null } : comp
+            // )));
+        } catch (error) {
+            console.error('There was an error freeing the computer!', error);
+        }
+    };
+
+    const switchComputer = async (oldComputer, newComputer, student) => {
+        console.log("switching computer, but not really");
+        var subjectId = selectedSubject._id;
+        var sessionId = selectedSession._id;
+        var updatedComputerOld = oldComputer;
+        var updatedComputerNew = newComputer;
+        try {
+            let studentEntryOfUser = await axiosInstance.post('/studentEntry/filteredFind', {student: student._id, labName : selectedLab});
+            updatedComputerOld.student = "";
+            updatedComputerOld.free = true;
+            const responseOld = await axiosInstance.patch(`/subject/updateComputer`, {subjectId, sessionId, computer: updatedComputerOld});
+
+            updatedComputerNew.student = studentEntryOfUser.data[0];
+            updatedComputerNew.free = false;
+            const responseNew = await axiosInstance.patch(`/subject/updateComputer`, {subjectId, sessionId, computer: updatedComputerNew});
+            setActionModal({ visible: false, computer: null, action: '', grade: '' });
+            // setComputers(computers.map(row => row.map(comp => 
+            //     comp._id === computer._id ? { ...comp, taken: false, student: null } : comp
+            // )));
+        } catch (error) {
+            console.error('There was an error freeing the computer!', error);
+        }
+        
+    };
+
+    const freeComputer = async (computer, sessionComp) => {
+
+        var subjectId = selectedSubject._id;
+        var sessionId = sessionComp._id;
         var updatedComputer = computer;
         updatedComputer.student = null;
         updatedComputer.free = true;
@@ -272,6 +317,7 @@ const LaboratorijskaVezba = ({ role }) => {
     const renderSubjects = () => (
         <div>
             <h3>Subjects</h3>
+            
             {subjects.map(subject => (
                 <button key={subject._id} onClick={() => handleSubjectClick(subject)}>{subject.desc}</button>
             ))}
@@ -281,6 +327,7 @@ const LaboratorijskaVezba = ({ role }) => {
     const renderSessions = () => (
         <div>
             <h3>Sessions</h3>
+            <p>{selectedSubject? selectedSubject.date.split('T')[0]: <></>}</p>
             {sessions.map(session => {
                 const extractTime = (datetime) => {
                     const timePart = datetime.split('T')[1];
@@ -303,6 +350,7 @@ const LaboratorijskaVezba = ({ role }) => {
     const renderComputers = () => (     // Ovde mozda nece da se stampa student index, jer iako je lab populated, mozda subjects nije kada se fetchuje nesto
         <div>
             <h3>Computers</h3>              
+            <p>{selectedSession? selectedSession.time.split('T')[1].split('.')[0] : <></>}</p>
             {computers.map((row, rowIndex) => (
                 <div key={rowIndex} style={{ display: 'flex', padding: '10px' }} >
                     {row.map((computer, colIndex) => (
@@ -311,10 +359,10 @@ const LaboratorijskaVezba = ({ role }) => {
                             className='laboratoryGridItem'
                             style={{
                                 padding: '10px',backgroundColor: computer.malfunctioned ? 'red' : computer.free ? 'green' : 
-                                    computer.student.attendance[selectedSubject.ordNum-1]? 'darkorange' : 'yellow'
+                                    computer.student? computer.student.attendance[selectedSubject.ordNum-1]? 'darkorange' : 'yellow' : 'grey'
                             }}
                             onClick={() => handleComputerClick(computer)}
-                            //disabled={computer.malfunctioned}
+                            disabled={role == 'student' && computer.malfunctioned}
                         >
                             {/* {computer.taken == true && computer.student.index} */}
                             
@@ -394,7 +442,7 @@ const LaboratorijskaVezba = ({ role }) => {
         const { computer, action, grade } = actionModal;
         switch (action) {
             case 'free':
-                freeComputer(computer);
+                freeComputer(computer, selectedSession);
                 break;
             case 'grade':
                 gradeStudent(computer, grade);

@@ -78,7 +78,7 @@ subjectRouter.patch("/updateComputer", authorizeToken, async (req: any, res) => 
 
         const updatedComputers = session.classroom.computers.map(computerRow => {
             return computerRow.map(comp => {
-                if (comp._id.equals(computer._id)) {
+                if (comp.name === computer.name) {
                     return new Computer({name:computer.name,malfunctioned:computer.malfunctioned,
                         malfunctionDesc:computer.malfunctionDesc, free:computer.free,
                         student:computer.student
