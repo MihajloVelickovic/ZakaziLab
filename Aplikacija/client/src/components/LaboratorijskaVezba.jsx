@@ -66,8 +66,54 @@ const LaboratorijskaVezba = ({ role }) => {
     };
 
     const handleComputerClick = (computer) => {
-        //you should show that form here
+        if (role === 'student') {
+            //handleStudentComputerClick(computer);
+        } else {
+            //handleNonStudentComputerClick(computer);
+        }
     }
+
+    // const handleStudentComputerClick = (computer) => {
+    //     // Check if the student is already occupying a computer
+    //     const occupiedComputer = computers.flat().find(comp => comp.student && comp.student.id === currentStudentId);
+        
+    //     if (occupiedComputer) {
+    //         // Ask if they want to switch computers or sessions
+    //         const confirmSwitch = window.confirm('You are already using a computer. Do you want to switch?');
+    //         if (confirmSwitch) {
+    //             // Update backend to switch computers
+    //             switchComputer(occupiedComputer, computer);
+    //         }
+    //     } else {
+    //         // Occupy the new computer
+    //         occupyComputer(computer);
+    //     }
+    // };
+
+    // const handleNonStudentComputerClick = (computer) => {
+    //     const options = [];
+    //     if (computer.taken) {
+    //         options.push('Free Computer');
+    //         options.push('Grade Student');
+    //     }
+    //     options.push('Set Malfunctioned');
+
+    //     const selectedOption = window.prompt(`Choose an option:\n${options.join('\n')}`);
+        
+    //     switch (selectedOption) {
+    //         case 'Free Computer':
+    //             freeComputer(computer);
+    //             break;
+    //         case 'Grade Student':
+    //             gradeStudent(computer);
+    //             break;
+    //         case 'Set Malfunctioned':
+    //             setMalfunctioned(computer);
+    //             break;
+    //         default:
+    //             console.log('Invalid option selected');
+    //     }
+    // };
 
     const renderStudentLab = () => (
         <>
@@ -108,15 +154,22 @@ const LaboratorijskaVezba = ({ role }) => {
     const renderSessions = () => (
         <div>
             <h3>Sessions</h3>
-            {sessions.map(session => (
-                <button 
-                    key={session._id} 
-                    onClick={() => handleSessionClick(session)}
-                    disabled={new Date(session.date) < new Date()}
-                >
-                    {session.time}
-                </button>
-            ))}
+            {sessions.map(session => {
+                const extractTime = (datetime) => {
+                    const timePart = datetime.split('T')[1];
+                    const [hours, minutes] = timePart.split(':');
+                    return `${hours}:${minutes}`;
+                };
+                const formattedTime = extractTime(session.time);
+                return (
+                    <button 
+                        key={session._id} 
+                        onClick={() => handleSessionClick(session)}
+                        disabled={new Date(session.date) < new Date()}
+                    >
+                        {formattedTime}
+                    </button>
+            )})}
         </div>
     );
 
@@ -124,17 +177,19 @@ const LaboratorijskaVezba = ({ role }) => {
         <div>
             <h3>Computers</h3>
             {computers.map((row, rowIndex) => (
-                <div key={rowIndex} style={{ display: 'flex' }}>
+                <div key={rowIndex} style={{ display: 'flex', padding: '10px' }} >
                     {row.map((computer, colIndex) => (
                         <button 
                             key={colIndex} 
+                            className='laboratoryGridItem'
                             style={{
-                                backgroundColor: computer.malfunctioned ? 'red' : computer.taken ? 'yellow' : 'green'
+                                padding: '10px',backgroundColor: computer.malfunctioned ? 'red' : computer.taken ? 'yellow' : 'green'
                             }}
                             onClick={() => handleComputerClick(computer)}
                             disabled={computer.malfunctioned}
                         >
-                            {computer.name}
+                            {/* {computer.taken == true && computer.student.index} */}
+                            {computer.malfunctioned? "malfunctioned": computer.taken? "taken" : "free"}
                         </button>
                     ))}
                 </div>
