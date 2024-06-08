@@ -10,7 +10,7 @@ const LaboratorijskaVezba = ({ role }) => {
     const [selectedSubject, setSelectedSubject] = useState(null);
     const [selectedSession, setSelectedSession] = useState(null);
     const [computers, setComputers] = useState([]);
-    const [gradeModal, setGradeModal] = useState({ visible: false, computer: null, grade: '' });
+    const [actionModal, setActionModal] = useState({ visible: false, computer: null, action: '', grade: '' });
 
     useEffect(() => {
         // Fetch all labs when the component mounts
@@ -19,7 +19,8 @@ const LaboratorijskaVezba = ({ role }) => {
         }).catch(error => {
             console.error('There was an error fetching the labs!', error);
         });
-    }, []);
+        console.log("not student clicked", actionModal);
+    }, [actionModal]);
 
     const handleLabClick = async (labName) => {
         // Fetch subjects when a lab is clicked
@@ -57,7 +58,8 @@ const LaboratorijskaVezba = ({ role }) => {
         if (role === 'student') {
             handleStudentComputerClick(computer);
         } else {
-            handleNonStudentComputerClick(computer);
+            setActionModal({ visible: true, computer, action: '', grade: '' });
+            console.log("not student clicked", actionModal);
         }
     }
 
@@ -86,31 +88,6 @@ const LaboratorijskaVezba = ({ role }) => {
             // Occupy the new computer
             console.log("prazno je ovde, mozes ti!");
             occupyComputer(computer);
-        }
-    };
-
-    const handleNonStudentComputerClick = (computer) => {
-        const options = [];
-        if (computer.taken) {
-            options.push('Free Computer');
-            options.push('Grade Student');
-        }
-        options.push('Set Malfunctioned');
-
-        const selectedOption = window.prompt(`Choose an option:\n${options.join('\n')}`);
-        
-        switch (selectedOption) {
-            case 'Free Computer':
-                freeComputer(computer);
-                break;
-            case 'Grade Student':
-                gradeStudent(computer);
-                break;
-            case 'Set Malfunctioned':
-                setMalfunctioned(computer);
-                break;
-            default:
-                console.log('Invalid option selected');
         }
     };
 
@@ -259,20 +236,84 @@ const LaboratorijskaVezba = ({ role }) => {
         </div>
     );
 
-    const renderGradeModal = () => (
-        <div className="modal">
-            <h3>Grade Student</h3>
-            <input 
-                type="number" 
-                value={gradeModal.grade} 
-                onChange={e => setGradeModal({ ...gradeModal, grade: e.target.value })} 
-                min="0" 
-                max={selectedSubject.maxPoints}
-            />
-            <button onClick={() => gradeStudent(gradeModal.computer, gradeModal.grade)}>Submit</button>
-            <button onClick={() => setGradeModal({ visible: false, computer: null, grade: '' })}>Cancel</button>
-        </div>
-    );
+    const renderActionModal = () => {
+        
+        console.log("something");
+        return (
+        <div className="computerClickOptions">
+            <h3>Computer Actions</h3>
+            <form onSubmit={(e) => e.preventDefault()}>
+                {!actionModal.computer.free && (
+                    <>
+                        <label>
+                            <input 
+                                type="radio" 
+                                name="action" 
+                                value="free" 
+                                checked={actionModal.action === 'free'} 
+                                onChange={() => setActionModal({ ...actionModal, action: 'free' })}
+                            />
+                            Free Computer
+                        </label>
+                        <label>
+                            <input 
+                                type="radio" 
+                                name="action" 
+                                value="grade" 
+                                checked={actionModal.action === 'grade'} 
+                                onChange={() => setActionModal({ ...actionModal, action: 'grade' })}
+                            />
+                            Grade Student
+                        </label>
+                    </>
+                )}
+                <label>
+                    <input 
+                        type="radio" 
+                        name="action" 
+                        value="malfunction" 
+                        checked={actionModal.action === 'malfunction'} 
+                        onChange={() => setActionModal({ ...actionModal, action: 'malfunction' })}
+                    />
+                    Set as Malfunctioned
+                </label>
+                {actionModal.action === 'grade' && (
+                    <div>
+                        <label>
+                            Grade: 
+                            <input 
+                                type="number" 
+                                value={actionModal.grade} 
+                                onChange={(e) => setActionModal({ ...actionModal, grade: e.target.value })}
+                                max={selectedSubject.maxPoints} 
+                                min={0}
+                            />
+                        </label>
+                    </div>
+                )}
+                <button onClick={() => handleSubmitAction()}>Submit</button>
+                <button onClick={() => setActionModal({ visible: false, computer: null, action: '', grade: '' })}>Cancel</button>
+            </form>
+        </div>        
+    )};
+
+    const handleSubmitAction = () => {
+        const { computer, action, grade } = actionModal;
+        switch (action) {
+            case 'free':
+                freeComputer(computer);
+                break;
+            case 'grade':
+                gradeStudent(computer, grade);
+                break;
+            case 'malfunction':
+                setMalfunctioned(computer);
+                break;
+            default:
+                break;
+        }
+        setActionModal({ visible: false, computer: null, action: '', grade: '' });
+    };
 
     let renderContext;
     switch (role) {
@@ -297,7 +338,7 @@ const LaboratorijskaVezba = ({ role }) => {
                 {selectedLab && renderSubjects()}
                 {selectedSubject && renderSessions()}
                 {selectedSession && renderComputers()}
-                {gradeModal.visible && renderGradeModal()}
+                {actionModal.visible && renderActionModal()}
             </div>
         </>
     )
