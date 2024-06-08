@@ -27,7 +27,7 @@ const LaboratorijskaVezba = ({ role }) => {
     useEffect(() => {
         if (actionModal.action === 'grade' && actionModal.computer && actionModal.computer.student) {
             const ordNum = selectedSubject.ordNum;
-            const initialGrade = actionModal.computer.student.points[ordNum];
+            const initialGrade = actionModal.computer.student.points[ordNum-1];
             setActionModal(prevModal => ({ ...prevModal, grade: initialGrade }));
         }
     }, [actionModal.action]);
@@ -136,6 +136,19 @@ const LaboratorijskaVezba = ({ role }) => {
         }
     };
 
+    const rerenderSubject = () => {
+        var savedComputers = computers;
+        var savedSelectedSession = selectedSession;
+        var savedSelectedSubject = selectedSubject;        
+
+        setSelectedSubject(null);
+        handleSubjectClick(savedSelectedSubject);
+        handleSessionClick(savedSelectedSession);
+        handleComputerClick(savedComputers);
+        console.log('rerendered');
+
+    }
+
     const occupyComputer = async (computer) => {
         // try {
         //     await axiosInstance.post(`/computer/occupy`, { computerId: computer._id, studentId: currentStudentId });
@@ -176,13 +189,17 @@ const LaboratorijskaVezba = ({ role }) => {
     };
 
     const gradeStudent = async (computer, grade) => {
-        // const ordNum = selectedSubject.ordNum;
-        // try {
-        //     await axiosInstance.post(`/student/grade`, { studentId: computer.student.id, ordNum, grade });
-        //     setGradeModal({ visible: false, computer: null, grade: '' });
-        // } catch (error) {
-        //     console.error('There was an error grading the student!', error);
-        // }
+        const ordNum = selectedSubject.ordNum - 1;
+        const studentEntryId = computer.student._id;
+        const modifiedStudentEntry = computer.student;
+        modifiedStudentEntry.points[ordNum] = grade;
+        modifiedStudentEntry.attendance[ordNum] = true;
+        try {
+            const response = await axiosInstance.patch(`/studentEntry/update/${studentEntryId}`, modifiedStudentEntry);
+            setActionModal({ visible: false, computer: null, action: '', grade: '' });
+        } catch (error) {
+            console.error('There was an error grading the student!', error);
+        }
     };
 
     const setMalfunctioned = async (computer) => {
@@ -282,11 +299,11 @@ const LaboratorijskaVezba = ({ role }) => {
         </div>
     );
 
-    const renderActionModal = () => {
+    const renderActionModal = () => {       //onSubmit={(e) => e.preventDefault()}
         return (
         <div className="computerClickOptions">
             <h3>Computer Actions</h3>
-            <form onSubmit={(e) => e.preventDefault()}>
+            <form onSubmit={handleSubmitAction}>
                 {!actionModal.computer.free && (
                     <>
                         <label>
@@ -336,13 +353,15 @@ const LaboratorijskaVezba = ({ role }) => {
                         </label>
                     </div>
                 )}
-                <button onClick={() => handleSubmitAction()}>Submit</button>
+                {/* <button onClick={() => handleSubmitAction()}>Submit</button> */}
+                <button type="submit">Submit</button>
                 <button onClick={() => setActionModal({ visible: false, computer: null, action: '', grade: '' })}>Cancel</button>
             </form>
         </div>        
     )};
 
-    const handleSubmitAction = () => {
+    const handleSubmitAction = (e) => {
+        e.preventDefault()
         const { computer, action, grade } = actionModal;
         switch (action) {
             case 'free':
