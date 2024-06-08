@@ -49,6 +49,14 @@ const Header=()=>{
                         </div>
                         </button>
                     </NavLink></li>
+                    <li><NavLink to="/admin">
+                        <button className="login-button">
+                            Admin stranica
+                        <div class="arrow-wrapper">
+                            <div class="arrow"></div>
+                        </div>
+                        </button>
+                    </NavLink></li>
                 </ul>
             </nav>
         </header>

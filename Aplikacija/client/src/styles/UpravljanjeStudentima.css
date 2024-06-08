@@ -1,0 +1,72 @@
+/* UpravljanjeStudentima.css */
+.wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.input-group input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box;
+    margin-right: 10px; 
+}
+
+.input-group input:last-child {
+    margin-right: 0;
+}
+
+.btn-submit, 
+.btn-clear {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin: 5px;
+}
+
+.btn-submit:hover {
+    background-color: #0056b3;
+}
+
+.btn-clear {
+    background-color: #dc3545; /* Red color for the clear button */
+}
+
+.btn-clear:hover {
+    background-color: #c82333;
+}
+
+.table-students {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.table-students th,
+.table-students td {
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+
+.table-students th {
+    background-color: #f2f2f2;
+    text-align: left;
+}
+
+.action-column {
+    width: 150px; /* Set a fixed width for the action column */
+}
+

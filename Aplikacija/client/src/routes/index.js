@@ -5,6 +5,7 @@ import LoginSignupPage from '../pages/LoginSignupPage';
 import StudentPage from '../pages/StudentPage';
 import ProfessorPage from '../pages/ProfessorPage';
 import Register from '../components/Register';
+import AdminPage from '../pages/AdminPage';
 
 import PrivateRoute from '../utils/PrivateRoute';
 import { AuthProvider } from '../context/AuthContext';
@@ -25,6 +26,7 @@ const AppRoutes=()=>{
                     <Route path="/student/*" element={<PrivateRoute>   <StudentPage/>  </PrivateRoute>}/>
                     <Route path="/professor/*" element={<PrivateRoute> <ProfessorPage/>    </PrivateRoute>}/>
                     <Route path="/register/:token" element={<Register/>}/>
+                    <Route path="/admin/*" element={<PrivateRoute> <AdminPage/> </PrivateRoute>}/>
 
              </Routes>
         </AuthProvider>

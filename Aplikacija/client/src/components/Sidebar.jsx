@@ -14,8 +14,8 @@ const Sidebar = ({ show, role }) => {
 
     const renderAdminLinks = () => (
         <>
-            <NavLink className="bi bi-person-plus" eventKey="1" as={Link} to="manage-users"> Upravljaj korisnicima</NavLink>
-            <NavLink className="bi bi-trash" eventKey="2" as={Link} to="delete-users"> Obriši korisnike</NavLink>
+            <NavLink className="bi bi-person" eventKey="1" as={Link} to="studenti"> Studenti</NavLink>
+            <NavLink className="bi bi-person" eventKey="2" as={Link} to="profesori"> Profesori</NavLink>
             {/* Add more admin specific links here */}
         </>
     );
