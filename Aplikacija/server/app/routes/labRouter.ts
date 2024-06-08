@@ -25,7 +25,10 @@ labRouter.get("/findAll", authorizeToken, async (req: any, res) => {
                     populate: {
                         path: 'classroom',
                         populate: {
-                            path: 'computers.student'
+                            path: 'computers.student',
+                            populate: {
+                                path: 'student'
+                            }
                         }
                     }
                 }

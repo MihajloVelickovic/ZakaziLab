@@ -10,6 +10,7 @@ const LaboratorijskaVezba = ({ role }) => {
     const [selectedSubject, setSelectedSubject] = useState(null);
     const [selectedSession, setSelectedSession] = useState(null);
     const [computers, setComputers] = useState([]);
+    const [gradeModal, setGradeModal] = useState({ visible: false, computer: null, grade: '' });
 
     useEffect(() => {
         // Fetch all labs when the component mounts
@@ -30,12 +31,6 @@ const LaboratorijskaVezba = ({ role }) => {
         }).catch(error => {
             console.error('There was an error fetching the subjects!', error);
         });
-        // axiosInstance.get(`/subject/findAll`).then(response => {
-        //     setSelectedLab(labName);
-        //     setSubjects(response.data);
-        // }).catch(error => {
-        //     console.error('There was an error fetching the subjects!', error);
-        // });
     };
 
     const handleSubjectClick = (subject) => {
@@ -52,13 +47,6 @@ const LaboratorijskaVezba = ({ role }) => {
     };
 
     const handleSessionClick = (session) => {
-        // Fetch computers when a session is clicked
-        // axiosInstance.get(`/api/session/${sessionId}/computers`).then(response => {
-        //     setSelectedSession(sessionId);
-        //     setComputers(response.data);
-        // }).catch(error => {
-        //     console.error('There was an error fetching the computers!', error);
-        // });
         setSelectedSession(session);
         console.log("selected session: ", session);
         setComputers(session.classroom.computers);
@@ -67,53 +55,127 @@ const LaboratorijskaVezba = ({ role }) => {
 
     const handleComputerClick = (computer) => {
         if (role === 'student') {
-            //handleStudentComputerClick(computer);
+            handleStudentComputerClick(computer);
         } else {
-            //handleNonStudentComputerClick(computer);
+            handleNonStudentComputerClick(computer);
         }
     }
 
-    // const handleStudentComputerClick = (computer) => {
-    //     // Check if the student is already occupying a computer
-    //     const occupiedComputer = computers.flat().find(comp => comp.student && comp.student.id === currentStudentId);
-        
-    //     if (occupiedComputer) {
-    //         // Ask if they want to switch computers or sessions
-    //         const confirmSwitch = window.confirm('You are already using a computer. Do you want to switch?');
-    //         if (confirmSwitch) {
-    //             // Update backend to switch computers
-    //             switchComputer(occupiedComputer, computer);
-    //         }
-    //     } else {
-    //         // Occupy the new computer
-    //         occupyComputer(computer);
-    //     }
-    // };
+    const handleStudentComputerClick = (computer) => {
+        var user = null;
+        if (localStorage.getItem('user')){
+            user = JSON.parse(localStorage.getItem('user'));
+        }
+        var Index = user? user.index : -1;
+        // Check if the student is already occupying a computer
+        const userIsOccupying = sessions.flatMap(session => session.classroom.computers)
+            .find(comp => comp.student && comp.student.student === user);
+        const occupiedComputer = computer.student?true:false;
+        if (occupiedComputer) {
+            console.log("that computer is taken >:3");
+            alert("that computer is taken >:3");
+        }
+        else if (userIsOccupying) {
+            // Ask if they want to switch computers or sessions
+            const confirmSwitch = window.confirm('You are already using a computer. Do you want to switch?');
+            if (confirmSwitch) {
+                // Update backend to switch computers
+                switchComputer(occupiedComputer, computer);
+            }
+        } else {
+            // Occupy the new computer
+            console.log("prazno je ovde, mozes ti!");
+            occupyComputer(computer);
+        }
+    };
 
-    // const handleNonStudentComputerClick = (computer) => {
-    //     const options = [];
-    //     if (computer.taken) {
-    //         options.push('Free Computer');
-    //         options.push('Grade Student');
-    //     }
-    //     options.push('Set Malfunctioned');
+    const handleNonStudentComputerClick = (computer) => {
+        const options = [];
+        if (computer.taken) {
+            options.push('Free Computer');
+            options.push('Grade Student');
+        }
+        options.push('Set Malfunctioned');
 
-    //     const selectedOption = window.prompt(`Choose an option:\n${options.join('\n')}`);
+        const selectedOption = window.prompt(`Choose an option:\n${options.join('\n')}`);
         
-    //     switch (selectedOption) {
-    //         case 'Free Computer':
-    //             freeComputer(computer);
-    //             break;
-    //         case 'Grade Student':
-    //             gradeStudent(computer);
-    //             break;
-    //         case 'Set Malfunctioned':
-    //             setMalfunctioned(computer);
-    //             break;
-    //         default:
-    //             console.log('Invalid option selected');
-    //     }
-    // };
+        switch (selectedOption) {
+            case 'Free Computer':
+                freeComputer(computer);
+                break;
+            case 'Grade Student':
+                gradeStudent(computer);
+                break;
+            case 'Set Malfunctioned':
+                setMalfunctioned(computer);
+                break;
+            default:
+                console.log('Invalid option selected');
+        }
+    };
+
+    const occupyComputer = async (computer) => {
+        // try {
+        //     await axiosInstance.post(`/computer/occupy`, { computerId: computer._id, studentId: currentStudentId });
+        //     setComputers(computers.map(row => row.map(comp => 
+        //         comp._id === computer._id ? { ...comp, taken: true, student: { id: currentStudentId } } : comp
+        //     )));
+        // } catch (error) {
+        //     console.error('There was an error occupying the computer!', error);
+        // }
+    };
+
+    const switchComputer = async (oldComputer, newComputer) => {
+        // try {
+        //     await axiosInstance.post(`/computer/switch`, { oldComputerId: oldComputer._id, newComputerId: newComputer._id, studentId: currentStudentId });
+        //     setComputers(computers.map(row => row.map(comp => {
+        //         if (comp._id === oldComputer._id) {
+        //             return { ...comp, taken: false, student: null };
+        //         } else if (comp._id === newComputer._id) {
+        //             return { ...comp, taken: true, student: { id: currentStudentId } };
+        //         } else {
+        //             return comp;
+        //         }
+        //     })));
+        // } catch (error) {
+        //     console.error('There was an error switching computers!', error);
+        // }
+    };
+
+    const freeComputer = async (computer) => {
+        // try {
+        //     await axiosInstance.post(`/computer/free`, { computerId: computer._id });
+        //     setComputers(computers.map(row => row.map(comp => 
+        //         comp._id === computer._id ? { ...comp, taken: false, student: null } : comp
+        //     )));
+        // } catch (error) {
+        //     console.error('There was an error freeing the computer!', error);
+        // }
+    };
+
+    const gradeStudent = async (computer, grade) => {
+        // const ordNum = selectedSubject.ordNum;
+        // try {
+        //     await axiosInstance.post(`/student/grade`, { studentId: computer.student.id, ordNum, grade });
+        //     setGradeModal({ visible: false, computer: null, grade: '' });
+        // } catch (error) {
+        //     console.error('There was an error grading the student!', error);
+        // }
+    };
+
+    const setMalfunctioned = async (computer) => {
+        // try {
+        //     await axiosInstance.post(`/computer/malfunction`, { computerId: computer._id });
+        //     setComputers(computers.map(row => row.map(comp => 
+        //         comp._id === computer._id ? { ...comp, malfunctioned: true } : comp
+        //     )));
+        // } catch (error) {
+        //     console.error('There was an error setting the computer as malfunctioned!', error);
+        // }
+    };
+
+
+
 
     const renderStudentLab = () => (
         <>
@@ -197,6 +259,21 @@ const LaboratorijskaVezba = ({ role }) => {
         </div>
     );
 
+    const renderGradeModal = () => (
+        <div className="modal">
+            <h3>Grade Student</h3>
+            <input 
+                type="number" 
+                value={gradeModal.grade} 
+                onChange={e => setGradeModal({ ...gradeModal, grade: e.target.value })} 
+                min="0" 
+                max={selectedSubject.maxPoints}
+            />
+            <button onClick={() => gradeStudent(gradeModal.computer, gradeModal.grade)}>Submit</button>
+            <button onClick={() => setGradeModal({ visible: false, computer: null, grade: '' })}>Cancel</button>
+        </div>
+    );
+
     let renderContext;
     switch (role) {
         case 'admin':
@@ -220,6 +297,7 @@ const LaboratorijskaVezba = ({ role }) => {
                 {selectedLab && renderSubjects()}
                 {selectedSubject && renderSessions()}
                 {selectedSession && renderComputers()}
+                {gradeModal.visible && renderGradeModal()}
             </div>
         </>
     )
