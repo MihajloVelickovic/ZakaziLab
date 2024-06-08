@@ -58,6 +58,49 @@ subjectRouter.post("/add", authorizeToken, async (req:any, res) => {
     }
 });
 
+subjectRouter.patch("/updateComputer", authorizeToken, async (req: any, res) => {
+    try {
+        if (!verifyToken(req.token)) {
+            return res.status(403).send({ message: "Invalid token" });
+        }
+
+        const { subjectId, sessionId, computer } = req.body;
+
+        const subject = await Tema.findById(subjectId);
+        if (!subject) {
+            return res.status(404).send({ message: "Subject not found" });
+        }
+
+        const session = subject.sessions.find(s => s._id.toString() === sessionId);
+        if (!session) {
+            return res.status(404).send({ message: "Session not found" });
+        }
+
+        const updatedComputers = session.classroom.computers.map(computerRow => {
+            return computerRow.map(comp => {
+                if (comp._id.equals(computer._id)) {
+                    return new Computer({name:computer.name,malfunctioned:computer.malfunctioned,
+                        malfunctionDesc:computer.malfunctionDesc, free:computer.free,
+                        student:computer.student
+                    });
+                }
+                return comp;
+            });
+        });
+
+
+        session.classroom.computers = updatedComputers;
+
+        await subject.save();
+
+        return res.status(200).send({ message: "Computer updated successfully" });
+    } catch (error) {
+        console.error(error); // Log the error for debugging purposes
+        return res.status(500).send({ message: "Internal server error" });
+    }
+});
+
+
 subjectRouter.patch("/update/:id", authorizeToken, async (req:any, res) => {
     if(!verifyToken(req.token)) 
         res.status(403).send({message: "Invalid token"});
@@ -114,7 +157,7 @@ subjectRouter.post("/filteredFind", authorizeToken, async (req: any, res) => {
             res.status(403).send({message: "Invalid token"});
         else{
             const query = req.body;
-            const subject = await Tema.find(query);
+            const subject = await Subject.find(query);
             res.json(subject);
         }
     } catch (err) {
