@@ -352,7 +352,8 @@ const LoginSignup = () => {
   const [formErrors, setFormErrors] = useState({});
   const [action, setAction] = useState("Login");
   const [typeOfUser, setTypeOfUser] = useState("student");
-
+  const [typeOfDropdown, setTypeOfDropdown] = useState("Student");
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormValues({ ...formValues, [name]: value });
@@ -483,7 +484,7 @@ const LoginSignup = () => {
           <input
             type="password"
             name="password"
-            placeholder="Password"
+            placeholder="Šifra"
             value={formValues.password}
             onChange={handleChange}
             onKeyDown={handleKeypress}
@@ -503,7 +504,7 @@ const LoginSignup = () => {
               <input
                 type="text"
                 name="name"
-                placeholder="Name"
+                placeholder="Ime"
                 value={formValues.name}
                 onChange={handleChange}
                 onKeyDown={handleKeypress}
@@ -519,7 +520,7 @@ const LoginSignup = () => {
               <input
                 type="text"
                 name="lastName"
-                placeholder="Last Name"
+                placeholder="Prezime"
                 value={formValues.lastName}
                 onChange={handleChange}
                 onKeyDown={handleKeypress}
@@ -539,7 +540,7 @@ const LoginSignup = () => {
                   <input
                     type="text"
                     name="module"
-                    placeholder="Module"
+                    placeholder="Modul"
                     value={formValues.module}
                     onChange={handleChange}
                     onKeyDown={handleKeypress}
@@ -559,7 +560,7 @@ const LoginSignup = () => {
                       <input
                         type="number"
                         name="index"
-                        placeholder="Index"
+                        placeholder="Broj indeksa"
                         value={formValues.index}
                         onChange={handleChange}
                         onKeyDown={handleKeypress}
@@ -580,7 +581,7 @@ const LoginSignup = () => {
                         onFocus={(e) => (e.target.type = "date")}
                         onBlur={(e) => (e.target.type = "text")}
                         name="birthDate"
-                        placeholder="Birth Date"
+                        placeholder="Datum rođenja"
                         value={formValues.birthDate}
                         onChange={handleChange}
                         onKeyDown={handleKeypress}
@@ -603,7 +604,7 @@ const LoginSignup = () => {
                         onFocus={(e) => (e.target.type = "date")}
                         onBlur={(e) => (e.target.type = "text")}
                         name="gradDate"
-                        placeholder="Graduation Date"
+                        placeholder="Datum diplomiranja"
                         value={formValues.gradDate}
                         onChange={handleChange}
                         onKeyDown={handleKeypress}
@@ -621,7 +622,7 @@ const LoginSignup = () => {
                       <input
                         type="text"
                         name="gradFaculty"
-                        placeholder="Graduation Faculty"
+                        placeholder="Fakultet diplomiranja"
                         value={formValues.gradFaculty}
                         onChange={handleChange}
                         onKeyDown={handleKeypress}
@@ -647,7 +648,7 @@ const LoginSignup = () => {
                             type="text"
                             onFocus={(e) => (e.target.type = "date")}
                             onBlur={(e) => (e.target.type = "text")}
-                            placeholder="PhD Graduation Date"
+                            placeholder="Datum doktoriranja"
                             name="phdGradDate"
                             value={formValues.phdGradDate}
                             onChange={handleChange}
@@ -667,7 +668,7 @@ const LoginSignup = () => {
                           <input
                             type="text"
                             name="phdGradFaculty"
-                            placeholder="PhD Graduation Faculty"
+                            placeholder="Fakultet doktoriranja"
                             value={formValues.phdGradFaculty}
                             onChange={handleChange}
                             onKeyDown={handleKeypress}
@@ -730,38 +731,44 @@ const LoginSignup = () => {
             </div>
             {action === "Sign Up" && (
               <div className="mt-3">
-                <DropdownButton id="dropdown-basic-button" title="Register as">
+                <DropdownButton id="dropdown-basic-button" title={typeOfDropdown}>
                   <Dropdown.Item
                     onClick={() => {
                       setAction("Sign Up");
                       setTypeOfUser("student");
+                      setTypeOfDropdown("Student");
                     }}
                   >
-                    student
+                    Student
                   </Dropdown.Item>
                   <Dropdown.Item
                     onClick={() => {
                       setAction("Sign Up");
                       setTypeOfUser("assistant");
+                      setTypeOfDropdown("Asistent");
+
                     }}
                   >
-                    assistant
+                    Asistent
                   </Dropdown.Item>
                   <Dropdown.Item
                     onClick={() => {
                       setAction("Sign Up");
                       setTypeOfUser("professor");
+                      setTypeOfDropdown("Profesor");
+
                     }}
                   >
-                    professor
+                    Profesor
                   </Dropdown.Item>
                   <Dropdown.Item
                     onClick={() => {
                       setAction("Sign Up");
                       setTypeOfUser("admin");
+                      setTypeOfDropdown("Administartor");
                     }}
                   >
-                    admin
+                    Administrator
                   </Dropdown.Item>
                 </DropdownButton>
               </div>

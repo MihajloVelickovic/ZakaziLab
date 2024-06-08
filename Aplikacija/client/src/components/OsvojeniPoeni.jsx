@@ -101,7 +101,7 @@ const OsvojeniPoeni = () => {
                 <p>Indeks: {Index}</p>
                 {Object.keys(tables).map((labName, index) => (
                     <div key={index} className="lab-table">
-                        <button className={selectedLabs.includes(labName) ? "active" : ""} onClick={() => toggleLab(labName)}>{labName}</button>
+                        <button className={selectedLabs.includes(labName) ? "active" : ""} onClick={() => toggleLab(labName)}>{labName.replace("_", " ")}</button>
                         <div className={selectedLabs.includes(labName) ? "table-open" : "table-closed"}>
                             <table className="custom-table">
                                 <thead>
