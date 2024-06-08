@@ -306,7 +306,7 @@ userRouter.post("/login", async (req, res) => {
         else if (user instanceof Student) 
             userType = 'Student';
       
-        const token = signToken({id: user._id, email: user.email});
+        const token = signToken({id: user._id, email: user.email, privileges: user.privileges});
         const refreshToken = signRefresh({id: user._id, email: user.email});
   
         mainRefreshToken = refreshToken;
@@ -328,7 +328,7 @@ userRouter.post("/refresh", (req, res) => {
         if(!verified)
             res.status(400).send({message: "Invalid refresh token"}); //AKO SE OVO DESI TREBA DA SE IZLOGUJE KORISNIK
         else{
-            const token = signToken({id: verified._id, email: verified.email});
+            const token = signToken({id: verified._id, email: verified.email, privileges: verified.privileges});
             const refreshToken = signRefresh({id: verified._id, email: verified.email});
             mainRefreshToken = refreshToken;
             res.status(200).send({token, refreshToken});
