@@ -207,11 +207,11 @@ userRouter.post("/register", async (req:any, res) => {
         const token = signToken(JSON.parse(JSON.stringify(newUser)), "15m");
 
         const mailOptions = {
-            from: emailParams.email,
+            from: `ZakažiLab <${emailParams.email}`,
             to: email,
             subject: "Završite registraciju",
             text: `http://localhost:3000/register/${token}`,
-            html: `<p>Ovaj link je validan 15 minuta</p>
+            html: `<p>Ovaj link je validan <b>15 minuta</b></p>
                    <a href="http://localhost:3000/register/${token}" target="_blank"><p>Potvridte registraciju!</p></a>`
         };
 
@@ -369,11 +369,11 @@ userRouter.post("/resetPasswordEmail", async (req, res) => {
     const token = signToken({id: existingUser._id}, "15m");
 
     const mailOptions = {
-        from: emailParams.email,
+        from: `ZakažiLab <${emailParams.email}>`,
         to: email,
         subject: "Resetovanje šifre",
         text: `http://localhost:3000/resetPassword/${token}`,
-        html: `<p>Ovaj link je validan 15 minuta</p>
+        html: `<p>Ovaj link je validan <b>15 minuta</b></p>
                <a href="http://localhost:3000/resetPassword/${token}" target="_blank"><p>Resetujte šifru!</p></a>`
     };
 
