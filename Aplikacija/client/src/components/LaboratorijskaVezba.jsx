@@ -16,9 +16,11 @@ const LaboratorijskaVezba = ({ role }) => {
         // Fetch all labs when the component mounts
         axiosInstance.get('/lab/findAll').then(response => {
             setLabs(response.data);
+            console.log(response.data);
         }).catch(error => {
             console.error('There was an error fetching the labs!', error);
         });
+        
         console.log("not student clicked", actionModal);
     }, [actionModal]);
 

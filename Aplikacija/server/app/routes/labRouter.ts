@@ -18,21 +18,26 @@ labRouter.get("/findAll", authorizeToken, async (req: any, res) => {
         res.status(403).send({message: "Invalid token"});
     else{
         const found = await Lab.find({})
-         .populate({
-                path: 'subjects',
+        .populate({
+            path: 'subjects',
+            model: 'Tema',
+            populate: {
+                path: 'sessions',
                 populate: {
-                    path: 'sessions',
+                    path: 'classroom',
                     populate: {
-                        path: 'classroom',
+                        path: 'computers.student',
+                        model: 'StudentEntry',
                         populate: {
-                            path: 'computers.student',
-                            populate: {
-                                path: 'student'
-                            }
+                            path: 'student',
+                            model: 'Student'
                         }
                     }
                 }
-            }).exec();
+            }
+        })
+        .exec();
+        
 
         found != null ? 
         res.status(200).send(found) : 
@@ -79,10 +84,6 @@ labRouter.post("/add", authorizeToken, async (req: any, res) => {
         console.log("classroom",classroomRef);
         const studentEntryList = await Promise.all(studentEntryPromises);
 
-        /* 
-         * Da imam dinar za svaku O(n^4) funkciju na backendu imao bih 2 dinara
-         * sto nije puno ali je cudno da se desilo dvaput
-         */ 
         for (let i = 0; i < subjectNum; ++i) {
             let sessions: any[] = [];
             for (let j = 0; j < timeSlots.length; ++j) {
