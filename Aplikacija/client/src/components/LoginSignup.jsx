@@ -353,6 +353,7 @@ const LoginSignup = () => {
   const [action, setAction] = useState("Login");
   const [typeOfUser, setTypeOfUser] = useState("student");
   const [typeOfDropdown, setTypeOfDropdown] = useState("Student");
+  const [forgotPasswordClicked, setForgotPasswordClicked] = useState(false);
   
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -365,6 +366,11 @@ const LoginSignup = () => {
     }
   };
 
+  const handleForgotPasswordClick = () => {
+    setForgotPasswordClicked(!forgotPasswordClicked);
+
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     var errorList = validate(formValues);
@@ -372,11 +378,26 @@ const LoginSignup = () => {
     if (Object.keys(errorList).length === 0) {
       console.log("success! pressed submit and input fields are adequate");
       if (action == "Login") {
-        let sendData = {};
+        if (forgotPasswordClicked) {
+          
+          let responseServer = await fetch('http://127.0.0.1:1738/user/resetPasswordEmail', {
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify({email: formValues.email})      //you can add {}
+          })
+          let data = await responseServer.json();
+          console.log("response: ", data);
+          errorList["serverResponse"] = `${data.message}`;
+        }
+        else {
+          let sendData = {};
         sendData.email = formValues.email;
         sendData.password = formValues.password;
         var response = await loginUser(e, sendData);
         errorList["serverResponse"] = `${response}`;
+        }
       } else if (action == "Sign Up") {
         var privilegije = typeOfUser;
         console.log("tip usera je:", privilegije);
@@ -420,6 +441,13 @@ const LoginSignup = () => {
             const errors = {};
             const regex = /^(?!\s)[A-Z0-9\s]+$/i;
             values.privileges = "placeholder za privilegije";
+
+            if (action=="Login" && forgotPasswordClicked){
+              if (!values['email']) {
+                errors['email'] = `email is required!`;                
+              }
+              return errors;
+            }
     
             for (let key in values) {
     
@@ -469,14 +497,14 @@ const LoginSignup = () => {
           <input
             type="email"
             name="email"
-            placeholder="Email"
+            placeholder={!forgotPasswordClicked?"Email":"Enter your email"}
             value={formValues.email}
             onChange={handleChange}
             onKeyDown={handleKeypress}
           ></input>
         </div>
         <p className="p-error">{formErrors.email}</p>
-        <div
+        {!forgotPasswordClicked? <><div
           className="input"
           style={{ marginBottom: formErrors.password ? "0px" : "10px" }}
         >
@@ -489,8 +517,12 @@ const LoginSignup = () => {
             onChange={handleChange}
             onKeyDown={handleKeypress}
           ></input>
-        </div>
+        </div> 
         <p className="p-error">{formErrors.password}</p>
+        </>
+        : <></>}
+        {action==="Sign Up"? <></> : <p onClick={handleForgotPasswordClick} style={{cursor: 'pointer', color: '#03A9F4'}} > forgot password?</p>}
+        
 
         {action !== "Sign Up" ? (
           <></>
@@ -726,7 +758,8 @@ const LoginSignup = () => {
                 type="submit"
                 className="login-signup-btn btn btn-primary  w-100"
               >
-                {action}
+                {action==="Login" && forgotPasswordClicked? 'send confirmation email' : action }
+                
               </Button>
             </div>
             {action === "Sign Up" && (
