@@ -230,9 +230,10 @@ userRouter.post("/register", async (req:any, res) => {
     
 });
 
-userRouter.post("/register/confirm", authorizeToken, async (req, res) => {
+userRouter.post("/register/confirm", authorizeToken, async (req:any, res) => {
    
-    let data = verifyToken(req.body.token);
+    console.log(req.token);
+    let data = verifyToken(req.token);
     if(!data)
         res.status(400).send({message: "Expired token"});
     else{

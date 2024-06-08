@@ -4,8 +4,8 @@ import { useParams } from "react-router-dom";
 const sendConfirmToken = async (confirmToken, setMessage) => {
     const response = await fetch(`http://127.0.0.1:1738/user/register/confirm`, {
         method: "POST",
-        body: JSON.stringify(confirmToken),
-        headers: {"Content-Type": "application/json"}
+        //body: JSON.stringify(confirmToken),
+        headers: {"Authorization": `Bearer ${confirmToken.token}`,"Content-Type": "application/json"}
     });
     var receivedMessage = await response.json();
     if (response.status === 200) {
