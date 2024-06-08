@@ -183,13 +183,13 @@ const LaboratorijskaVezba = ({ role }) => {
                             key={colIndex} 
                             className='laboratoryGridItem'
                             style={{
-                                padding: '10px',backgroundColor: computer.malfunctioned ? 'red' : computer.taken ? 'yellow' : 'green'
+                                padding: '10px',backgroundColor: computer.malfunctioned ? 'red' : computer.free ? 'green' : 'yellow'
                             }}
                             onClick={() => handleComputerClick(computer)}
                             disabled={computer.malfunctioned}
                         >
                             {/* {computer.taken == true && computer.student.index} */}
-                            {computer.malfunctioned? "malfunctioned": computer.taken? "taken" : "free"}
+                            {computer.malfunctioned? "malfunctioned": computer.free? "free" : "taken"}
                         </button>
                     ))}
                 </div>
