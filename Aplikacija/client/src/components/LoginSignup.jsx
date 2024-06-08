@@ -497,7 +497,7 @@ const LoginSignup = () => {
           <input
             type="email"
             name="email"
-            placeholder={!forgotPasswordClicked?"Email":"Enter your email"}
+            placeholder={!forgotPasswordClicked?"Email":"Email"}
             value={formValues.email}
             onChange={handleChange}
             onKeyDown={handleKeypress}
@@ -521,7 +521,7 @@ const LoginSignup = () => {
         <p className="p-error">{formErrors.password}</p>
         </>
         : <></>}
-        {action==="Sign Up"? <></> : <p onClick={handleForgotPasswordClick} style={{cursor: 'pointer', color: '#03A9F4'}} > forgot password?</p>}
+        {action==="Sign Up"? <></> : <p onClick={handleForgotPasswordClick} style={{cursor: 'pointer', color: '#03A9F4'}} > {forgotPasswordClicked ? "Nazad" : "Zaboravljena šifra"}</p>}
         
 
         {action !== "Sign Up" ? (
@@ -758,7 +758,7 @@ const LoginSignup = () => {
                 type="submit"
                 className="login-signup-btn btn btn-primary  w-100"
               >
-                {action==="Login" && forgotPasswordClicked? 'send confirmation email' : action }
+                {action==="Login" && forgotPasswordClicked? 'Pošalji mejl za resetovanje šifre' : action }
                 
               </Button>
             </div>
