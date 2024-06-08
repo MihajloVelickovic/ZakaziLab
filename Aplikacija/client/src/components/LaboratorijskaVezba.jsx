@@ -24,19 +24,44 @@ const LaboratorijskaVezba = ({ role }) => {
         console.log("not student clicked", actionModal);
     }, [actionModal]);
 
+    useEffect(() => {
+        if (actionModal.action === 'grade' && actionModal.computer && actionModal.computer.student) {
+            const ordNum = selectedSubject.ordNum;
+            const initialGrade = actionModal.computer.student.points[ordNum];
+            setActionModal(prevModal => ({ ...prevModal, grade: initialGrade }));
+        }
+    }, [actionModal.action]);
+
     const handleLabClick = async (labName) => {
+        setActionModal({ visible: false, computer: null, action: '', grade: '' });
         // Fetch subjects when a lab is clicked
-        var lab = labName;
-        console.log(lab);
-        await axiosInstance.post(`/subject/filteredFind`, {lab}).then(response => {
-            setSelectedLab(labName);
-            setSubjects(response.data);
-        }).catch(error => {
-            console.error('There was an error fetching the subjects!', error);
-        });
+        if (selectedLab){
+            setComputers(null);
+            setSelectedSession(null);
+            setSessions(null);
+            setSelectedSubject(null);
+            setSubjects(null);
+        }
+        if (selectedLab && selectedLab == labName) {
+            setSelectedLab(null);
+        }
+        else {
+            setSelectedLab(null);
+            var lab = labName;
+            console.log(lab);
+            await axiosInstance.post(`/subject/filteredFind`, {lab}).then(response => {
+                setSelectedLab(labName);
+                setSubjects(response.data);
+                console.log("vracene teme: ", response.data)
+            }).catch(error => {
+                console.error('There was an error fetching the subjects!', error);
+            });
+        }
+        
     };
 
     const handleSubjectClick = (subject) => {
+        setActionModal({ visible: false, computer: null, action: '', grade: '' });
         // Fetch sessions when a subject is clicked
         // axiosInstance.get(`/api/subject/${subjectId}/sessions`).then(response => {
         //     setSelectedSubject(subjectId);
@@ -44,19 +69,37 @@ const LaboratorijskaVezba = ({ role }) => {
         // }).catch(error => {
         //     console.error('There was an error fetching the sessions!', error);
         // });
-        console.log(subject);
-        setSelectedSubject(subject);
-        setSessions(subject.sessions);
+        if (selectedSubject){
+            setSessions(null);
+            setSelectedSession(null);
+            setComputers(null);
+        }
+        if (selectedSubject && subject == selectedSubject){
+            setSelectedSubject(null);
+        }
+        else {
+            setSelectedSubject(subject);
+            setSessions(subject.sessions);
+        }
     };
 
     const handleSessionClick = (session) => {
-        setSelectedSession(session);
-        console.log("selected session: ", session);
-        setComputers(session.classroom.computers);
-        console.log("computers: ", session.classroom.computers);
+        setActionModal({ visible: false, computer: null, action: '', grade: '' });
+        if (session == selectedSession){
+            setSelectedSession(null);
+            setComputers(null);
+        }
+        else {
+            setSelectedSession(session);
+            console.log("selected session: ", session);
+            setComputers(session.classroom.computers);
+            console.log("computers: ", session.classroom.computers);
+        }
+        
     };
 
     const handleComputerClick = (computer) => {
+        setActionModal({ visible: false, computer: null, action: '', grade: '' });
         if (role === 'student') {
             handleStudentComputerClick(computer);
         } else {
@@ -214,9 +257,9 @@ const LaboratorijskaVezba = ({ role }) => {
         </div>
     );
 
-    const renderComputers = () => (
+    const renderComputers = () => (     // Ovde mozda nece da se stampa student index, jer iako je lab populated, mozda subjects nije kada se fetchuje nesto
         <div>
-            <h3>Computers</h3>
+            <h3>Computers</h3>              
             {computers.map((row, rowIndex) => (
                 <div key={rowIndex} style={{ display: 'flex', padding: '10px' }} >
                     {row.map((computer, colIndex) => (
@@ -230,7 +273,8 @@ const LaboratorijskaVezba = ({ role }) => {
                             disabled={computer.malfunctioned}
                         >
                             {/* {computer.taken == true && computer.student.index} */}
-                            {computer.malfunctioned? "malfunctioned": computer.free? "free" : "taken"}
+                            
+                            {computer.malfunctioned? "malfunctioned": computer.free? "free" : computer.student? computer.student.student.index : "taken"}
                         </button>
                     ))}
                 </div>
@@ -239,8 +283,6 @@ const LaboratorijskaVezba = ({ role }) => {
     );
 
     const renderActionModal = () => {
-        
-        console.log("something");
         return (
         <div className="computerClickOptions">
             <h3>Computer Actions</h3>
@@ -264,6 +306,7 @@ const LaboratorijskaVezba = ({ role }) => {
                                 value="grade" 
                                 checked={actionModal.action === 'grade'} 
                                 onChange={() => setActionModal({ ...actionModal, action: 'grade' })}
+                                
                             />
                             Grade Student
                         </label>
