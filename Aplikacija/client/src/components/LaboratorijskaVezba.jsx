@@ -13,7 +13,6 @@ const LaboratorijskaVezba = ({ role }) => {
     const [actionModal, setActionModal] = useState({ visible: false, computer: null, action: '', grade: '' });
 
     useEffect(() => {
-        // Fetch all labs when the component mounts
         axiosInstance.get('/lab/findAll').then(response => {
             setLabs(response.data);
             console.log(response.data);
@@ -34,7 +33,6 @@ const LaboratorijskaVezba = ({ role }) => {
 
     const handleLabClick = async (labName) => {
         setActionModal({ visible: false, computer: null, action: '', grade: '' });
-        // Fetch subjects when a lab is clicked
         if (selectedLab){
             setComputers(null);
             setSelectedSession(null);
@@ -62,13 +60,7 @@ const LaboratorijskaVezba = ({ role }) => {
 
     const handleSubjectClick = (subject) => {
         setActionModal({ visible: false, computer: null, action: '', grade: '' });
-        // Fetch sessions when a subject is clicked
-        // axiosInstance.get(`/api/subject/${subjectId}/sessions`).then(response => {
-        //     setSelectedSubject(subjectId);
-        //     setSessions(response.data);
-        // }).catch(error => {
-        //     console.error('There was an error fetching the sessions!', error);
-        // });
+
         if (selectedSubject){
             setSessions(null);
             setSelectedSession(null);
@@ -114,7 +106,6 @@ const LaboratorijskaVezba = ({ role }) => {
             user = JSON.parse(localStorage.getItem('user'));
         }
         var Index = user? user.index : -1;
-        // Check if the student is already occupying a computer
         const userIsOccupying = sessions.flatMap(session => session.classroom.computers)
             .find(comp => comp.student && comp.student.student === user);
         const occupiedComputer = computer.student?true:false;
@@ -209,15 +200,43 @@ const LaboratorijskaVezba = ({ role }) => {
         }
     };
 
-    const setMalfunctioned = async (computer) => {
-        // try {
-        //     await axiosInstance.post(`/computer/malfunction`, { computerId: computer._id });
-        //     setComputers(computers.map(row => row.map(comp => 
-        //         comp._id === computer._id ? { ...comp, malfunctioned: true } : comp
-        //     )));
-        // } catch (error) {
-        //     console.error('There was an error setting the computer as malfunctioned!', error);
-        // }
+    const setMalfunctioned = async (computer, malfunctionedStatus) => {
+
+        var parsedName = computer.name.split('/')[1];
+        parsedName = parsedName.split('_');
+        var c_row = parsedName[1];
+        var c_col = parsedName[2];
+
+        console.log("taj odabrani kompjuter je na redu i koloni: ", c_row, c_col);
+
+        try {
+            for (const sessionIteration of selectedSubject.sessions) {
+                var foundComputer;
+                sessionIteration.classroom.computers.map(r => r.map(
+                    comp => {
+                        var parsedNameComp = comp.name.split('/')[1];
+                        parsedNameComp = parsedNameComp.split('_');
+                        var c_rowComp = parsedNameComp[1];
+                        var c_colComp = parsedNameComp[2];
+                        if (c_row === c_rowComp && c_col === c_colComp) {
+                            foundComputer = comp;
+                            foundComputer.malfunctioned = malfunctionedStatus;
+                            foundComputer.free = true;
+                            foundComputer.student = null;
+                        }
+                        return comp;
+                    }
+                ));
+
+                console.log("computer found: ", foundComputer);
+
+                const response = await axiosInstance.patch(`/subject/updateComputer`, {subjectId : selectedSubject._id, sessionId : sessionIteration._id, computer: foundComputer});
+            }
+
+        } catch (error) {
+            console.error('There was an error setting the computer as malfunctioned!', error);
+        }
+
     };
 
 
@@ -292,15 +311,14 @@ const LaboratorijskaVezba = ({ role }) => {
                             className='laboratoryGridItem'
                             style={{
                                 padding: '10px',backgroundColor: computer.malfunctioned ? 'red' : computer.free ? 'green' : 
-                                console.log(computer.student.attendance)
-                                //computer.student.attendance[selectedSubject.ordNum-1]? 'darkorange' : 'yellow'
+                                    computer.student.attendance[selectedSubject.ordNum-1]? 'darkorange' : 'yellow'
                             }}
                             onClick={() => handleComputerClick(computer)}
-                            disabled={computer.malfunctioned}
+                            //disabled={computer.malfunctioned}
                         >
                             {/* {computer.taken == true && computer.student.index} */}
                             
-                            {computer.malfunctioned? "malfunctioned": computer.free? "free" : computer.student? computer.student.student.index : "taken"}
+                            {computer.malfunctioned? "N/A": computer.free? "free" : computer.student? computer.student.student.index : "taken"}
                         </button>
                     ))}
                 </div>
@@ -308,69 +326,71 @@ const LaboratorijskaVezba = ({ role }) => {
         </div>
     );
 
-    const renderActionModal = () => {       //onSubmit={(e) => e.preventDefault()}
+    const renderActionModal = () => {
+        const { computer, action } = actionModal;
+        const isComputerMalfunctioned = computer.malfunctioned;
+    
         return (
-        <div className="computerClickOptions">
-            <h3>Computer Actions</h3>
-            <form onSubmit={handleSubmitAction}>
-                {!actionModal.computer.free && (
-                    <>
-                        <label>
-                            <input 
-                                type="radio" 
-                                name="action" 
-                                value="free" 
-                                checked={actionModal.action === 'free'} 
-                                onChange={() => setActionModal({ ...actionModal, action: 'free' })}
-                            />
-                            Free Computer
-                        </label>
-                        <label>
-                            <input 
-                                type="radio" 
-                                name="action" 
-                                value="grade" 
-                                checked={actionModal.action === 'grade'} 
-                                onChange={() => setActionModal({ ...actionModal, action: 'grade' })}
-                                
-                            />
-                            Grade Student
-                        </label>
-                    </>
-                )}
-                <label>
-                    <input 
-                        type="radio" 
-                        name="action" 
-                        value="malfunction" 
-                        checked={actionModal.action === 'malfunction'} 
-                        onChange={() => setActionModal({ ...actionModal, action: 'malfunction' })}
-                    />
-                    Set as Malfunctioned
-                </label>
-                {actionModal.action === 'grade' && (
-                    <div>
-                        <label>
-                            Grade: 
-                            <input 
-                                type="number" 
-                                value={actionModal.grade} 
-                                onChange={(e) => setActionModal({ ...actionModal, grade: e.target.value })}
-                                max={selectedSubject.maxPoints} 
-                                min={0}
-                            />
-                        </label>
-                    </div>
-                )}
-                {/* <button onClick={() => handleSubmitAction()}>Submit</button> */}
-                <button type="submit">Submit</button>
-                <button onClick={() => setActionModal({ visible: false, computer: null, action: '', grade: '' })}>Cancel</button>
-            </form>
-        </div>        
-    )};
-
+            <div className="computerClickOptions">
+                <h3>Computer Actions</h3>
+                <form onSubmit={handleSubmitAction}>
+                    {!computer.free && (
+                        <>
+                            <label>
+                                <input 
+                                    type="radio" 
+                                    name="action" 
+                                    value="free" 
+                                    checked={action === 'free'} 
+                                    onChange={() => setActionModal({ ...actionModal, action: 'free' })}
+                                />
+                                Free Computer
+                            </label>
+                            <label>
+                                <input 
+                                    type="radio" 
+                                    name="action" 
+                                    value="grade" 
+                                    checked={action === 'grade'} 
+                                    onChange={() => setActionModal({ ...actionModal, action: 'grade' })}
+                                />
+                                Grade Student
+                            </label>
+                        </>
+                    )}
+                    <label>
+                        <input 
+                            type="radio" 
+                            name="action" 
+                            value="malfunction" 
+                            checked={action === 'malfunction'} 
+                            onChange={() => setActionModal({ ...actionModal, action: 'malfunction' })}
+                        />
+                        {isComputerMalfunctioned ? 'Fix Computer' : 'Set as Malfunctioned'}
+                    </label>
+                    {action === 'grade' && (
+                        <div>
+                            <label>
+                                Grade: 
+                                <input 
+                                    type="number" 
+                                    value={actionModal.grade} 
+                                    onChange={(e) => setActionModal({ ...actionModal, grade: e.target.value })}
+                                    max={selectedSubject.maxPoints} 
+                                    min={0}
+                                />
+                            </label>
+                        </div>
+                    )}
+                    <button type="submit">Submit</button>
+                    <button type="button" onClick={() => setActionModal({ visible: false, computer: null, action: '', grade: '' })}>Cancel</button>
+                </form>
+            </div>        
+        );
+    };
+    
     const handleSubmitAction = (e) => {
-        e.preventDefault()
+        e.preventDefault();
         const { computer, action, grade } = actionModal;
         switch (action) {
             case 'free':
@@ -380,13 +400,14 @@ const LaboratorijskaVezba = ({ role }) => {
                 gradeStudent(computer, grade);
                 break;
             case 'malfunction':
-                setMalfunctioned(computer);
+                setMalfunctioned(computer, !computer.malfunctioned); // Toggle malfunctioned status
                 break;
             default:
                 break;
         }
         setActionModal({ visible: false, computer: null, action: '', grade: '' });
     };
+    
 
     let renderContext;
     switch (role) {

@@ -46,6 +46,10 @@ const Kabinet = () => {
     };
 
     const handleShowHideCabinets = () => {
+        if (showCabinets){
+            setSelectedCabinet(null);
+            setSelectedComputer(null);
+        }
         setShowCabinets(!showCabinets);
     };
 
@@ -54,6 +58,7 @@ const Kabinet = () => {
             setSelectedCabinet(cabinet);
         else 
             setSelectedCabinet(null);
+        setSelectedComputer(null);
     };
 
     const handleAddCabinetClick = () => {       //if it's already selected deselect it here
