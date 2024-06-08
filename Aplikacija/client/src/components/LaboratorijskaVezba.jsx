@@ -286,7 +286,7 @@ const LaboratorijskaVezba = ({ role }) => {
 
     const renderLabs = () => (
         <div>
-            <h3>Labs</h3>
+            <h3>Vežbe</h3>
             {labs.map(lab => (
                 <button key={lab._id} onClick={() => handleLabClick(lab.name)}>{lab.name}</button>
             ))}
@@ -295,7 +295,7 @@ const LaboratorijskaVezba = ({ role }) => {
 
     const renderSubjects = () => (
         <div>
-            <h3>Subjects</h3>
+            <h3>Teme</h3>
             
             {subjects.map(subject => (
                 <button key={subject._id} onClick={() => handleSubjectClick(subject)}>{subject.desc}</button>
@@ -305,7 +305,7 @@ const LaboratorijskaVezba = ({ role }) => {
 
     const renderSessions = () => (
         <div>
-            <h3>Sessions</h3>
+            <h3>Termini</h3>
             <p>{selectedSubject? selectedSubject.date.split('T')[0]: <></>}</p>
             {sessions.map(session => {
                 const extractTime = (datetime) => {
@@ -328,7 +328,7 @@ const LaboratorijskaVezba = ({ role }) => {
 
     const renderComputers = () => (     // Ovde mozda nece da se stampa student index, jer iako je lab populated, mozda subjects nije kada se fetchuje nesto
         <div>
-            <h3>Computers</h3>              
+            <h3>Računari</h3>              
             <p>{selectedSession? selectedSession.time.split('T')[1].split('.')[0] : <></>}</p>
             {computers.map((row, rowIndex) => (
                 <div key={rowIndex} style={{ display: 'flex', padding: '10px' }} >
@@ -345,7 +345,7 @@ const LaboratorijskaVezba = ({ role }) => {
                         >
                             {/* {computer.taken == true && computer.student.index} */}
                             
-                            {computer.malfunctioned? "N/A": computer.free? "free" : computer.student? computer.student.student.index : "taken"}
+                            {computer.malfunctioned? "N/A": computer.free? "S" : computer.student? computer.student.student.index : "taken"}
                         </button>
                     ))}
                 </div>
@@ -359,7 +359,7 @@ const LaboratorijskaVezba = ({ role }) => {
     
         return (
             <div className="computerClickOptions">
-                <h3>Computer Actions</h3>
+                <h3>Upravljanje računarom</h3>
                 <form onSubmit={handleSubmitAction}>
                     {!computer.free && (
                         <>
@@ -371,7 +371,7 @@ const LaboratorijskaVezba = ({ role }) => {
                                     checked={action === 'free'} 
                                     onChange={() => setActionModal({ ...actionModal, action: 'free' })}
                                 />
-                                Free Computer
+                                Oslobodi računar
                             </label>
                             <label>
                                 <input 
@@ -381,7 +381,7 @@ const LaboratorijskaVezba = ({ role }) => {
                                     checked={action === 'grade'} 
                                     onChange={() => setActionModal({ ...actionModal, action: 'grade' })}
                                 />
-                                Grade Student
+                                Oceni studenta
                             </label>
                         </>
                     )}
