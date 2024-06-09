@@ -16,6 +16,7 @@ import PageHome from "./PageHome";
 import UpravljanjeStudentima from "./UpravljanjeStudentima";
 import UpravljanjeProfesorima from "./UpravljanjeProfesorima";
 import UpravljanjeAsistentima from "./UpravljanjeAsistentima"
+import AdminRequests from './AdminRequests';
 
 
 import { redirect } from 'react-router-dom';
@@ -59,6 +60,7 @@ const Admin = () => {
                     <Route path="studenti" element={<UpravljanjeStudentima role="admin"/>}/>
                     <Route path="profesori" element={<UpravljanjeProfesorima role="admin"/>} />
                     <Route path="asistenti" element={<UpravljanjeAsistentima role="admin"/>}/>
+                    <Route path="AdminRequests" element={<AdminRequests role="admin"/>}/>
                 </Routes>
             </main>
             <Footer/>

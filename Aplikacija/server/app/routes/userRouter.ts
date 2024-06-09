@@ -266,11 +266,11 @@ userRouter.post("/register/confirm", authorizeToken, async (req:any, res) => {
 
     if(!("status" in req.body))
         return res.status(400).send({message: "Invalid body, status needed"});
-
+    console.log(data);
     if(req.body.status === false){
         const mailOptions = {
             from: `ZakažiLab <${emailParams.email}`,
-            to: data["data"].email,
+            to: data.email,
             subject: "Zahtev za registraciju ODBIJEN",
             text: `Administrator je odbio Vaš zahtev za registraciju, pokušajte ponovo. Obratite pažnju na ispravnost unetih podataka`,
             html: `<p>Administrator je <b>odbio</b> Vaš zahtev za registraciju, pokušajte ponovo. Obratite pažnju na ispravnost unetih podataka<br/></p>
@@ -279,7 +279,7 @@ userRouter.post("/register/confirm", authorizeToken, async (req:any, res) => {
        transporer.sendMail(mailOptions, (err, info) => {
             err ?
             console.log(err) :
-            console.log(`Email sent to ${data["email"].email}`);
+            console.log(`Email sent to ${data.email}`);
         
         });
 
