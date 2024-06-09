@@ -96,3 +96,22 @@ main button {
 .sidebar-buttons-wrapper{
     /* margin-top: -20px; */
 }
+
+.user-info {
+    margin-bottom: 20px;
+    margin-left: 20px;
+}
+
+.user-info h2 {
+    margin: 5px 0;
+    font-size: 18px;
+    color: #333;
+}
+
+.user-info h2:first-child {
+    margin-top: 0;
+}
+
+.user-info h2:last-child {
+    margin-bottom: 0;
+}
