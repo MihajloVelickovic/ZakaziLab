@@ -15,6 +15,7 @@ import AuthContext from '../context/AuthContext';
 import PageHome from "./PageHome";
 import UpravljanjeStudentima from "./UpravljanjeStudentima";
 import UpravljanjeProfesorima from "./UpravljanjeProfesorima";
+import UpravljanjeAsistentima from "./UpravljanjeAsistentima"
 
 
 import { redirect } from 'react-router-dom';
@@ -57,6 +58,7 @@ const Admin = () => {
                     <Route path="home" element={<PageHome role="admin"/>} />
                     <Route path="studenti" element={<UpravljanjeStudentima role="admin"/>}/>
                     <Route path="profesori" element={<UpravljanjeProfesorima role="admin"/>} />
+                    <Route path="asistenti" element={<UpravljanjeAsistentima role="admin"/>}/>
                 </Routes>
             </main>
             <Footer/>
