@@ -252,7 +252,7 @@ const UpravljanjeAsistentima = () => {
       </div>
       <div className="input-group">
         <input
-          type="number"
+          type="text"
           name="gradFaculty"
           value={formData.gradFaculty}
           onChange={handleChange}

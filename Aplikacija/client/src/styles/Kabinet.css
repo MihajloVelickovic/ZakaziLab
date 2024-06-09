@@ -144,6 +144,13 @@
     border-radius: 5px;
 }
 
+.disabled-button {
+    background-color: gray;
+    color: white;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
 
 
 

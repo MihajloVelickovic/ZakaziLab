@@ -57,6 +57,14 @@ const Header=()=>{
                         </div>
                         </button>
                     </NavLink></li>
+                    <li><NavLink to="/assistant">
+                        <button className="login-button">
+                            Asistent stranica
+                        <div class="arrow-wrapper">
+                            <div class="arrow"></div>
+                        </div>
+                        </button>
+                    </NavLink></li>
                 </ul>
             </nav>
         </header>

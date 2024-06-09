@@ -6,6 +6,7 @@ import StudentPage from '../pages/StudentPage';
 import ProfessorPage from '../pages/ProfessorPage';
 import Register from '../components/Register';
 import AdminPage from '../pages/AdminPage';
+import AssistantPage from '../pages/AssistantPage'
 import ResetPassword from '../components/ResetPassword'
 import ConfirmRegister from '../components/ConfirmRegister'
 
@@ -27,6 +28,7 @@ const AppRoutes=()=>{
                     <Route path="/login" element={<LoginSignupPage/>}/>
                     <Route path="/student/*" element={<PrivateRoute>   <StudentPage/>  </PrivateRoute>}/>
                     <Route path="/professor/*" element={<PrivateRoute> <ProfessorPage/>    </PrivateRoute>}/>
+                    <Route path="/assistant/*" element={<PrivateRoute> <AssistantPage/>    </PrivateRoute>}/>
                     <Route path="/register/:token" element={<Register/>}/>
                     <Route path="/confirm/:token" element={<ConfirmRegister/>}/>
                     <Route path="/resetPassword/:token" element={<ResetPassword/>}/>

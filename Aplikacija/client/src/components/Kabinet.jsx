@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axiosInstance from '../utils/axiosInstance';
 import '../styles/Kabinet.css';
 
-const Kabinet = () => {
+const Kabinet = ({role}) => {
     const [cabinets, setCabinets] = useState([]);
     const [showCabinets, setShowCabinets] = useState(false);
     const [showDeleteCabinets, setShowDeleteCabinets] = useState(false);
@@ -153,8 +153,8 @@ const Kabinet = () => {
             <button onClick={handleShowHideCabinets}>
                 {showCabinets ? 'Sakrij kabinete' : 'Prikaži kabinete'}
             </button>
-            <button onClick={handleAddCabinetClick}>Dodaj kabinet</button>
-            <button onClick={handleShowDeleteCabinets} disabled={!selectedCabinet}>Obriši kabinet</button>
+            <button onClick={handleAddCabinetClick} disabled={role!=='professor'} className={role!=='professor'?'disabled-button': ''}>Dodaj kabinet</button>
+            <button onClick={handleShowDeleteCabinets} disabled={role!== 'professor' || !selectedCabinet} className={role!=='professor' ? 'disabled-button':''}>Obriši kabinet</button>
             <button onClick={handleManageButtonClick} disabled={!selectedComputer}>      
                 Upravljaj kvarom
             </button>

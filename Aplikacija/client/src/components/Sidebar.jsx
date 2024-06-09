@@ -22,7 +22,15 @@ const Sidebar = ({ show, role }) => {
 
     const renderProfessorLinks = () => (
         <>
-        <NavLink className="sidebar-buttons nav-item bi bi-house" eventKey="1" as={Link} to="home"> Početna</NavLink>
+        <NavLink className="sidebar-buttons" eventKey="2" as={Link} to="lab"><i className="fa fa-flask" ></i> Laboratorijske vežbe</NavLink>
+        <NavLink className="sidebar-buttons bi bi-card-checklist" eventKey="3" as={Link} to="IzvestajOPoenima" > Izveštaj o poenima</NavLink>
+        <NavLink className="sidebar-buttons bi bi-calendar3" eventKey="4" as={Link} to="aktivnosti" > Kalendar aktivnosti</NavLink>
+        <NavLink className="sidebar-buttons" eventKey="5" as={Link} to="kabinet" ><i class="fa-solid fa-display"></i> Kabineti</NavLink>
+        </>
+    );
+
+    const renderAssistantLinks = () => (
+        <>
         <NavLink className="sidebar-buttons" eventKey="2" as={Link} to="lab"><i className="fa fa-flask" ></i> Laboratorijske vežbe</NavLink>
         <NavLink className="sidebar-buttons bi bi-card-checklist" eventKey="3" as={Link} to="IzvestajOPoenima" > Izveštaj o poenima</NavLink>
         <NavLink className="sidebar-buttons bi bi-calendar3" eventKey="4" as={Link} to="aktivnosti" > Kalendar aktivnosti</NavLink>
@@ -37,6 +45,9 @@ const Sidebar = ({ show, role }) => {
             break;
         case 'professor':
             navLinks = renderProfessorLinks();
+            break;
+        case 'professor':
+            navLinks = renderAssistantLinks();
             break;
         case 'student':
         default:
