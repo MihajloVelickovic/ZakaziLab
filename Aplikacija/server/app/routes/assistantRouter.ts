@@ -8,9 +8,9 @@ const assistantRouter = Router();
 assistantRouter.get("/findAll", authorizeToken, async (req: any, res) => {
     
     if(!verifyToken(req.token)) 
-        res.status(403).send({message: "Invalid token"});
-
-    const found = await Assistant.find({});
+        return res.status(403).send({message: "Invalid token"});
+    
+    const found = await Assistant.find({}).populate('assignedLabs');
 
     found != null ? 
     res.status(200).send(found) : 
@@ -18,7 +18,11 @@ assistantRouter.get("/findAll", authorizeToken, async (req: any, res) => {
 
 }); 
 
-assistantRouter.post("/add", async (req, res) => {
+assistantRouter.post("/add", authorizeToken,async (req:any, res) => {
+    let data;
+    if(!(data = verifyToken(req.token))) 
+        return res.status(403).send({message: "Invalid token"});
+
     const {
             name, lastName, email, password,
             privileges, module, gradDate, gradFaculty
@@ -39,7 +43,9 @@ assistantRouter.post("/add", async (req, res) => {
 
 });
 
-assistantRouter.patch("/update/:id", async (req, res) => {
+assistantRouter.patch("/update/:id", authorizeToken, async (req:any, res) => {
+    if(!verifyToken(req.token)) 
+        return res.status(403).send({message: "Invalid token"});
     const assistantId = req.params.id;
     const {
         name, lastName, email, password,
@@ -83,14 +89,17 @@ assistantRouter.post("/filteredFind", authorizeToken, async (req: any, res) => {
         res.status(403).send({message: "Invalid token"});
     else{
         const query = req.body;
-        const assistants = await Assistant.find(query);
+        const assistants = await Assistant.find(query).populate('assignedLabs');
         assistants != null ?
         res.status(200).send(assistants) :
         res.status(404).send({message: "Assistants with filter not found"});
     }
 });
 
-assistantRouter.delete("/delete/:id", async (req, res) => {
+assistantRouter.delete("/delete/:id", authorizeToken,async (req:any, res) => {
+    let data;
+    if(!(data = verifyToken(req.token))) 
+        return res.status(403).send({message: "Invalid token"});
     try{
         const {id} = req.params;
         const entry = await Assistant.findByIdAndDelete(id);

@@ -25,7 +25,10 @@ studentEntryRouter.get("/findAll", authorizeToken, async (req: any, res) => {
     }
 }); 
 
-studentEntryRouter.post("/add", async (req, res) => {
+studentEntryRouter.post("/add", authorizeToken, async (req:any, res) => {
+    let data;
+    if(!(data = verifyToken(req.token))) 
+        return res.status(403).send({message: "Invalid token"});
     const {
            student, attendance, timeSlot, points, labName
         } = req.body;
@@ -53,41 +56,45 @@ studentEntryRouter.post("/add", async (req, res) => {
 
 });
 
-studentEntryRouter.patch("/update/:id", async (req, res) => {
-    const studentEntryId = req.params.id;
-    const { student, attendance, timeSlot, points, labName } = req.body;
-
-    if (!studentEntryId) {
-        return res.status(400).send({ message: "Student Entry ID is required for update" });
-    }
-
-    try {
-        const updateFields: any = {};
-        if (student !== undefined) {
-            const studentDoc = await Student.findById(student);
-            if (!studentDoc) {
-                return res.status(400).send({ message: `Student not found: ${student}` });
+studentEntryRouter.patch("/update/:id", authorizeToken, async (req:any, res) => {
+    if(!verifyToken(req.token)) 
+        res.status(403).send({message: "Invalid token"});
+    else {
+        const studentEntryId = req.params.id;
+        const { student, attendance, timeSlot, points, labName } = req.body;
+    
+        if (!studentEntryId) {
+            return res.status(400).send({ message: "Student Entry ID is required for update" });
+        }
+    
+        try {
+            const updateFields: any = {};
+            if (student !== undefined) {
+                const studentDoc = await Student.findById(student);
+                if (!studentDoc) {
+                    return res.status(400).send({ message: `Student not found: ${student}` });
+                }
+                updateFields.student = student;
             }
-            updateFields.student = student;
+            if (attendance !== undefined) updateFields.attendance = attendance;
+            if (timeSlot !== undefined) updateFields.timeSlot = timeSlot;
+            if (points !== undefined) updateFields.points = points;
+            if (labName !== undefined) updateFields.labName = labName;
+    
+            const result = await StudentEntry.findByIdAndUpdate(
+                studentEntryId,
+                { $set: updateFields },
+                { new: true, runValidators: true }
+            );
+    
+            if (!result) {
+                return res.status(404).send({ message: "Student Entry not found" });
+            }
+    
+            res.status(200).send(result);
+        } catch (err: any) {
+            res.status(400).send({ message: `Error updating student entry: ${err.message}` });
         }
-        if (attendance !== undefined) updateFields.attendance = attendance;
-        if (timeSlot !== undefined) updateFields.timeSlot = timeSlot;
-        if (points !== undefined) updateFields.points = points;
-        if (labName !== undefined) updateFields.labName = labName;
-
-        const result = await StudentEntry.findByIdAndUpdate(
-            studentEntryId,
-            { $set: updateFields },
-            { new: true, runValidators: true }
-        );
-
-        if (!result) {
-            return res.status(404).send({ message: "Student Entry not found" });
-        }
-
-        res.status(200).send(result);
-    } catch (err: any) {
-        res.status(400).send({ message: `Error updating student entry: ${err.message}` });
     }
 });
 
@@ -107,14 +114,18 @@ studentEntryRouter.post("/filteredFind", authorizeToken, async (req: any, res: a
     
 });
 
-studentEntryRouter.delete("/delete/:id", async (req, res) => {
+studentEntryRouter.delete("/delete/:id", authorizeToken, async (req:any, res) => {
+   
     try{
-        const {id} = req.params;
-        const entry = await StudentEntry.findByIdAndDelete(id);
-        entry != null ?
-        res.status(200).send({message: `Deleted studentEntry with id: ${id}`}) :
-        res.status(404).send({message: `No studentEntry with id: ${id} found`});
-        
+        if(!verifyToken(req.token)) 
+            res.status(403).send({message: "Invalid token"});
+        else {
+            const {id} = req.params;
+            const entry = await StudentEntry.findByIdAndDelete(id);
+            entry != null ?
+            res.status(200).send({message: `Deleted studentEntry with id: ${id}`}) :
+            res.status(404).send({message: `No studentEntry with id: ${id} found`});
+        }       
     }
     catch(err: any){
         console.log(err.message);

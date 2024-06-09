@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Mongoose, Schema } from "mongoose";
 import User, { IUser } from "./user";
 
 
@@ -6,6 +6,7 @@ export interface IAssistant extends IUser {
     module: string;
     gradDate: Date;
     gradFaculty: string;
+    assignedLabs: mongoose.Types.ObjectId[];
 }
 
 const AssistantSchema = new mongoose.Schema<IAssistant>({
@@ -20,6 +21,11 @@ const AssistantSchema = new mongoose.Schema<IAssistant>({
     gradFaculty: {
         type: String,
         required: true
+    },
+    assignedLabs: {
+        type: [Schema.Types.ObjectId],
+        ref: 'Lab',
+        default: []
     }
 });
 
