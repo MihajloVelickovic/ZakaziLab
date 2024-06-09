@@ -6,6 +6,7 @@ const ConfirmRegister = () => {
     const { token } = useParams();
     const [message, setMessage] = useState(null);
     const [tokenData, setTokenData] = useState(null);
+    const [refuseMessage, setRefuseMessage] = useState("");
 
     useEffect(() => {
         if (token) {
@@ -15,13 +16,14 @@ const ConfirmRegister = () => {
     }, [token]);
 
     const handleConfirm = async (status) => {
-        const response = await fetch(`http://127.0.0.1:1738/user/register/confirm`, {
+        
+        const response = await fetch(`http://127.0.0.1:1738/register/confirm`, {
             method: "POST",
             headers: {
                 "Authorization": `Bearer ${token}`,
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ status })
+            body: JSON.stringify({status: status, message: refuseMessage})
         });
         const receivedMessage = await response.json();
         if (response.status === 200) {
@@ -50,20 +52,26 @@ const ConfirmRegister = () => {
                 <h3>Informacije o novom korisniku</h3>
                 {tokenData && (
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        {/* {Object.keys(tokenData.data).map((key) => (
-                            <div key={key}>
-                                <strong>{key}:</strong> {tokenData.data[key]}
-                            </div>
-                        ))} */}
-                        {Object.keys(tokenData.data).filter(key => key !== 'password').map((key) => (
+                        {Object.keys(tokenData.data).map((key) => (
                             <div key={key}>
                                 <strong>{key}:</strong> {tokenData.data[key]}
                             </div>
                         ))}
                         <div style={{ marginTop: '20px' }}>
                             <button onClick={() => handleConfirm(true)}>Confirm</button>
+                        </div>
+                        <div style={{ marginTop: '20px' }}>
+                            <textarea
+                                value={refuseMessage}
+                                onChange={(e) => setRefuseMessage(e.target.value)}
+                                placeholder="Enter your refusal message here"
+                                style={{ width: 'fitContent', height: '100px' }}
+                            />
+                        </div>
+                        <div style={{ marginTop: '20px' }}>
                             <button onClick={() => handleConfirm(false)}>Refuse</button>
                         </div>
+                        
                     </div>
                 )}
             </div>
