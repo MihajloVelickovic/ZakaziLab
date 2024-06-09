@@ -49,7 +49,7 @@ assistantRouter.patch("/update/:id", authorizeToken, async (req:any, res) => {
     const assistantId = req.params.id;
     const {
         name, lastName, email, password,
-        privileges, module, gradDate, gradFaculty
+        privileges, module, gradDate, gradFaculty, assignedLabs
     } = req.body;
 
     if (!assistantId) {
@@ -66,6 +66,7 @@ assistantRouter.patch("/update/:id", authorizeToken, async (req:any, res) => {
         if (module !== undefined) updateFields.module = module;
         if (gradDate !== undefined) updateFields.gradDate = gradDate;
         if (gradFaculty !== undefined) updateFields.gradFaculty = gradFaculty;
+        if(assignedLabs !== undefined) updateFields.assignedLabs = assignedLabs;
 
         const result = await Assistant.findByIdAndUpdate(
             assistantId,
