@@ -15,6 +15,7 @@ import LaboratorijskaVezba from "./LaboratorijskaVezba";
 import IzvestajOPoenima from "./IzvestajOPoenima";
 import KalendarAktivnosti from "./KalendarAktivnosti";
 import Kabinet from './Kabinet';
+import AttendanceChart from './AttendanceChart';
 
 import { useContext } from 'react';
 import AuthContext from '../context/AuthContext';

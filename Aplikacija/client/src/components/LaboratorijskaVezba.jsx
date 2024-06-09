@@ -303,7 +303,7 @@ const LaboratorijskaVezba = ({ role }) => {
         <div>
             <h3>Vežbe</h3>
             {labs.map(lab => (
-                <button key={lab._id} onClick={() => handleLabClick(lab.name)}>{lab.name}</button>
+                <button className='lab-button' key={lab._id} onClick={() => handleLabClick(lab.name)}>{lab.name}</button>
             ))}
             {(role === 'admin' || role === 'assistant' || role === 'professor') && (
                 <button className = 'addLabButton' style={{float:'right'}} onClick={() => setShowAddLabModal(true)}>Dodaj laboratorijsku vežbu</button>
@@ -315,7 +315,7 @@ const LaboratorijskaVezba = ({ role }) => {
         <div>
             <h3>Teme</h3>
             {subjects.map(subject => (
-                <button key={subject._id} onClick={() => handleSubjectClick(subject)}>{subject.desc}</button>
+                <button className='lab-button' key={subject._id} onClick={() => handleSubjectClick(subject)}>{subject.desc}</button>
             ))}
         </div>
     );
@@ -332,7 +332,7 @@ const LaboratorijskaVezba = ({ role }) => {
                 };
                 const formattedTime = extractTime(session.time);
                 return (
-                    <button 
+                    <button className='lab-button'
                         key={session._id} 
                         onClick={() => handleSessionClick(session)}
                         disabled={new Date(session.date) < new Date()}
@@ -426,8 +426,8 @@ const LaboratorijskaVezba = ({ role }) => {
                             </label>
                         </div>
                     )}
-                    <button type="submit">Submit</button>
-                    <button type="button" onClick={() => setActionModal({ visible: false, computer: null, action: '', grade: '' })}>Cancel</button>
+                    <button className='lab-button' type="submit">Submit</button>
+                    <button className='lab-button' type="button" onClick={() => setActionModal({ visible: false, computer: null, action: '', grade: '' })}>Cancel</button>
                 </form>
             </div>        
         );
