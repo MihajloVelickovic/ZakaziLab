@@ -152,26 +152,26 @@ userRouter.post("/register", async (req:any, res) => {
     
     try {
 
-        const foundStudent = VALID_DOMAINS[0].some(domain => {
-            if(email.includes(domain))
-                return true;
-            return false;
-        });
+        // const foundStudent = VALID_DOMAINS[0].some(domain => {
+        //     if(email.includes(domain))
+        //         return true;
+        //     return false;
+        // });
 
-        const foundProfessor = VALID_DOMAINS[1].some(domain => {
-            if(email.includes(domain))
-                return true;
-            return false;
-        })
+        // const foundProfessor = VALID_DOMAINS[1].some(domain => {
+        //     if(email.includes(domain))
+        //         return true;
+        //     return false;
+        // })
 
-        if(!foundStudent && !foundProfessor)
-            return res.status(400).send({message: "Ovaj domen nije validan"});
+        // if(!foundStudent && !foundProfessor)
+        //     return res.status(400).send({message: "Ovaj domen nije validan"});
 
-        if(foundStudent && privileges !== "student")
-            return res.status(400).send({message: "Ovaj domen mogu imati samo studentske email adrese"});
+        // if(foundStudent && privileges !== "student")
+        //     return res.status(400).send({message: "Ovaj domen mogu imati samo studentske email adrese"});
         
-        if(foundProfessor && privileges === "student")
-            return res.status(400).send({message: "Ovaj domen mogu imati samo profesorske email adrese"});
+        // if(foundProfessor && privileges === "student")
+        //     return res.status(400).send({message: "Ovaj domen mogu imati samo profesorske email adrese"});
 
         let userExists = await User.findOne({ email });
         if (userExists) 
@@ -209,10 +209,10 @@ userRouter.post("/register", async (req:any, res) => {
         const mailOptions = {
             from: `ZakažiLab <${emailParams.email}`,
             to: email,
-            subject: "Završite registraciju",
+            subject: "Pošaljite registraciju",
             text: `http://localhost:3000/register/${token}`,
             html: `<p>Ovaj link je validan <b>15 minuta</b></p>
-                   <a href="http://localhost:3000/register/${token}" target="_blank"><p>Potvridte registraciju!</p></a>`
+                   <a href="http://localhost:3000/register/${token}" target="_blank"><p>Pošaljite registraciju!</p></a>`
         };
 
         transporer.sendMail(mailOptions, (err, info) => {
@@ -221,13 +221,46 @@ userRouter.post("/register", async (req:any, res) => {
             console.log(`Email sent to ${email}`);
         });
 
-        res.status(200).json({message: `Email poslat na adresu ${email}. Ako niste primili mejl, proverite da nema grešaka u adresi koju ste naveli`});
+        res.status(200).json({message: `Email poslat na adresu ${email}. Klikom na link koji Vam je stigao, šaljete unete podatke administratoru na uvid. U narednih 48h će Vam biti odobrena ili odbijena registracija`});
     } 
     catch (error:any) {
         res.status(500).json({ message: 'Error registering user', error:`${error.message}}`});
     }
     
     
+});
+
+userRouter.post("/register/contactAdmin", authorizeToken, async (req: any, res) => {
+    
+    if(!verifyToken(req.token))
+        return res.status(400).send({message: "Invalid token"});
+
+    const token = req.token;
+    const admins = await Admin.find({});
+
+    const emails: any = [];
+
+    admins.reduce((current: any, next) => {
+        current.push(next.email)
+    }, emails);
+
+    const mailOptions = {
+        from: `ZakažiLab <${emailParams.email}`,
+        to: emails,
+        subject: "Pošaljite registraciju",
+        text: `http://localhost:3000/confirm/${token}`,
+        html: `<p>Ovaj link je validan <b>15 minuta</b></p>
+            <a href="http://localhost:3000/confirm/${token}" target="_blank"><p>Pošaljite registraciju!</p></a>`
+    };
+
+    transporer.sendMail(mailOptions, (err, info) => {
+        err ?
+        console.log(err) :
+        console.log(`Email sent to ${emails}`);
+    });
+    
+    res.status(200).json({message: `Email poslat administratorima. U narednih 48h će Vam biti odobrena ili odbijena registracija`});
+
 });
 
 userRouter.post("/register/confirm", authorizeToken, async (req:any, res) => {
@@ -243,8 +276,8 @@ userRouter.post("/register/confirm", authorizeToken, async (req:any, res) => {
             return res.status(400).send({message: `Korisnik sa email adresom ${data.email} je već registrovan`});
 
         data =  Object.keys(data)
-                        .filter(objectKey => objectKey !== "iat" && objectKey !== "exp")
-                        .reduce((newObject: any, key) => {
+                      .filter(objectKey => objectKey !== "iat" && objectKey !== "exp")
+                      .reduce((newObject: any, key) => {
                                 newObject[key] = data[key];
                                 return newObject;
                             }, {});
