@@ -5,7 +5,7 @@ import '../styles/Page.css';
 import { useState } from "react";
 
 
-import Brand from "../images/favicon.ico";
+import Brand from "../images/logo.ico";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css'
 import {Route, Routes} from 'react-router-dom';
@@ -39,7 +39,7 @@ const Professor = () => {
             </button>
             </div>
             <div>
-             <Link to='/' className="title"><img src={Brand} alt="" style={{width:"40px"}} className="rounded-pill"/> ZakažiLab </Link>
+             <Link to='/' className="title"><img src={Brand} alt="" style={{width:"60px"}} className="rounded-pill"/> ZakažiLab </Link>
             </div>
             <button onClick={logoutUser} className="login-button" style={{position: "absolute", right: "40px"}} >Odjavi se
             {/* <i className="bi bi-box-arrow-right"></i> */}

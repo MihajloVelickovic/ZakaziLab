@@ -315,7 +315,7 @@ const LaboratorijskaVezba = ({ role }) => {
                 <button className='lab-button' key={lab._id} onClick={() => handleLabClick(lab.name)}>{lab.name}</button>
             ))}
             {(role === 'admin' || role === 'assistant' || role === 'professor') && (
-                <button className = 'addLabButton' style={{float:'right'}} onClick={() => setShowAddLabModal(true)}>Dodaj laboratorijsku vežbu</button>
+                <button className = 'addLabButton' onClick={() => setShowAddLabModal(true)}>Dodaj laboratorijsku vežbu</button>
             )}
         </div>
     );
