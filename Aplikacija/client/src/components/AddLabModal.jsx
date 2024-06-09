@@ -87,9 +87,9 @@ const AddLabModal = ({ onClose }) => {
 
     const handleSubmit = async (e) => {         //I added it to be async
         e.preventDefault();
-        labData['subjects'] = labData['subjects'].map( datum => {
-            datum.date = `${datum.date}T00:00:00Z`;
-            return datum;
+        labData['subjects'] = labData['subjects'].map( subject => {
+            subject.date = `${subject.date}T00:00:00Z`;
+            return subject;
         })
         console.log(labData);
         await axiosInstance.post('/lab/add', labData).then(response => {
