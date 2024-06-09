@@ -10,7 +10,7 @@ professorRouter.get("/findAll", authorizeToken, async (req: any, res) => {
     if(!verifyToken(req.token)) 
         res.status(403).send({message: "Invalid token"});
     else {
-        const found = await Professor.find({});
+        const found = await Professor.find({}).populate('assignedLabs');
         found != null ? 
         res.status(200).send(found) : 
         res.status(404).send({message: "professors not found"});
@@ -48,7 +48,7 @@ professorRouter.patch("/update/:id", authorizeToken,async (req:any, res) => {
         const {
             name, lastName, email,
             privileges, module, gradDate,
-            gradFaculty, phdGradDate, phdGradFaculty
+            gradFaculty, phdGradDate, phdGradFaculty, assignedLabs
         } = req.body;
 
         if (!professorId) {
@@ -66,6 +66,7 @@ professorRouter.patch("/update/:id", authorizeToken,async (req:any, res) => {
             if (gradFaculty !== undefined) updateFields.gradFaculty = gradFaculty;
             if (phdGradDate !== undefined) updateFields.phdGradDate = phdGradDate;
             if (phdGradFaculty !== undefined) updateFields.phdGradFaculty = phdGradFaculty;
+            if(assignedLabs !== undefined) updateFields.assignedLabs = assignedLabs;
 
             const result = await Professor.findByIdAndUpdate(
                 professorId,
@@ -92,7 +93,7 @@ professorRouter.post("/filteredFind", authorizeToken, async (req: any, res) => {
    else {
         const query = req.body;
 
-        const professors = await Professor.find(query);
+        const professors = await Professor.find(query).populate('assignedLabs');
         professors != null ?
         res.status(200).send(professors) :
         res.status(404).send({message: "professors with filter not found"});

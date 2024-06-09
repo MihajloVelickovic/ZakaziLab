@@ -8,7 +8,10 @@ import { authorizeToken, verifyToken } from "../config/tokenFuncs";
 const studentRouter = Router();
 
 //dodavanje
-studentRouter.post("/add", async (req, res) => {
+studentRouter.post("/add", authorizeToken, async (req:any, res) => {
+    let data;
+    if(!(data = verifyToken(req.token))) 
+        return res.status(403).send({message: "Invalid token"});
     const { name, lastName, email, password,
          privileges, birthDate, index, module} = req.body;
     
