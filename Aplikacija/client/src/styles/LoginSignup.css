@@ -210,6 +210,8 @@
     justify-content: center;
     background-color: #f8f9fa;
     background-image: url(../images/loginBackground.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 .container {
