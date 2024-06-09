@@ -111,15 +111,10 @@ labRouter.post("/add", authorizeToken, async (req: any, res) => {
                             , free:false,student:studentEntryList[r*classroomRef.cols+c]});   
                             }
                             else {
-                                computer = new Computer({ name: `${sname}_${r}_${c}`, malfunctioned:true,
-                                malfunctionDesc:classroomRef.computers[r][c].malfunctionDesc});
+                                computer = new Computer({ name: `${sname}_${r}_${c}`});
                             }                        
                         }
-                        else if(classroomRef.computers[r][c].malfunctioned){
-                            computer = new Computer({ name: `${sname}_${r}_${c}`, malfunctioned:true,
-                                malfunctionDesc:classroomRef.computers[r][c].malfunctionDesc});                         
-                        }
-                        else{
+                        else {
                             computer = new Computer({ name: `${sname}_${r}_${c}`});
                         }
                         rowComputers.push(computer);
