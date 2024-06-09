@@ -236,8 +236,6 @@ userRouter.post("/register/contactAdmin", authorizeToken, async (req: any, res) 
     if(!(data = verifyToken(req.token)))
         return res.status(400).send({message: "Invalid token"});
 
-    
-
     data =  Object.keys(data)
                   .filter(objectKey => objectKey !== "iat" && objectKey !== "exp")
                   .reduce((newObject: any, key) => {
@@ -254,7 +252,7 @@ userRouter.post("/register/contactAdmin", authorizeToken, async (req: any, res) 
         res.status(200).json({message: "Uspešno poslat zahtev administratorima"});
     }
     catch(err){
-        res.status(500).send({message: "Error sending request", err});
+        res.status(500).send({message: "Zahtev već u bazi zahteva!"});
     }
 });
 
