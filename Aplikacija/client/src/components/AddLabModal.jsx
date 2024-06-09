@@ -11,7 +11,7 @@ const AddLabModal = ({ onClose }) => {
         subjectNum: 0,
         maxPoints: 0,
         classroom: '',
-        subjects: [],               //moze da ostane ovako, ali mora da doda maxPoints na serveru i da preimenuje dates
+        Subjects: [],               //moze da ostane ovako, ali mora da doda maxPoints na serveru i da preimenuje dates
         studentList: [],            //mora da bude lista student id-ova        
         timeSlots: [],           
         autoSchedule: false,
@@ -38,21 +38,21 @@ const AddLabModal = ({ onClose }) => {
     };
 
     const handleSubjectChange = (index, field, value) => {
-        const newSubjects = [...labData.subjects];
-        newSubjects[index] = {
-            ...newSubjects[index],
+        const newSubject = [...labData.Subjects];
+        newSubject[index] = {
+            ...newSubject[index],
             [field]: value
         };
         setLabData({
             ...labData,
-            subjects: newSubjects
+            Subjects: newSubject
         });
     };
 
     const addSubject = () => {
         setLabData({
             ...labData,
-            subjects: [...labData.subjects, { desc: '', date: '', maxSubjPoints: 0 }]
+            Subjects: [...labData.Subjects, { desc: '', date: '', maxPoints: 0 }]
         });
     };
 
@@ -87,32 +87,30 @@ const AddLabModal = ({ onClose }) => {
 
     const handleSubmit = async (e) => {         //I added it to be async
         e.preventDefault();
-        labData['subjects'] = labData['subjects'].map( subject => {
-            subject.date = `${subject.date}T00:00:00Z`;
-            return subject;
+        labData['Subjects'] = labData['Subjects'].map( Subjects => {
+            Subjects.date = `${Subjects.date}T00:00:00Z`;
+            console.log(Subjects.date.split('T')[0])
+            return Subjects;
         })
-        labData['studentList'] = labData['studentList'].map( async index => {
-            
-            let response = await axiosInstance.post('/user/filteredFind', {index});
-            if (!response.ok) {
-                console.log('Failed to fetch data', response);
-            }
-
+        const studentListUpdated = labData['studentList'].map( async index => {
+            let response = await axiosInstance.post('/student/filteredFind', {index});
             //const data = await response.json();
-            const student = response.data;
+            const student = response.data[0];
             console.log("fetchovao sam studenta: ", student);
-            return student;
+            index = student._id;
+            return index;
             //fetch student
         })
+        labData['studentList'] = await Promise.all(studentListUpdated);
 
-
+        console.log(labData['Subjects'][0].date);
         console.log(labData);
-        // await axiosInstance.post('/lab/add', labData).then(response => {
-        //     onClose();
-        //     // Refresh the labs list if needed
-        // }).catch(error => {
-        //     console.error('There was an error adding the lab!', error);
-        // });
+        await axiosInstance.post('/lab/add', labData).then(response => {
+            onClose();
+            // Refresh the labs list if needed
+        }).catch(error => {
+            console.error('There was an error adding the lab!', error);
+        });
     };
 
     return (
@@ -151,8 +149,8 @@ const AddLabModal = ({ onClose }) => {
                         <input type="number" min="0" name="subjectNum" value={labData.subjectNum} onChange={handleChange} required />
                     </label>
                     <div>
-                        <h3>Subjects</h3>
-                        {labData.subjects.map((subject, index) => (
+                        <h3>Subject</h3>
+                        {labData.Subjects.map((subject, index) => (
                             <div key={index}>
                                 <label>
                                     Description:
@@ -164,7 +162,7 @@ const AddLabModal = ({ onClose }) => {
                                 </label>
                                 <label>
                                     Max Points:
-                                    <input type="number" min="0" value={subject.maxSubjPoints} onChange={(e) => handleSubjectChange(index, 'maxSubjPoints', e.target.value)} required />
+                                    <input type="number" min="0" value={subject.maxPoints} onChange={(e) => handleSubjectChange(index, 'maxPoints', e.target.value)} required />
                                 </label>
                             </div>
                         ))}

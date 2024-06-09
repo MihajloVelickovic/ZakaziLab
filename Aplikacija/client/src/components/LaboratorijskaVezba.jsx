@@ -136,9 +136,18 @@ const LaboratorijskaVezba = ({ role }) => {
 
         const occupiedComputer = computer.student?true:false;
         if (occupiedComputer) {
-            console.log("that computer is taken >:3");
-            console.log(computer);
-            alert("that computer is taken >:3");
+            console.log(occupiedComputer, computerUserIsOccupying);
+            if (computer.name == computerUserIsOccupying.name){
+                const confirmSwitch = window.confirm('Da li zelite da oslobodite Vaš računar?');  
+                if (confirmSwitch) {
+                    // Update backend to switch computers
+                    //switchComputer(computerUserIsOccupying, computer, user);
+                    await freeComputer(computer, sessionIsOccupying);
+                }  
+            }
+            else {
+                alert("Taj računar je već zauzet!");
+            }
         }
         else if (userIsOccupying) {
             // Ask if they want to switch computers or sessions
@@ -345,6 +354,7 @@ const LaboratorijskaVezba = ({ role }) => {
 
     const renderComputers = () => (     // Ovde mozda nece da se stampa student index, jer iako je lab populated, mozda subjects nije kada se fetchuje nesto
         <div>
+            {console.log("selected session: ", selectedSession)}
             <h3>Računari</h3>              
             <p>{selectedSession? selectedSession.time.split('T')[1].split('.')[0] : <></>}</p>
             {computers.map((row, rowIndex) => (
