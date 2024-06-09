@@ -33,7 +33,7 @@ export const TemaSchema = new mongoose.Schema<ISubject>({
     },
     lab: {
         type:String,
-        required:true
+        required:true,
     }
 });
 
