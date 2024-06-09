@@ -13,6 +13,7 @@ import userRouter from "./routes/userRouter";
 import adminRouter from "./routes/adminRouter";
 import computerRouter from "./routes/computerRouter";
 import classSessionRouter from "./routes/classSessionRouter";
+import registrationRequestRouter from "./routes/registrationRequestRouter";
 
 const corsOptions = {
     origin: 'http://localhost:3000',
@@ -24,6 +25,8 @@ const app = express();
 app.use(express.json());
 app.use(cors(corsOptions));
 
+app.use("/user", userRouter);
+app.use("/regRequest", registrationRequestRouter);
 app.use("/user", userRouter);
 app.use("/student", studentRouter);
 app.use("/subject", subjectRouter);
