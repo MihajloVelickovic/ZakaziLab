@@ -152,26 +152,26 @@ userRouter.post("/register", async (req:any, res) => {
     
     try {
 
-        // const foundStudent = VALID_DOMAINS[0].some(domain => {
-        //     if(email.includes(domain))
-        //         return true;
-        //     return false;
-        // });
+        const foundStudent = VALID_DOMAINS[0].some(domain => {
+            if(email.includes(domain))
+                return true;
+            return false;
+        });
 
-        // const foundProfessor = VALID_DOMAINS[1].some(domain => {
-        //     if(email.includes(domain))
-        //         return true;
-        //     return false;
-        // })
+        const foundProfessor = VALID_DOMAINS[1].some(domain => {
+            if(email.includes(domain))
+                return true;
+            return false;
+        })
 
-        // if(!foundStudent && !foundProfessor)
-        //     return res.status(400).send({message: "Ovaj domen nije validan"});
+        if(!foundStudent && !foundProfessor)
+            return res.status(400).send({message: "Ovaj domen nije validan"});
 
-        // if(foundStudent && privileges !== "student")
-        //     return res.status(400).send({message: "Ovaj domen mogu imati samo studentske email adrese"});
+        if(foundStudent && privileges !== "student")
+            return res.status(400).send({message: "Ovaj domen mogu imati samo studentske email adrese"});
         
-        // if(foundProfessor && privileges === "student")
-        //     return res.status(400).send({message: "Ovaj domen mogu imati samo profesorske email adrese"});
+        if(foundProfessor && privileges === "student")
+            return res.status(400).send({message: "Ovaj domen mogu imati samo profesorske email adrese"});
 
         let userExists = await User.findOne({ email });
         if (userExists) 
@@ -293,7 +293,7 @@ userRouter.post("/register/confirm", authorizeToken, async (req:any, res) => {
        transporer.sendMail(mailOptions, (err, info) => {
             err ?
             console.log(err) :
-            console.log(`Email sent to ${data.email}`);
+            console.log(`Email sent to ${data["email"].email}`);
         });
         return res.status(200).send({message: "Administrator je odbio zahtev"});
     }
