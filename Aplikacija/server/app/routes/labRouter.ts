@@ -50,7 +50,7 @@ labRouter.post("/add", authorizeToken, async (req: any, res) => {
 
     const currentYear = new Date().getFullYear();
     const nextYear = currentYear + 1;
-    
+    console.log(Subjects);
 
     const name = `${labName}_${currentYear}/${nextYear}`;
     
@@ -59,35 +59,29 @@ labRouter.post("/add", authorizeToken, async (req: any, res) => {
         const attendances = Array(subjectNum).fill(false);
         const points = Array(subjectNum).fill(0);
 
-        let studentEntryPromises = studentList.map(async (index:any) => {
-            const student:any = await Student.findOne({index});
-            if(student){
-
-                const entrytoAdd:any = new StudentEntry(
-                    {student:student._id, attendance:attendances,points, labName:name})
-                let savedEntry:any;
-                try{
-                    savedEntry = await entrytoAdd.save();        
-                }
-                catch(err){
-                    console.log(err);
-                    return res.status(400).send({ message: "Error adding studentEntry" });
-                }
-                return savedEntry?._id;
+        let studentEntryPromises = studentList.map(async (student:any) => {
+         const entrytoAdd:any = new StudentEntry(
+                {student:student._id, attendance:attendances,points, labName:name})
+            let savedEntry:any;
+            try{
+                savedEntry = await entrytoAdd.save();        
             }
+            catch(err){
+                console.log(err);
+                return res.status(400).send({ message: "Error adding studentEntry" });
+            }
+            return savedEntry?._id;            
         });
 
         const classroomRef:any = await Classroom.findOne({_id:classroom});
-        console.log("classroom",classroomRef);
         const studentEntryList = await Promise.all(studentEntryPromises);
 
         for (let i = 0; i < subjectNum; ++i) {
             let sessions: any[] = [];
-            for (let j = 0; j < timeSlots.length; ++j) {
+            for (let j = 0; j < timeSlots.length; ++j) {              
                 let datum = Subjects[i].date.split('T')[0];
                 let computers: IComputer[][] = [];
                 let sname = `${classroomRef.name}_${datum}/${timeSlots[j]}`;
-                console.log("sname",sname);
                 
                 const existingClassroom = await Classroom.findOne({ name: sname });
                 if (existingClassroom) {                  
@@ -97,7 +91,7 @@ labRouter.post("/add", authorizeToken, async (req: any, res) => {
                 for (let r = 0; r < classroomRef.rows; ++r) {
                     const rowComputers: IComputer[] = [];
                     for (let c = 0; c < classroomRef.cols; ++c) {
-                        let computer;
+                        let computer:any;
                         if(autoSchedule) {
                             if((!classroomRef.computers[r][c].malfunctioned &&
                                 ((r*classroomRef.cols+c+j*(classroomRef.rows*classroomRef.cols)))
@@ -130,7 +124,8 @@ labRouter.post("/add", authorizeToken, async (req: any, res) => {
                                 : 0;
 
             const subDesc = Subjects[i].desc;
-            const date = Subjects[i].date;
+            console.log(subDesc);
+            const date = new Date(Subjects[i].date);
             const subject = new Tema({
                 ordNum: (i+1), desc: subDesc, date, sessions, maxPoints: subjMaxPoints, lab: name,
             });
@@ -142,8 +137,10 @@ labRouter.post("/add", authorizeToken, async (req: any, res) => {
                 console.log(err);
                 const overlap = err.keyValue['sessions.classroom.name'].split('_')[1];
                 subjects.forEach(async (_id) => {
-                    const deleted = await Tema.findOneAndDelete({_id});                  
-                    console.log("Deleted subjects Id: ", _id)
+                    const deleted = await Tema.findOneAndDelete({_id});                                    
+                });
+                studentEntryList.forEach(async (_id) => {
+                    const deleted = await StudentEntry.findOneAndDelete({_id});
                 });
                 return res.status(400).send({ message: `Preklapanje termina ${overlap}`});     
             }
