@@ -98,7 +98,7 @@ labRouter.post("/add", authorizeToken, async (req: any, res) => {
                 if (existingClassroom) {                  
                     return res.status(400).send({ message: `Classroom with name ${sname} already exists` });
                 }
-
+                //dodavanje kabineta i kom
                 for (let r = 0; r < classroomRef.rows; ++r) {
                     const rowComputers: IComputer[] = [];
                     for (let c = 0; c < classroomRef.cols; ++c) {
