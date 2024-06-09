@@ -25,7 +25,8 @@ export const StudentEntrySchema = new mongoose.Schema<IStudentEntry>({
     },
     labName: {
         type: String,
-        required: true
+        required: true,
+        unique:true
     }
 });
 
