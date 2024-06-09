@@ -9,6 +9,7 @@ import Professor from "../models/professor";
 import nm from "nodemailer";
 import { emailParams, transporer, strongPassword, VALID_DOMAINS } from "../config/config";
 import subjectRouter from "./subjectRouter";
+import RegistrationRequest from "../models/registrationRequest";
 
 const userRouter = Router();
 
@@ -151,7 +152,7 @@ userRouter.post("/register", async (req:any, res) => {
         return res.status(400).json({ message: 'All of the fields are necessary' });
     
     try {
-
+        
         const foundStudent = VALID_DOMAINS[0].some(domain => {
             if(email.includes(domain))
                 return true;
@@ -231,7 +232,6 @@ userRouter.post("/register", async (req:any, res) => {
 });
 
 userRouter.post("/register/contactAdmin", authorizeToken, async (req: any, res) => {
-    
     let data: any;
     if(!(data = verifyToken(req.token)))
         return res.status(400).send({message: "Invalid token"});
@@ -245,31 +245,17 @@ userRouter.post("/register/contactAdmin", authorizeToken, async (req: any, res) 
                             return newObject;
                           }, {});
 
-    const emails: any[] = [];
+    const newToken = signToken({data}, "", true);
+              
+    const regRequest = new RegistrationRequest({token: newToken});
 
-    const admins = await Admin.find({});
-
-    admins.forEach(admin => emails.push(admin.email));
-
-    const newToken = signToken({data}, "2d");
-
-    const mailOptions = {
-        from: `ZakažiLab <${emailParams.email}`,
-        to: emails,
-        subject: "Novi zahtev za registraciju",
-        text: `http://localhost:3000/confirm/${newToken}`,
-        html: `<p>Ovaj link je validan <b>2 dana</b></p>
-            <a href="http://localhost:3000/confirm/${newToken}" target="_blank"><p>Potvrdite registraciju novog korisnika!</p></a>`
-    };
-
-    transporer.sendMail(mailOptions, (err, info) => {
-        err ?
-        console.log(err) :
-        console.log(`Email sent to ${emails}`);
-    });
-    
-    res.status(200).json({message: `Email poslat administratorima. U narednih 48h će Vam biti odobrena ili odbijena registracija`});
-
+    try{
+        const savedReq = await regRequest.save();
+        res.status(200).json({message: "Uspešno poslat zahtev administratorima"});
+    }
+    catch(err){
+        res.status(500).send({message: "Error sending request", err});
+    }
 });
 
 userRouter.post("/register/confirm", authorizeToken, async (req:any, res) => {
@@ -277,7 +263,7 @@ userRouter.post("/register/confirm", authorizeToken, async (req:any, res) => {
     let data: any = verifyToken(req.token);
     if(!data)
         return res.status(400).send({message: "Expired token"});
-    
+
     if(!("status" in req.body))
         return res.status(400).send({message: "Invalid body, status needed"});
 
@@ -294,38 +280,45 @@ userRouter.post("/register/confirm", authorizeToken, async (req:any, res) => {
             err ?
             console.log(err) :
             console.log(`Email sent to ${data["email"].email}`);
+        
         });
-        return res.status(200).send({message: "Administrator je odbio zahtev"});
+
+        try{
+            await RegistrationRequest.findOneAndDelete({token: req.body.requestToken});
+            return res.status(200).send({message: "Administrator je odbio zahtev"});
+        }
+        catch(err){
+            return res.status(400).send({message: "Error deleting request"});
+        }
     }
     else{
 
-        const invalidateTokens = await User.findOne({email: data.email});
+        const request = await RegistrationRequest.findOne({token: req.body.requestToken});
         
-        if(invalidateTokens != null)
-            return res.status(400).send({message: `Korisnik sa email adresom ${data.email} je već registrovan`});
+        if (request === null)
+            return res.status(400).send({message: "Request not found"}); 
 
-        data = Object.keys(data)
-                     .filter(objectKey => objectKey !== "iat" && objectKey !== "exp")
-                     .reduce((newObject: any, key) => {
-                                newObject[key] = data[key];
-                                return newObject;
-                            }, {});
+        let requestToken = verifyToken(request.token);
 
+        if(!requestToken)
+            return res.status(400).send({message: "Invalid token"});
+
+        requestToken = requestToken["data"];
 
         let dbUser;
-        const type = data["data"].privileges;
+        const type = requestToken.privileges;
         switch(type){
             case "student": 
-                dbUser = new Student(data["data"]);
+                dbUser = new Student(requestToken);
                 break;
             case "assistant": 
-                dbUser = new Assistant(data["data"]);
+                dbUser = new Assistant(requestToken);
                 break;
             case "admin": 
-                dbUser = new Admin(data["data"]);
+                dbUser = new Admin(requestToken);
                 break;
             case "professor": 
-                dbUser = new Professor(data["data"]);
+                dbUser = new Professor(requestToken);
                 break;
             default: 
                 return res.status(400).json({ message: "Invalid privileges" });
@@ -334,6 +327,7 @@ userRouter.post("/register/confirm", authorizeToken, async (req:any, res) => {
         }
         try{
             await dbUser.save();
+            await RegistrationRequest.findOneAndDelete({token: req.body.requestToken});
             const mailOptions = {
                 from: `ZakažiLab <${emailParams.email}`,
                 to: dbUser.email,
@@ -344,7 +338,7 @@ userRouter.post("/register/confirm", authorizeToken, async (req:any, res) => {
            transporer.sendMail(mailOptions, (err, info) => {
                 err ?
                 console.log(err) :
-                console.log(`Email sent to ${data.email}`);
+                console.log(`Email sent to ${requestToken.email}`);
             });
             res.status(200).send({message: "Uspešna registracija"});
         }

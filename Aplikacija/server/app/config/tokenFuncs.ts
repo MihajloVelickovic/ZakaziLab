@@ -12,10 +12,15 @@ const refreshPublicKey = fs.readFileSync(path.resolve(__dirname, "../keys/refres
 
 function signToken(payload: any): any;
 function signToken(payload: any, expiration: string): any;
+function signToken(payload: any, expiration: string, infinite: boolean): any;
 
-function signToken(payload: any, expiration?: string){
+function signToken(payload: any, expiration?: string, infinite?: boolean){
 
     let exp;
+    if(typeof infinite !== "undefined" && infinite === true){
+        return jwt.sign(payload, privateKey, {algorithm: "RS256"});
+    }
+
     if(typeof expiration === "undefined")
         exp = TOKEN_LENGTH;    //temporary
     else

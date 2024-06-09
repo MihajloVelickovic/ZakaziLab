@@ -36,11 +36,9 @@ const strongPassword: RegExp =  /^(?=.*[A-Z])(?=.*[!@#$%^&*()_+{}\[\]:;"'<>,.?/~
 
 const TOKEN_LENGTH = process.env.TOKEN_LENGTH;
 
-
-
 const VALID_DOMAINS = [
-                        [process.env.STUDENT_DOMAINS!.split(",")],
-                        [process.env.PROFESSOR_DOMAINS!.split(",")]
+                        process.env.STUDENT_DOMAINS!.split(","),
+                        process.env.PROFESSOR_DOMAINS!.split(",")
                       ];
 
 export {URI, emailParams, transporer, strongPassword, TOKEN_LENGTH, VALID_DOMAINS};
