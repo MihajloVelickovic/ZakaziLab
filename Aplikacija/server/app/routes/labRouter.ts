@@ -68,8 +68,9 @@ labRouter.post("/add", authorizeToken, async (req: any, res) => {
         const attendances = Array(subjectNum).fill(false);
         const points = Array(subjectNum).fill(0);
 
-        let studentEntryPromises = studentList.map(async (student:any) => {
-            const entrytoAdd:any = new StudentEntry({student, attendance:attendances,points, labName:name})
+        let studentEntryPromises = studentList.map(async (index:any) => {
+            const student:any = await Student.find({index});                    //I changed this, I think it works
+            const entrytoAdd:any = new StudentEntry({student: student._id, attendance:attendances,points, labName:name})
             let savedEntry:any;
             try{
                 savedEntry = await entrytoAdd.save();        
