@@ -17,7 +17,7 @@ const ConfirmRegister = () => {
 
     const handleConfirm = async (status) => {
         
-        const response = await fetch(`http://127.0.0.1:1738/register/confirm`, {
+        const response = await fetch(`http://127.0.0.1:1738/user/register/confirm`, {
             method: "POST",
             headers: {
                 "Authorization": `Bearer ${token}`,
@@ -52,7 +52,7 @@ const ConfirmRegister = () => {
                 <h3>Informacije o novom korisniku</h3>
                 {tokenData && (
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        {Object.keys(tokenData.data).map((key) => (
+                        {Object.keys(tokenData.data).filter(key => key !== 'password').map((key) => (
                             <div key={key}>
                                 <strong>{key}:</strong> {tokenData.data[key]}
                             </div>
