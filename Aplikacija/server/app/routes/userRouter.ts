@@ -222,7 +222,7 @@ userRouter.post("/register", async (req:any, res) => {
             console.log(`Email sent to ${email}`);
         });
 
-        res.status(200).json({message: `Email poslat na adresu ${email}. Klikom na link koji Vam je stigao, šaljete unete podatke administratoru na uvid. U narednih 48h će Vam biti odobrena ili odbijena registracija`});
+        res.status(200).json({message: `Email poslat na adresu ${email}. Klikom na link koji Vam je stigao, šaljete unete podatke administratoru na uvid. Administrator će vam odobriti ili odbijti zahtev u narednom periodu`});
     } 
     catch (error:any) {
         res.status(500).json({ message: 'Error registering user', error:`${error.message}}`});
