@@ -44,7 +44,7 @@ labRouter.post("/add", authorizeToken, async (req: any, res) => {
     }
 
     let { labName, desc, mandatory, subjectNum, Subjects, maxPoints, classroom,
-         studentList, timeSlots, autoSchedule, maxSubjPoints } = req.body;
+         studentList, timeSlots, autoSchedule } = req.body;
 
     console.log(req.body);
 
@@ -61,7 +61,7 @@ labRouter.post("/add", authorizeToken, async (req: any, res) => {
 
         let studentEntryPromises = studentList.map(async (student:any) => {
          const entrytoAdd:any = new StudentEntry(
-                {student:student._id, attendance:attendances,points, labName:name})
+                {student:student, attendance:attendances,points, labName:name})
             let savedEntry:any;
             try{
                 savedEntry = await entrytoAdd.save();        
@@ -117,8 +117,8 @@ labRouter.post("/add", authorizeToken, async (req: any, res) => {
                 sessions.push(new ClassSession({ classroom: classroom, time }));
             }
 
-            const subjMaxPoints = maxSubjPoints !== undefined 
-                                ? maxSubjPoints[i]
+            const subjMaxPoints = Subjects !== undefined 
+                                ? Subjects[i].maxPoints
                                 : maxPoints !== 0
                                 ? maxPoints/subjectNum
                                 : 0;
