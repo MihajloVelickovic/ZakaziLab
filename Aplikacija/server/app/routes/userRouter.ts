@@ -248,7 +248,7 @@ userRouter.post("/register/contactAdmin", authorizeToken, async (req: any, res) 
     const emails: any[] = [];
 
     const admins = await Admin.find({});
-    
+
     admins.forEach(admin => emails.push(admin.email));
 
     const newToken = signToken({data}, "2d");
@@ -256,10 +256,10 @@ userRouter.post("/register/contactAdmin", authorizeToken, async (req: any, res) 
     const mailOptions = {
         from: `ZakažiLab <${emailParams.email}`,
         to: emails,
-        subject: "Pošaljite registraciju",
+        subject: "Novi zahtev za registraciju",
         text: `http://localhost:3000/confirm/${newToken}`,
-        html: `<p>Ovaj link je validan <b>15 minuta</b></p>
-            <a href="http://localhost:3000/confirm/${newToken}" target="_blank"><p>Pošaljite registraciju!</p></a>`
+        html: `<p>Ovaj link je validan <b>2 dana</b></p>
+            <a href="http://localhost:3000/confirm/${newToken}" target="_blank"><p>Potvrdite registraciju novog korisnika!</p></a>`
     };
 
     transporer.sendMail(mailOptions, (err, info) => {
@@ -278,17 +278,17 @@ userRouter.post("/register/confirm", authorizeToken, async (req:any, res) => {
     if(!data)
         return res.status(400).send({message: "Expired token"});
     
-
-    if(!req.body.status)
+    if(!("status" in req.body))
         return res.status(400).send({message: "Invalid body, status needed"});
 
     if(req.body.status === false){
         const mailOptions = {
             from: `ZakažiLab <${emailParams.email}`,
-            to: data.email,
+            to: data["data"].email,
             subject: "Zahtev za registraciju ODBIJEN",
             text: `Administrator je odbio Vaš zahtev za registraciju, pokušajte ponovo. Obratite pažnju na ispravnost unetih podataka`,
-            html: `<p>Administrator je <b>odbio</b> Vaš zahtev za registraciju, pokušajte ponovo. Obratite pažnju na ispravnost unetih podataka</p>`
+            html: `<p>Administrator je <b>odbio</b> Vaš zahtev za registraciju, pokušajte ponovo. Obratite pažnju na ispravnost unetih podataka<br/></p>
+                   <p>Razlog: ${req.body.message}</p>`
        };
        transporer.sendMail(mailOptions, (err, info) => {
             err ?
