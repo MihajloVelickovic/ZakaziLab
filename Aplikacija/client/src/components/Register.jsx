@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 const sendConfirmToken = async (confirmToken, setMessage) => {
-    const response = await fetch(`http://127.0.0.1:1738/user/register/confirm`, {
+    const response = await fetch(`http://127.0.0.1:1738/user/register/contactAdmin`, {
         method: "POST",
         //body: JSON.stringify(confirmToken),
         headers: {"Authorization": `Bearer ${confirmToken.token}`,"Content-Type": "application/json"}
@@ -29,18 +29,18 @@ const Register = () => {
     },[confirmToken])
 
     useEffect(() => {
-        if (message) {
-            const timer = setTimeout(() => {
-                window.location.href = `/login`;
-            }, 3000); // 3 seconds delay
+        // if (message) {
+        //     const timer = setTimeout(() => {
+        //         window.location.href = `/login`;
+        //     }, 3000); // 3 seconds delay
 
-            return () => clearTimeout(timer); // Clean up the timer if the component unmounts or message changes
-        }
+        //     return () => clearTimeout(timer); // Clean up the timer if the component unmounts or message changes
+        // }
     }, [message]); // Adding message and history as dependencies to useEffect
     
     return (
         <h2 style={{textAlign:"center", marginTop:"40px"}}>
-            {message?<p>{message}</p>: <p>Jos se nije primila poruka</p>}
+            {message?<p>{message}</p>: <p>Pending...</p>}
         </h2>
     )
 }
