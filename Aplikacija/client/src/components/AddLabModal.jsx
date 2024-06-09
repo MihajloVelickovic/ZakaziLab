@@ -12,7 +12,7 @@ const AddLabModal = ({ onClose }) => {
         maxPoints: 0,
         classroom: '',
         subjects: [],               //moze da ostane ovako, ali mora da doda maxPoints na serveru i da preimenuje dates
-        studentList: [],            
+        studentList: [],            //mora da bude lista student id-ova        
         timeSlots: [],           
         autoSchedule: false,
     });
@@ -91,13 +91,28 @@ const AddLabModal = ({ onClose }) => {
             datum.date = `${datum.date}T00:00:00Z`;
             return datum;
         })
+        labData['studentList'] = labData['studentList'].map( async index => {
+            
+            let response = await axiosInstance.post('/user/filteredFind', {index});
+            if (!response.ok) {
+                console.log('Failed to fetch data', response);
+            }
+
+            //const data = await response.json();
+            const student = response.data;
+            console.log("fetchovao sam studenta: ", student);
+            return student;
+            //fetch student
+        })
+
+
         console.log(labData);
-        await axiosInstance.post('/lab/add', labData).then(response => {
-            onClose();
-            // Refresh the labs list if needed
-        }).catch(error => {
-            console.error('There was an error adding the lab!', error);
-        });
+        // await axiosInstance.post('/lab/add', labData).then(response => {
+        //     onClose();
+        //     // Refresh the labs list if needed
+        // }).catch(error => {
+        //     console.error('There was an error adding the lab!', error);
+        // });
     };
 
     return (
