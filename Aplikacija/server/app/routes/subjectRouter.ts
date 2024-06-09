@@ -167,6 +167,7 @@ subjectRouter.get("/findAll", authorizeToken, async (req: any, res) => {
     }
 });
 
+
 subjectRouter.post("/filteredFind", authorizeToken, async (req: any, res) => {
     try {
         if(!verifyToken(req.token)) 
