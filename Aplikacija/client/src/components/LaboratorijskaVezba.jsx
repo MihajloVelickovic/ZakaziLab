@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../utils/axiosInstance'
 import '../styles/LaboratorijskaVezba.css'
+import AddLabModal from './AddLabModal';
+
 
 const LaboratorijskaVezba = ({ role }) => {
     const [labs, setLabs] = useState([]);
@@ -11,6 +13,7 @@ const LaboratorijskaVezba = ({ role }) => {
     const [selectedSession, setSelectedSession] = useState(null);
     const [computers, setComputers] = useState([]);
     const [actionModal, setActionModal] = useState({ visible: false, computer: null, action: '', grade: '' });
+    const [showAddLabModal, setShowAddLabModal] = useState(false); // New state for Add Lab modal
 
     useEffect(() => {
         axiosInstance.get('/lab/findAll').then(response => {
@@ -287,12 +290,24 @@ const LaboratorijskaVezba = ({ role }) => {
 
     };
 
+    // const renderLabs = () => (
+    //     <div>
+    //         <h3>Vežbe</h3>
+    //         {labs.map(lab => (
+    //             <button key={lab._id} onClick={() => handleLabClick(lab.name)}>{lab.name}</button>
+    //         ))}
+    //     </div>
+    // );
+
     const renderLabs = () => (
         <div>
             <h3>Vežbe</h3>
             {labs.map(lab => (
                 <button key={lab._id} onClick={() => handleLabClick(lab.name)}>{lab.name}</button>
             ))}
+            {(role === 'admin' || role === 'assistant' || role === 'professor') && (
+                <button onClick={() => setShowAddLabModal(true)}>Dodaj laboratorijsku vežbu</button>
+            )}
         </div>
     );
 
@@ -447,6 +462,7 @@ const LaboratorijskaVezba = ({ role }) => {
                 {selectedSubject && renderSessions()}
                 {selectedSession && renderComputers()}
                 {actionModal.visible && renderActionModal()}
+                {showAddLabModal && <AddLabModal onClose={() => setShowAddLabModal(false)} />}
             </div>
         </>
     )
