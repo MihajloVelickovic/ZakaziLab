@@ -521,7 +521,7 @@ const LoginSignup = () => {
         <p className="p-error">{formErrors.password}</p>
         </>
         : <></>}
-        {action==="Sign Up"? <></> : <p onClick={handleForgotPasswordClick} style={{cursor: 'pointer', color: '#03A9F4'}} > forgot password?</p>}
+        {action==="Sign Up"? <></> : <p onClick={handleForgotPasswordClick} style={{cursor: 'pointer', color: '#03A9F4'}} > {forgotPasswordClicked? "forgot password?" : "go back to login"}</p>}
         
 
         {action !== "Sign Up" ? (
