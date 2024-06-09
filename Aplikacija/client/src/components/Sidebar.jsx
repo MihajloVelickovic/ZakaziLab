@@ -35,6 +35,7 @@ const Sidebar = ({ show, role }) => {
         <NavLink className="sidebar-buttons bi bi-card-checklist" eventKey="3" as={Link} to="IzvestajOPoenima" > Izveštaj o poenima</NavLink>
         <NavLink className="sidebar-buttons bi bi-calendar3" eventKey="4" as={Link} to="aktivnosti" > Kalendar aktivnosti</NavLink>
         <NavLink className="sidebar-buttons" eventKey="5" as={Link} to="kabinet" ><i class="fa-solid fa-display"></i> Kabineti</NavLink>
+        <NavLink className="sidebar-buttons" eventKey="6" as={Link} to="graf prisustva" ><i class="bi bi-bar-chart-line"></i> Graf prisustva</NavLink>
         </>
     );
 

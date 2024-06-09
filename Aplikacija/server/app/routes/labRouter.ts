@@ -4,7 +4,7 @@ import Student from "../models/student";
 import Lab from "../models/lab";
 import { authorizeToken, verifyToken } from "../config/tokenFuncs";
 import Tema, { ISubject } from "../models/subject";
-import mongoose from "mongoose";
+import mongoose, { AnyBulkWriteOperation } from "mongoose";
 import Classroom from "../models/classroom";
 import Computer, { IComputer } from "../models/computer";
 import ClassSession, { IClassSession } from "../models/classSession";
@@ -18,27 +18,18 @@ labRouter.get("/findAll", authorizeToken, async (req: any, res) => {
         res.status(403).send({message: "Invalid token"});
     else{
         const found = await Lab.find({})
-        .populate({
-            path: 'subjects',
-            model: 'Tema',
-            populate: {
-                path: 'sessions',
+         .populate({
+                path: 'subjects',
                 populate: {
-                    path: 'classroom',
+                    path: 'sessions',
                     populate: {
-                        path: 'computers.student',
-                        model: 'StudentEntry',
+                        path: 'classroom',
                         populate: {
-                            path: 'student',
-                            model: 'Student',
-                            select: "-password"
+                            path: 'computers.student'
                         }
                     }
                 }
-            }
-        })
-        .exec();
-        
+            }).exec();
 
         found != null ? 
         res.status(200).send(found) : 
@@ -52,8 +43,8 @@ labRouter.post("/add", authorizeToken, async (req: any, res) => {
         return res.status(403).send({ message: "Invalid token" });
     }
 
-    let { labName, desc, mandatory, subjectNum, maxPoints, classroom, rows, cols,
-         crName, studentList, dates, timeSlots, subjectDescs, autoSchedule } = req.body;
+    let { labName, desc, mandatory, subjectNum, Subjects, maxPoints, classroom,
+         studentList, timeSlots, autoSchedule, maxSubjPoints } = req.body;
 
     console.log(req.body);
 
@@ -68,17 +59,22 @@ labRouter.post("/add", authorizeToken, async (req: any, res) => {
         const attendances = Array(subjectNum).fill(false);
         const points = Array(subjectNum).fill(0);
 
-        let studentEntryPromises = studentList.map(async (student:any) => {
-            const entrytoAdd:any = new StudentEntry({student, attendance:attendances,points, labName:name})
-            let savedEntry:any;
-            try{
-                savedEntry = await entrytoAdd.save();        
+        let studentEntryPromises = studentList.map(async (index:any) => {
+            const student:any = await Student.findOne({index});
+            if(student){
+
+                const entrytoAdd:any = new StudentEntry(
+                    {student:student._id, attendance:attendances,points, labName:name})
+                let savedEntry:any;
+                try{
+                    savedEntry = await entrytoAdd.save();        
+                }
+                catch(err){
+                    console.log(err);
+                    return res.status(400).send({ message: "Error adding studentEntry" });
+                }
+                return savedEntry?._id;
             }
-            catch(err){
-                console.log(err);
-                return res.status(400).send({ message: "Error adding studentEntry" });
-            }
-            return savedEntry?._id;
         });
 
         const classroomRef:any = await Classroom.findOne({_id:classroom});
@@ -88,9 +84,9 @@ labRouter.post("/add", authorizeToken, async (req: any, res) => {
         for (let i = 0; i < subjectNum; ++i) {
             let sessions: any[] = [];
             for (let j = 0; j < timeSlots.length; ++j) {
-                let datum = dates[i].split('T')[0];
+                let datum = Subjects[i].date.split('T')[0];
                 let computers: IComputer[][] = [];
-                let sname = `${crName}_${datum}/${timeSlots[j]}`;
+                let sname = `${classroomRef.name}_${datum}/${timeSlots[j]}`;
                 console.log("sname",sname);
                 
                 const existingClassroom = await Classroom.findOne({ name: sname });
@@ -98,15 +94,16 @@ labRouter.post("/add", authorizeToken, async (req: any, res) => {
                     return res.status(400).send({ message: `Classroom with name ${sname} already exists` });
                 }
 
-                for (let r = 0; r < rows; ++r) {
+                for (let r = 0; r < classroomRef.rows; ++r) {
                     const rowComputers: IComputer[] = [];
-                    for (let c = 0; c < cols; ++c) {
+                    for (let c = 0; c < classroomRef.cols; ++c) {
                         let computer;
                         if(autoSchedule) {
                             if((!classroomRef.computers[r][c].malfunctioned &&
-                                ((r*cols+c+j*(rows*cols))) < studentEntryList.length)) {
+                                ((r*classroomRef.cols+c+j*(classroomRef.rows*classroomRef.cols)))
+                                 < studentEntryList.length)) {
                                 computer = new Computer({ name: `${sname}_${r}_${c}`
-                            , free:false,student:studentEntryList[r*cols+c]});   
+                            , free:false,student:studentEntryList[r*classroomRef.cols+c]});   
                             }
                             else {
                                 computer = new Computer({ name: `${sname}_${r}_${c}`});
@@ -121,15 +118,21 @@ labRouter.post("/add", authorizeToken, async (req: any, res) => {
                 }
                 const dateTime = `${datum}T${timeSlots[j]}:00Z`;
                 let time = new Date(dateTime);
-                const classroom = new Classroom({ name: sname, rows, cols, computers });
+                const classroom = new Classroom({ name: sname, rows:classroomRef.rows,
+                     cols:classroomRef.cols, computers });
                 sessions.push(new ClassSession({ classroom: classroom, time }));
             }
 
-            const subDesc = subjectDescs[i];
-            const date = dates[i];
+            const subjMaxPoints = maxSubjPoints !== undefined 
+                                ? maxSubjPoints[i]
+                                : maxPoints !== 0
+                                ? maxPoints/subjectNum
+                                : 0;
+
+            const subDesc = Subjects[i].desc;
+            const date = Subjects[i].date;
             const subject = new Tema({
-                ordNum: (i+1), desc: subDesc, date, sessions, maxPoints:
-                (maxPoints/subjectNum), lab: name,
+                ordNum: (i+1), desc: subDesc, date, sessions, maxPoints: subjMaxPoints, lab: name,
             });
             
             try {
@@ -251,27 +254,18 @@ labRouter.post("/filteredFind", authorizeToken, async (req: any, res) => {
         res.status(403).send({message: "Invalid token"});
     else{
         const query = req.body;
-        const labs = await lab.find(query)
-        .populate({
+        const labs = await lab.find(query).populate({
             path: 'subjects',
-            model: 'Tema',
             populate: {
                 path: 'sessions',
                 populate: {
                     path: 'classroom',
                     populate: {
-                        path: 'computers.student',
-                        model: 'StudentEntry',
-                        populate: {
-                            path: 'student',
-                            model: 'Student',
-                            select: "-password"
-                        }
+                        path: 'computers.student'
                     }
                 }
             }
-        })
-        .exec();
+        }).exec();
         
         labs != null ?
         res.status(200).send(labs) :

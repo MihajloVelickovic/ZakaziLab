@@ -1,5 +1,7 @@
 .modal {
-    display: block; 
+    /* display: block;  */
+    display: flex;
+    flex-direction: column;
     position: fixed; 
     z-index: 1; 
     padding-top: 100px; 
@@ -13,11 +15,14 @@
 }
 
 .modal-content {
+    display: flex;
+    flex-direction: column;
     background-color: #fefefe;
     margin: auto;
     padding: 20px;
     border: 1px solid #888;
     width: 80%; 
+    padding-left: 50px;
 }
 
 .close {
@@ -33,3 +38,19 @@
     text-decoration: none;
     cursor: pointer;
 }
+
+.addLabForm {
+    display: flex;
+    flex-direction: column;
+}
+
+.removeBtn {
+    width: 70px;
+}
+.addIndexBtn{
+    width: 110px;
+}
+.addSubjectBtn {
+    width: 150px;
+}
+

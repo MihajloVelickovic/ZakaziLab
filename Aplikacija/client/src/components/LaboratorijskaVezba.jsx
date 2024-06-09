@@ -306,7 +306,7 @@ const LaboratorijskaVezba = ({ role }) => {
                 <button key={lab._id} onClick={() => handleLabClick(lab.name)}>{lab.name}</button>
             ))}
             {(role === 'admin' || role === 'assistant' || role === 'professor') && (
-                <button onClick={() => setShowAddLabModal(true)}>Dodaj laboratorijsku vežbu</button>
+                <button className = 'addLabButton' style={{float:'right'}} onClick={() => setShowAddLabModal(true)}>Dodaj laboratorijsku vežbu</button>
             )}
         </div>
     );
@@ -455,8 +455,8 @@ const LaboratorijskaVezba = ({ role }) => {
 
     return (
         <>
-            <div>
-                <h2>This is the laboratories section</h2>
+            <div style={{paddingBottom: '200px'}}>
+                {/* <h2>This is the laboratories section</h2> */}
                 {renderLabs()}
                 {selectedLab && renderSubjects()}
                 {selectedSubject && renderSessions()}

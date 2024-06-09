@@ -8,4 +8,20 @@
     margin-right: 30px;
     margin-bottom: 10px;
     border-radius: 5px;
+    margin: 5px;
+}
+
+button {
+    background-color: #007bff;
+    padding: 5px;
+    margin: 10px;
+    color: #ffffff;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.addLabButton {
+    background-color: green;
+    padding: 8px;
 }
