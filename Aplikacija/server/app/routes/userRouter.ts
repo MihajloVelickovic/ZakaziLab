@@ -267,10 +267,23 @@ userRouter.post("/register/confirm", authorizeToken, async (req:any, res) => {
     if(!("status" in req.body))
         return res.status(400).send({message: "Invalid body, status needed"});
     console.log(data);
+
+    const request = await RegistrationRequest.findOne({token: req.body.requestToken});
+        
+    if (request === null)
+        return res.status(400).send({message: "Request not found"}); 
+
+    let requestToken = verifyToken(request.token);
+
+    if(!requestToken)
+        return res.status(400).send({message: "Invalid token"});
+
+    requestToken = requestToken["data"];
+
     if(req.body.status === false){
         const mailOptions = {
             from: `ZakažiLab <${emailParams.email}`,
-            to: data.email,
+            to: requestToken.email,
             subject: "Zahtev za registraciju ODBIJEN",
             text: `Administrator je odbio Vaš zahtev za registraciju, pokušajte ponovo. Obratite pažnju na ispravnost unetih podataka`,
             html: `<p>Administrator je <b>odbio</b> Vaš zahtev za registraciju, pokušajte ponovo. Obratite pažnju na ispravnost unetih podataka<br/></p>
@@ -279,8 +292,7 @@ userRouter.post("/register/confirm", authorizeToken, async (req:any, res) => {
        transporer.sendMail(mailOptions, (err, info) => {
             err ?
             console.log(err) :
-            console.log(`Email sent to ${data.email}`);
-        
+            console.log(`Email sent to ${requestToken.email}`);
         });
 
         try{
@@ -293,18 +305,7 @@ userRouter.post("/register/confirm", authorizeToken, async (req:any, res) => {
     }
     else{
 
-        const request = await RegistrationRequest.findOne({token: req.body.requestToken});
         
-        if (request === null)
-            return res.status(400).send({message: "Request not found"}); 
-
-        let requestToken = verifyToken(request.token);
-
-        if(!requestToken)
-            return res.status(400).send({message: "Invalid token"});
-
-        requestToken = requestToken["data"];
-
         let dbUser;
         const type = requestToken.privileges;
         switch(type){
@@ -330,7 +331,7 @@ userRouter.post("/register/confirm", authorizeToken, async (req:any, res) => {
             await RegistrationRequest.findOneAndDelete({token: req.body.requestToken});
             const mailOptions = {
                 from: `ZakažiLab <${emailParams.email}`,
-                to: dbUser.email,
+                to: requestToken.email,
                 subject: "Zahtev za registraciju ODOBREN",
                 text: `Administrator je odobrio Vaš zahtev za registraciju. Od sada se možete ulogovati sa email adresom i šifrom koju ste naveli prilikom registracije`,
                 html: `<p>Administrator je <b>odobrio</b> Vaš zahtev za registraciju. Od sada se možete ulogovati sa email adresom i šifrom koju ste naveli prilikom registracije</p>`
