@@ -10,7 +10,7 @@ professorRouter.get("/findAll", authorizeToken, async (req: any, res) => {
     if(!verifyToken(req.token)) 
         res.status(403).send({message: "Invalid token"});
     else {
-        const found = await Professor.find({}).populate('assignedLabs');
+        const found = await Professor.find({});
         found != null ? 
         res.status(200).send(found) : 
         res.status(404).send({message: "professors not found"});
@@ -93,7 +93,7 @@ professorRouter.post("/filteredFind", authorizeToken, async (req: any, res) => {
    else {
         const query = req.body;
 
-        const professors = await Professor.find(query).populate('assignedLabs');
+        const professors = await Professor.find(query);
         professors != null ?
         res.status(200).send(professors) :
         res.status(404).send({message: "professors with filter not found"});

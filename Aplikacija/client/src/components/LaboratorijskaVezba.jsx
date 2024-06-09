@@ -24,7 +24,9 @@ const LaboratorijskaVezba = ({ role }) => {
         });
         
         console.log("not student clicked", actionModal);
-    }, [actionModal]);
+    }, [actionModal, labs]);
+
+
 
     useEffect(() => {
         if (actionModal.action === 'grade' && actionModal.computer && actionModal.computer.student) {
@@ -314,9 +316,6 @@ const LaboratorijskaVezba = ({ role }) => {
             {labs.map(lab => (
                 <button className='lab-button' key={lab._id} onClick={() => handleLabClick(lab.name)}>{lab.name}</button>
             ))}
-            {(role === 'admin' || role === 'assistant' || role === 'professor') && (
-                <button className = 'addLabButton' onClick={() => setShowAddLabModal(true)}>Dodaj laboratorijsku vežbu</button>
-            )}
         </div>
     );
 
@@ -461,11 +460,33 @@ const LaboratorijskaVezba = ({ role }) => {
         }
         setActionModal({ visible: false, computer: null, action: '', grade: '' });
     };
+
+    const handleDeleteLab = async () => {
+        if (!selectedLab) return;
+        
+        try {
+            await axiosInstance.delete(`/lab/delete/${selectedLab}`);
+            setLabs(prevLabs => prevLabs.filter(lab => lab !== selectedLab));
+            setSelectedLab(null);
+            setSubjects([]);
+            setSessions([]);
+            setComputers([]);
+        } catch (error) {
+            console.error('There was an error deleting the lab!', error);
+        }
+    };
     
 
     return (
         <>
             <div style={{paddingBottom: '200px'}}>
+            {(role === 'admin' || role === 'assistant' || role === 'professor') && (
+                <button className = 'addLabButton' onClick={() => setShowAddLabModal(true)}>Dodaj laboratorijsku vežbu</button>
+            )}
+            {(role === 'admin' || role === 'assistant' || role === 'professor') && (
+                <button className = 'addLabButton' onClick={handleDeleteLab}>Izbriši laboratorijsku vežbu</button>
+            )}
+
                 {/* <h2>This is the laboratories section</h2> */}
                 {renderLabs()}
                 {selectedLab && renderSubjects()}

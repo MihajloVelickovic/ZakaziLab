@@ -10,7 +10,7 @@ assistantRouter.get("/findAll", authorizeToken, async (req: any, res) => {
     if(!verifyToken(req.token)) 
         return res.status(403).send({message: "Invalid token"});
     
-    const found = await Assistant.find({}).populate('assignedLabs');
+    const found = await Assistant.find({});
 
     found != null ? 
     res.status(200).send(found) : 
@@ -90,7 +90,7 @@ assistantRouter.post("/filteredFind", authorizeToken, async (req: any, res) => {
         res.status(403).send({message: "Invalid token"});
     else{
         const query = req.body;
-        const assistants = await Assistant.find(query).populate('assignedLabs');
+        const assistants = await Assistant.find(query);
         assistants != null ?
         res.status(200).send(assistants) :
         res.status(404).send({message: "Assistants with filter not found"});
