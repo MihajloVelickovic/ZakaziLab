@@ -115,9 +115,12 @@ labRouter.post("/add", authorizeToken, async (req: any, res) => {
                                 malfunctionDesc:classroomRef.computers[r][c].malfunctionDesc});
                             }                        
                         }
-                        else {
+                        else if(classroomRef.computers[r][c].malfunctioned){
                             computer = new Computer({ name: `${sname}_${r}_${c}`, malfunctioned:true,
                                 malfunctionDesc:classroomRef.computers[r][c].malfunctionDesc});                         
+                        }
+                        else{
+                            computer = new Computer({ name: `${sname}_${r}_${c}`});
                         }
                         rowComputers.push(computer);
                     }
