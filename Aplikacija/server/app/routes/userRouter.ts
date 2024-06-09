@@ -232,25 +232,34 @@ userRouter.post("/register", async (req:any, res) => {
 
 userRouter.post("/register/contactAdmin", authorizeToken, async (req: any, res) => {
     
-    if(!verifyToken(req.token))
+    let data: any;
+    if(!(data = verifyToken(req.token)))
         return res.status(400).send({message: "Invalid token"});
 
-    const token = req.token;
+    
+
+    data =  Object.keys(data)
+                  .filter(objectKey => objectKey !== "iat" && objectKey !== "exp")
+                  .reduce((newObject: any, key) => {
+                            newObject[key] = data[key];
+                            return newObject;
+                          }, {});
+
+    const emails: any[] = [];
+
     const admins = await Admin.find({});
+    
+    admins.forEach(admin => emails.push(admin.email));
 
-    const emails: any = [];
-
-    admins.reduce((current: any, next) => {
-        current.push(next.email)
-    }, emails);
+    const newToken = signToken({data}, "2d");
 
     const mailOptions = {
         from: `ZakažiLab <${emailParams.email}`,
         to: emails,
         subject: "Pošaljite registraciju",
-        text: `http://localhost:3000/confirm/${token}`,
+        text: `http://localhost:3000/confirm/${newToken}`,
         html: `<p>Ovaj link je validan <b>15 minuta</b></p>
-            <a href="http://localhost:3000/confirm/${token}" target="_blank"><p>Pošaljite registraciju!</p></a>`
+            <a href="http://localhost:3000/confirm/${newToken}" target="_blank"><p>Pošaljite registraciju!</p></a>`
     };
 
     transporer.sendMail(mailOptions, (err, info) => {
@@ -265,9 +274,29 @@ userRouter.post("/register/contactAdmin", authorizeToken, async (req: any, res) 
 
 userRouter.post("/register/confirm", authorizeToken, async (req:any, res) => {
    
-    let data = verifyToken(req.token);
+    let data: any = verifyToken(req.token);
     if(!data)
-        res.status(400).send({message: "Expired token"});
+        return res.status(400).send({message: "Expired token"});
+    
+
+    if(!req.body.status)
+        return res.status(400).send({message: "Invalid body, status needed"});
+
+    if(req.body.status === false){
+        const mailOptions = {
+            from: `ZakažiLab <${emailParams.email}`,
+            to: data.email,
+            subject: "Zahtev za registraciju ODBIJEN",
+            text: `Administrator je odbio Vaš zahtev za registraciju, pokušajte ponovo. Obratite pažnju na ispravnost unetih podataka`,
+            html: `<p>Administrator je <b>odbio</b> Vaš zahtev za registraciju, pokušajte ponovo. Obratite pažnju na ispravnost unetih podataka</p>`
+       };
+       transporer.sendMail(mailOptions, (err, info) => {
+            err ?
+            console.log(err) :
+            console.log(`Email sent to ${data.email}`);
+        });
+        return res.status(200).send({message: "Administrator je odbio zahtev"});
+    }
     else{
 
         const invalidateTokens = await User.findOne({email: data.email});
@@ -275,33 +304,49 @@ userRouter.post("/register/confirm", authorizeToken, async (req:any, res) => {
         if(invalidateTokens != null)
             return res.status(400).send({message: `Korisnik sa email adresom ${data.email} je već registrovan`});
 
-        data =  Object.keys(data)
-                      .filter(objectKey => objectKey !== "iat" && objectKey !== "exp")
-                      .reduce((newObject: any, key) => {
+        data = Object.keys(data)
+                     .filter(objectKey => objectKey !== "iat" && objectKey !== "exp")
+                     .reduce((newObject: any, key) => {
                                 newObject[key] = data[key];
                                 return newObject;
                             }, {});
+
+
         let dbUser;
-        const type = data.privileges;
+        const type = data["data"].privileges;
         switch(type){
             case "student": 
-                dbUser = new Student(data);
+                dbUser = new Student(data["data"]);
                 break;
             case "assistant": 
-                dbUser = new Assistant(data);
+                dbUser = new Assistant(data["data"]);
                 break;
             case "admin": 
-                dbUser = new Admin(data);
+                dbUser = new Admin(data["data"]);
                 break;
             case "professor": 
-                dbUser = new Professor(data);
+                dbUser = new Professor(data["data"]);
                 break;
             default: 
                 return res.status(400).json({ message: "Invalid privileges" });
+
+            console.log(dbUser);
         }
         try{
             await dbUser.save();
-            res.status(200).send({message: "Završena registracija"});
+            const mailOptions = {
+                from: `ZakažiLab <${emailParams.email}`,
+                to: dbUser.email,
+                subject: "Zahtev za registraciju ODOBREN",
+                text: `Administrator je odobrio Vaš zahtev za registraciju. Od sada se možete ulogovati sa email adresom i šifrom koju ste naveli prilikom registracije`,
+                html: `<p>Administrator je <b>odobrio</b> Vaš zahtev za registraciju. Od sada se možete ulogovati sa email adresom i šifrom koju ste naveli prilikom registracije</p>`
+           };
+           transporer.sendMail(mailOptions, (err, info) => {
+                err ?
+                console.log(err) :
+                console.log(`Email sent to ${data.email}`);
+            });
+            res.status(200).send({message: "Uspešna registracija"});
         }
         catch(err){
             res.status(400).send({message: "Error saving user to database"});
