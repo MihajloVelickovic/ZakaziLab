@@ -36,8 +36,8 @@ body {
 }
 
 .studentContainer {
-    display: flex;
-    flex-direction: row;
+    /* display: flex;
+    flex-direction: row; */
     height: 100%;
     width: 100%;
     font-family: "JetBrains Mono", "Georgia", serif;
@@ -48,7 +48,7 @@ body {
     height: 100%;
     padding-left: 10px;
     /* margin-left: 10px; */
-    padding: 20px;
+    /* padding: 20px; */
     float: left;
     background-color:#64B5F6;
 }

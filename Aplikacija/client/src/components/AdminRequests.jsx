@@ -64,6 +64,11 @@ const AdminRequests = () => {
                         </div>
                     </div>
                 ))}
+                {/* {Object.keys(tokenData.data).filter(key => key !== 'password').map((key) => (
+                            <div key={key}>
+                                <strong>{key}:</strong> {tokenData.data[key]}
+                            </div>
+                ))} */}
             </div>
         </>
     );
