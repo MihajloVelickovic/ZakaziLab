@@ -49,7 +49,7 @@
 //     const addSubject = () => {
 //         setLabData({
 //             ...labData,
-//             subjects: [...labData.subjects, { desc: '', subjectDate: '', maxPoints: 0 }]
+//             subjects: [...labData.subjects, { desc: '', SubjectDate: '', maxPoints: 0 }]
 //         });
 //     };
 
@@ -125,7 +125,7 @@
 //                                 </label>
 //                                 <label>
 //                                     Subject Date:
-//                                     <input type="date" value={subject.subjectDate} onChange={(e) => handleSubjectChange(index, 'subjectDate', e.target.value)} required />
+//                                     <input type="date" value={subject.SubjectDate} onChange={(e) => handleSubjectChange(index, 'SubjectDate', e.target.value)} required />
 //                                 </label>
 //                                 <label>
 //                                     Max Points:
@@ -221,7 +221,7 @@ const AddLabModal = ({ onClose }) => {
     const addSubject = () => {
         setLabData({
             ...labData,
-            subjects: [...labData.subjects, { desc: '', subjectDate: '', maxPoints: 0 }]
+            subjects: [...labData.subjects, { desc: '', SubjectDate: '', maxSubjPoints: 0 }]
         });
     };
 
@@ -310,11 +310,11 @@ const AddLabModal = ({ onClose }) => {
                                 </label>
                                 <label>
                                     Subject Date:
-                                    <input type="date" value={subject.subjectDate} onChange={(e) => handleSubjectChange(index, 'subjectDate', e.target.value)} required />
+                                    <input type="date" value={subject.SubjectDate} onChange={(e) => handleSubjectChange(index, 'SubjectDate', e.target.value)} required />
                                 </label>
                                 <label>
                                     Max Points:
-                                    <input type="number" min="0" value={subject.maxPoints} onChange={(e) => handleSubjectChange(index, 'maxPoints', e.target.value)} required />
+                                    <input type="number" min="0" value={subject.maxSubjPoints} onChange={(e) => handleSubjectChange(index, 'maxSubjPoints', e.target.value)} required />
                                 </label>
                             </div>
                         ))}
