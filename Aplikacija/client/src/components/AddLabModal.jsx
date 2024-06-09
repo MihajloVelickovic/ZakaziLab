@@ -180,9 +180,9 @@ const AddLabModal = ({ onClose }) => {
         subjectNum: 0,
         maxPoints: 0,
         classroom: '',
-        subjects: [],               //moze da ostane ovako, ali mora da doda maxPoints na serveru
-        studentList: [],            //fetch each student
-        sessionTimes: [],           //as timeSlots[]
+        subjects: [],               //moze da ostane ovako, ali mora da doda maxPoints na serveru i da preimenuje dates
+        studentList: [],            
+        timeSlots: [],           
         autoSchedule: false,
     });
 
@@ -240,7 +240,7 @@ const AddLabModal = ({ onClose }) => {
             const time = `${sessionHour.padStart(2, '0')}:${sessionMinute.padStart(2, '0')}`;
             setLabData({
                 ...labData,
-                sessionTimes: [...labData.sessionTimes, time]
+                timeSlots: [...labData.timeSlots, time]
             });
             setSessionHour('');
             setSessionMinute('');
@@ -365,7 +365,7 @@ const AddLabModal = ({ onClose }) => {
                         </label>
                         <button type="button" onClick={handleAddSessionTime}>Add Session Time</button>
                         <div>
-                            {labData.sessionTimes.map((time, idx) => (
+                            {labData.timeSlots.map((time, idx) => (
                                 <div key={idx}>{time}</div>
                             ))}
                         </div>
