@@ -12,6 +12,7 @@ import ConfirmRegister from '../components/ConfirmRegister'
 import AdminRequests from '../components/AdminRequests';
 
 import PrivateRoute from '../utils/PrivateRoute';
+import PrivateRouteAdmin from '../utils/PrivateRouteAdmin';
 import { AuthProvider } from '../context/AuthContext';
 
 //AuthProvider
@@ -27,13 +28,13 @@ const AppRoutes=()=>{
              <Routes>
                     <Route exact path="/" element={<HomePage/>}/>
                     <Route path="/login" element={<LoginSignupPage/>}/>
-                    <Route path="/student/*" element={<PrivateRoute>   <StudentPage/>  </PrivateRoute>}/>
+                    <Route path="/student/*" element={<StudentPage/>}/>
                     <Route path="/professor/*" element={<PrivateRoute> <ProfessorPage/>    </PrivateRoute>}/>
                     <Route path="/assistant/*" element={<PrivateRoute> <AssistantPage/>    </PrivateRoute>}/>
                     <Route path="/register/:token" element={<Register/>}/>
                     <Route path="/confirm/:token" element={<ConfirmRegister/>}/>
                     <Route path="/resetPassword/:token" element={<ResetPassword/>}/>
-                    <Route path="/admin/*" element={<PrivateRoute> <AdminPage/> </PrivateRoute>}/>
+                    <Route path="/admin/*" element={<PrivateRouteAdmin> <AdminPage/> </PrivateRouteAdmin>}/>
 
              </Routes>
         </AuthProvider>
