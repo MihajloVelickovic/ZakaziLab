@@ -9,6 +9,7 @@ import AdminPage from '../pages/AdminPage';
 import AssistantPage from '../pages/AssistantPage'
 import ResetPassword from '../components/ResetPassword'
 import ConfirmRegister from '../components/ConfirmRegister'
+import AdminRequests from '../components/AdminRequests';
 
 import PrivateRoute from '../utils/PrivateRoute';
 import { AuthProvider } from '../context/AuthContext';

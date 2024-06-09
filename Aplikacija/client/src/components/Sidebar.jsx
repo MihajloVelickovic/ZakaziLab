@@ -17,6 +17,7 @@ const Sidebar = ({ show, role }) => {
             <NavLink className="bi bi-person" eventKey="1" as={Link} to="studenti"> Studenti</NavLink>
             <NavLink className="bi bi-person" eventKey="2" as={Link} to="profesori"> Profesori</NavLink>
             <NavLink className="bi bi-person" eventKey="3" as={Link} to="asistenti"> Asistenti</NavLink>
+            <NavLink className="bi bi-person" eventKey="4" as={Link} to="AdminRequests"> Zahtevi</NavLink>
         </>
     );
 

@@ -222,7 +222,7 @@ userRouter.post("/register", async (req:any, res) => {
             console.log(`Email sent to ${email}`);
         });
 
-        res.status(200).json({message: `Email poslat na adresu ${email}. Klikom na link koji Vam je stigao, šaljete unete podatke administratoru na uvid. U narednih 48h će Vam biti odobrena ili odbijena registracija`});
+        res.status(200).json({message: `Email poslat na adresu ${email}. Klikom na link koji Vam je stigao, šaljete unete podatke administratoru na uvid. Administrator će vam odobriti ili odbijti zahtev u narednom periodu`});
     } 
     catch (error:any) {
         res.status(500).json({ message: 'Error registering user', error:`${error.message}}`});
@@ -235,8 +235,6 @@ userRouter.post("/register/contactAdmin", authorizeToken, async (req: any, res) 
     let data: any;
     if(!(data = verifyToken(req.token)))
         return res.status(400).send({message: "Invalid token"});
-
-    
 
     data =  Object.keys(data)
                   .filter(objectKey => objectKey !== "iat" && objectKey !== "exp")
@@ -254,7 +252,7 @@ userRouter.post("/register/contactAdmin", authorizeToken, async (req: any, res) 
         res.status(200).json({message: "Uspešno poslat zahtev administratorima"});
     }
     catch(err){
-        res.status(500).send({message: "Error sending request", err});
+        res.status(500).send({message: "Zahtev već u bazi zahteva!"});
     }
 });
 
@@ -266,11 +264,24 @@ userRouter.post("/register/confirm", authorizeToken, async (req:any, res) => {
 
     if(!("status" in req.body))
         return res.status(400).send({message: "Invalid body, status needed"});
+    console.log(data);
+
+    const request = await RegistrationRequest.findOne({token: req.body.requestToken});
+        
+    if (request === null)
+        return res.status(400).send({message: "Request not found"}); 
+
+    let requestToken = verifyToken(request.token);
+
+    if(!requestToken)
+        return res.status(400).send({message: "Invalid token"});
+
+    requestToken = requestToken["data"];
 
     if(req.body.status === false){
         const mailOptions = {
             from: `ZakažiLab <${emailParams.email}`,
-            to: data["data"].email,
+            to: requestToken.email,
             subject: "Zahtev za registraciju ODBIJEN",
             text: `Administrator je odbio Vaš zahtev za registraciju, pokušajte ponovo. Obratite pažnju na ispravnost unetih podataka`,
             html: `<p>Administrator je <b>odbio</b> Vaš zahtev za registraciju, pokušajte ponovo. Obratite pažnju na ispravnost unetih podataka<br/></p>
@@ -279,8 +290,7 @@ userRouter.post("/register/confirm", authorizeToken, async (req:any, res) => {
        transporer.sendMail(mailOptions, (err, info) => {
             err ?
             console.log(err) :
-            console.log(`Email sent to ${data["email"].email}`);
-        
+            console.log(`Email sent to ${requestToken.email}`);
         });
 
         try{
@@ -293,18 +303,7 @@ userRouter.post("/register/confirm", authorizeToken, async (req:any, res) => {
     }
     else{
 
-        const request = await RegistrationRequest.findOne({token: req.body.requestToken});
         
-        if (request === null)
-            return res.status(400).send({message: "Request not found"}); 
-
-        let requestToken = verifyToken(request.token);
-
-        if(!requestToken)
-            return res.status(400).send({message: "Invalid token"});
-
-        requestToken = requestToken["data"];
-
         let dbUser;
         const type = requestToken.privileges;
         switch(type){
@@ -330,7 +329,7 @@ userRouter.post("/register/confirm", authorizeToken, async (req:any, res) => {
             await RegistrationRequest.findOneAndDelete({token: req.body.requestToken});
             const mailOptions = {
                 from: `ZakažiLab <${emailParams.email}`,
-                to: dbUser.email,
+                to: requestToken.email,
                 subject: "Zahtev za registraciju ODOBREN",
                 text: `Administrator je odobrio Vaš zahtev za registraciju. Od sada se možete ulogovati sa email adresom i šifrom koju ste naveli prilikom registracije`,
                 html: `<p>Administrator je <b>odobrio</b> Vaš zahtev za registraciju. Od sada se možete ulogovati sa email adresom i šifrom koju ste naveli prilikom registracije</p>`
