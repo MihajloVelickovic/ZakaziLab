@@ -24,7 +24,7 @@ const LaboratorijskaVezba = ({ role }) => {
         });
         
         console.log("not student clicked", actionModal);
-    }, [actionModal, labs]);
+    }, [actionModal]);
 
 
 
@@ -465,8 +465,9 @@ const LaboratorijskaVezba = ({ role }) => {
         if (!selectedLab) return;
         
         try {
-            await axiosInstance.delete(`/lab/delete/${selectedLab}`);
-            setLabs(prevLabs => prevLabs.filter(lab => lab !== selectedLab));
+            const foundLab = labs.find(lab => lab.name === selectedLab);
+            await axiosInstance.delete(`/lab/delete/${foundLab._id}`);
+            setLabs(prevLabs => prevLabs.filter(lab => lab.name !== selectedLab));
             setSelectedLab(null);
             setSubjects([]);
             setSessions([]);
@@ -479,14 +480,15 @@ const LaboratorijskaVezba = ({ role }) => {
 
     return (
         <>
+            <div className='modifyLabButtonContainer'>
+                {(role === 'admin' || role === 'assistant' || role === 'professor') && (
+                    <button className = 'modifyLabButton' onClick={() => setShowAddLabModal(true)}>Dodaj laboratorijsku vežbu</button>
+                )}
+                {(role === 'admin' || role === 'assistant' || role === 'professor') && (
+                    <button disabled={!selectedLab} className = 'modifyLabButton' onClick={handleDeleteLab}>Izbriši laboratorijsku vežbu</button>
+                )}
+            </div>
             <div style={{paddingBottom: '200px'}}>
-            {(role === 'admin' || role === 'assistant' || role === 'professor') && (
-                <button className = 'addLabButton' onClick={() => setShowAddLabModal(true)}>Dodaj laboratorijsku vežbu</button>
-            )}
-            {(role === 'admin' || role === 'assistant' || role === 'professor') && (
-                <button className = 'addLabButton' onClick={handleDeleteLab}>Izbriši laboratorijsku vežbu</button>
-            )}
-
                 {/* <h2>This is the laboratories section</h2> */}
                 {renderLabs()}
                 {selectedLab && renderSubjects()}

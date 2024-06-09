@@ -21,9 +21,14 @@
     transition: background-color 0.3s ease;
 }
 
-.addLabButton {
+.modifyLabButton {
     background-color: #0056b3;
     color:white;
     padding: 8px;
     float: right;
+    margin-left: 20px;
+}
+
+.modifyLabButtonContainer {
+    margin-right: 20%;
 }

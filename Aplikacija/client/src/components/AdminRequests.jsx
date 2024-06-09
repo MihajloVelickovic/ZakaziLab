@@ -54,7 +54,7 @@ const AdminRequests = () => {
             <h2>Admin Requests</h2>
             <div className="requests-container">
                 {usersData.map(user => (
-                    <div key={user.token} className="request-card">
+                    <div key={user.token} className="request-card request-conainter">
                         <p><strong>Name:</strong> {user.name}</p>
                         <p><strong>Email:</strong> {user.email}</p>
                         <p><strong>Privileges:</strong> {user.privileges}</p>
