@@ -13,7 +13,7 @@ import RegistrationRequest from "../models/registrationRequest";
 
 const userRouter = Router();
 
-let mainRefreshToken: string = "";
+let mainRefreshToken: string[] = [];
 
 //dodavanje
 userRouter.post("/add", authorizeToken, async (req: any, res) => {
@@ -272,7 +272,7 @@ userRouter.post("/register/confirm", authorizeToken, async (req:any, res) => {
     if (request === null)
         return res.status(400).send({message: "Request not found"}); 
 
-    let requestToken = verifyToken(request.token);
+    let requestToken: any = verifyToken(request.token);
     console.log(requestToken);
 
     if(!requestToken)
@@ -382,7 +382,7 @@ userRouter.post("/login", async (req, res) => {
         const token = signToken({id: user._id, email: user.email, privileges: user.privileges});
         const refreshToken = signRefresh({id: user._id, email: user.email});
   
-        mainRefreshToken = refreshToken;
+        mainRefreshToken.push(refreshToken);
 
         res.status(200).json({token, refreshToken, user, message: 'Successfull log-in'});
     } 
@@ -395,7 +395,7 @@ userRouter.post("/refresh", (req, res) => {
     if (!req.body.token)
         res.status(422).send({message: "Unprocessable request"});
     else{
-        if(req.body.token !== mainRefreshToken)
+        if(!mainRefreshToken.includes(req.body.token))
             return res.status(422).send({message: "Invalid token"});
         const verified: any = verifyRefresh(req.body.token);
         if(!verified)
@@ -403,21 +403,24 @@ userRouter.post("/refresh", (req, res) => {
         else{
             const token = signToken({id: verified._id, email: verified.email, privileges: verified.privileges});
             const refreshToken = signRefresh({id: verified._id, email: verified.email});
-            mainRefreshToken = refreshToken;
+            mainRefreshToken.splice(mainRefreshToken.indexOf(req.body.token), 1);
+            mainRefreshToken.push(refreshToken);
             res.status(200).send({token, refreshToken});
         }
     }
 })
 
-userRouter.post("/logout", authorizeToken, (req: any, res) => {
+userRouter.post("/logout", authorizeToken, async (req: any, res) => {
     if(!verifyToken(req.token))
         res.status(403).send({message: "Invalid token"});
     else{
         if(!req.body.token)
             return res.status(422).send({message: "Refresh token necessary"});
         
-        if(verifyRefresh(req.body.token) !== false){
-            mainRefreshToken = "";
+        if(!mainRefreshToken.includes(req.body.token))
+            return res.status(400).send({message: "Invalid refresh token"});
+        if(verifyRefresh(req.body.token)){
+            mainRefreshToken.splice(mainRefreshToken.indexOf(req.body.token), 1);;
             res.status(200).send({message: "Successful log-out"});
         }
 
@@ -461,7 +464,7 @@ userRouter.post("/resetPasswordEmail", async (req, res) => {
 });
 
 userRouter.post("/resetPassword", authorizeToken, async (req: any, res) => {
-    let data;
+    let data: any;
     if(!(data = verifyToken(req.token)))
         return res.status(403).send({message: "Invalid token"});
 

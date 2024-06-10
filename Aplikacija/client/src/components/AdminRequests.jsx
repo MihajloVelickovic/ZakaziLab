@@ -81,7 +81,7 @@ const AdminRequests = () => {
                             />
                             <div>
                             <button className="AcceptanceButtons acceptButton01" onClick={() => handleRequest(user.token, true)}>Accept</button>
-                            <button className="AcceptanceButtons refuseButton01" onClick={() => handleRequest(user.token, false, "Reason for refusal")}>Refuse</button>
+                            <button className="AcceptanceButtons refuseButton01" onClick={() => handleRequest(user.token, false, refusalMessages[user.token])}>Refuse</button>
                             </div>
                         </div>
                     </div>
