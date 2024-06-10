@@ -29,7 +29,9 @@ labRouter.get("/findAll", authorizeToken, async (req: any, res) => {
                         }
                     }
                 }
-            }).exec();
+            }).populate("studentList").exec();
+
+            
 
         found != null ? 
         res.status(200).send(found) : 

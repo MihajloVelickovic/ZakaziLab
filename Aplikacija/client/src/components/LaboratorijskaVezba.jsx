@@ -15,16 +15,41 @@ const LaboratorijskaVezba = ({ role }) => {
     const [actionModal, setActionModal] = useState({ visible: false, computer: null, action: '', grade: '' });
     const [showAddLabModal, setShowAddLabModal] = useState(false); // New state for Add Lab modal
 
-    useEffect(() => {
-        axiosInstance.get('/lab/findAll').then(response => {
-            setLabs(response.data);
-            console.log(response.data);
-        }).catch(error => {
-            console.error('There was an error fetching the labs!', error);
-        });
+    // useEffect(() => {
+    //     axiosInstance.get('/lab/findAll').then(response => {
+    //         setLabs(response.data);
+    //         console.log(response.data);
+    //     }).catch(error => {
+    //         console.error('There was an error fetching the labs!', error);
+    //     });
         
+    //     console.log("not student clicked", actionModal);
+    // }, [actionModal]);
+
+    useEffect(() => {
+        const fetchLabs = async () => {
+            try {
+                const response = await axiosInstance.get('/lab/findAll');
+                let allLabs = response.data;
+                console.log('All labs:', allLabs);
+
+                if (role === 'student') {
+                    const user = JSON.parse(localStorage.getItem('user'));
+                    allLabs = allLabs.filter(lab => 
+                        lab.studentList.some(studentEntry => studentEntry.student === user._id)
+                    );
+                    console.log('Filtered labs for student:', allLabs);
+                }
+
+                setLabs(allLabs);
+            } catch (error) {
+                console.error('There was an error fetching the labs!', error);
+            }
+        };
+
+        fetchLabs();
         console.log("not student clicked", actionModal);
-    }, [actionModal]);
+    }, [role, actionModal]);
 
 
 
