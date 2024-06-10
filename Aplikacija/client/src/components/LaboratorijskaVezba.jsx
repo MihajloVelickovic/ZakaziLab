@@ -103,7 +103,12 @@ const LaboratorijskaVezba = ({ role }) => {
         if (role === 'student') {
             handleStudentComputerClick(computer);
         } else {
-            setActionModal({ visible: true, computer, action: '', grade: '' });
+            if (computer === actionModal.computer){
+                setActionModal({ visible: false, computer: null, action: '', grade: '' });
+            }
+            else {
+                setActionModal({ visible: true, computer, action: '', grade: '' });
+            }
             console.log("not student clicked", actionModal);
         }
     }
@@ -472,6 +477,8 @@ const LaboratorijskaVezba = ({ role }) => {
             setSubjects([]);
             setSessions([]);
             setComputers([]);
+            setSelectedSubject(null);
+            setSelectedSession(null);
         } catch (error) {
             console.error('There was an error deleting the lab!', error);
         }
@@ -495,7 +502,7 @@ const LaboratorijskaVezba = ({ role }) => {
                 {selectedSubject && renderSessions()}
                 {selectedSession && renderComputers()}
                 {actionModal.visible && renderActionModal()}
-                {showAddLabModal && <AddLabModal onClose={() => setShowAddLabModal(false)} />}
+                {showAddLabModal && <AddLabModal onClose={() => {setShowAddLabModal(false); setActionModal({ visible: false, computer: null, action: '', grade: '' })}} />}
             </div>
         </>
     )

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import '../styles/ResetPassword.css'
 
 const initialValues = {
     pas1: "",
@@ -51,11 +52,7 @@ const ResetPassword = () => {
 
     return (
         <>
-            <h2 style={{ textAlign: "center", marginTop: "40px" }}>
-                Hello
-            </h2>
-
-            <div className="forgotPasswordContainer">
+            <div className="forgotPasswordContainer" style={{ textAlign: "center", marginTop: "40px" }}>
                 <h3>Unesite novu šifru</h3>
                 <form onSubmit={handleSubmit}>
                     <label>
@@ -78,8 +75,9 @@ const ResetPassword = () => {
                     </label>
                     <button type="submit">Submit</button>
                 </form>
+                {message && <div className="message" >{message}</div>}
             </div>
-            {message && <div>{message}</div>}
+            
         </>
     );
 }

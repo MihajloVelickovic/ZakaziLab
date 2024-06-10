@@ -3,6 +3,7 @@ import React from "react";
 import '../styles/Admin.css';
 import { useState } from "react";
 import "../styles/LoginButton.css";
+import '../styles/Student.css';
 
 import Brand from "../images/logo.ico";
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -50,11 +51,11 @@ const Admin = () => {
             </button>
         </header>
         <div className="studentContainer">            
-            <aside className="StudentAside" style={{left: showSidebar ? '0' : '-250px', position:"fixed"}}> 
+            <aside className="StudentAside" style={{left: showSidebar ? '0' : '-200px', position:"fixed", transition: 'left 0.3s ease'}}> 
                 {/* <NavigationBar /> */}
                 <Sidebar show={showSidebar} role="admin" />
             </aside>
-            <main style={{ marginLeft: showSidebar ? '250px' : '0', transition: 'margin-left 0.3s ease' }}>
+            <main style={{ marginLeft: showSidebar ? '150px' : '0', width: "80%", transition: 'margin-left 0.3s ease' }}>
                 <Routes>
                     <Route path="home" element={<PageHome role="admin"/>} />
                     <Route path="studenti" element={<UpravljanjeStudentima role="admin"/>}/>

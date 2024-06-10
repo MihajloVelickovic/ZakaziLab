@@ -59,6 +59,13 @@ const AddLabModal = ({ onClose }) => {
     });
   };
 
+  const handleRemoveSubject = (indexToRemove) => {
+    setLabData({
+      ...labData,
+      Subjects: labData.Subjects.filter((_, index) => index !== indexToRemove),
+    });
+  };
+
   const handleAddStudentIndex = () => {
     if (studentIndex.trim()) {
       setLabData({
@@ -142,6 +149,7 @@ const AddLabModal = ({ onClose }) => {
                 name="classroom"
                 value={labData.classroom}
                 onChange={handleChange}
+                required
               >
                 <option value="">Izaberi kabinet</option>
                 {classrooms.map((classroom) => (
@@ -257,6 +265,13 @@ const AddLabModal = ({ onClose }) => {
                     />
                   </label>
                 </div>
+                <button
+                  type="button"
+                  className="removeBtn"
+                  onClick={() => handleRemoveSubject(index)}
+                >
+                  Obriši
+                </button>
               </div>
             ))}
             <button
@@ -311,7 +326,7 @@ const AddLabModal = ({ onClose }) => {
                   min="0"
                   max="23"
                   placeholder="HH"
-                  required
+                  // required
                 />
               </label>
             </div>
@@ -325,7 +340,7 @@ const AddLabModal = ({ onClose }) => {
                   min="0"
                   max="59"
                   placeholder="MM"
-                  required
+                  // required
                 />
               </label>
             </div>
@@ -363,3 +378,4 @@ const AddLabModal = ({ onClose }) => {
 };
 
 export default AddLabModal;
+

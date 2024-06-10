@@ -267,11 +267,13 @@ userRouter.post("/register/confirm", authorizeToken, async (req:any, res) => {
     console.log(data);
 
     const request = await RegistrationRequest.findOne({token: req.body.requestToken});
+    console.log("nadjen request: ", request);
         
     if (request === null)
         return res.status(400).send({message: "Request not found"}); 
 
     let requestToken = verifyToken(request.token);
+    console.log(requestToken);
 
     if(!requestToken)
         return res.status(400).send({message: "Invalid token"});
