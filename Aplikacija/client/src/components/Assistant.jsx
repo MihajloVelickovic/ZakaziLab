@@ -15,6 +15,7 @@ import LaboratorijskaVezba from "./LaboratorijskaVezba";
 import IzvestajOPoenima from "./IzvestajOPoenima";
 import KalendarAktivnosti from "./KalendarAktivnosti";
 import Kabinet from './Kabinet';
+import AttendanceChart from './AttendanceChart';
 
 import { useContext } from 'react';
 import AuthContext from '../context/AuthContext';
@@ -57,6 +58,7 @@ const Professor = () => {
                     <Route path="IzvestajOPoenima" element={<IzvestajOPoenima />} />
                     <Route path="aktivnosti" element={<KalendarAktivnosti role="assistant"/>} />
                     <Route path="Kabinet" element={<Kabinet role="assistant" />} />
+                    <Route path="graf_prisustva" element={<AttendanceChart role="assistant" />} />
                 </Routes>
             </main>
         <Footer/>

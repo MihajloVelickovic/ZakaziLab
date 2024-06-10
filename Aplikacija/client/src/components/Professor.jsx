@@ -58,6 +58,7 @@ const Professor = () => {
                     <Route path="IzvestajOPoenima" element={<IzvestajOPoenima />} />
                     <Route path="aktivnosti" element={<KalendarAktivnosti role="professor"/>} />
                     <Route path="Kabinet" element={<Kabinet role="professor" />} />
+                    <Route path="graf_prisustva" element={<AttendanceChart role="professor" />} />
                 </Routes>
             </main>
         <Footer/>

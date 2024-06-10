@@ -63,15 +63,18 @@ const AttendanceChart = () => {
         </div>
     );
 
-    useEffect(() => {
+    const fetchLabs = async () => {
         axiosInstance.get('/lab/findAll').then(response => {
             setLabs(response.data);
             console.log(response.data);
         }).catch(error => {
             console.error('There was an error fetching the labs!', error);
         });
-    
-    });
+    }
+    useEffect(() => {
+        console.log("hey");
+        fetchLabs();
+    }, []);
 
     useEffect(() => {
         if (selectedSubject) {
@@ -104,8 +107,11 @@ const AttendanceChart = () => {
 
     return (
         <>
+            <div className="chartContainer">
             {renderLabs()}
             {selectedLab && renderSubjects()}
+            </div>
+            
             {selectedSubject &&
                 <div className="attendance-chart size-stuff">
                     <h3>Graf prisustva</h3>
