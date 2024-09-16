@@ -9,7 +9,7 @@ export interface ICourse extends mongoose.Document {
     ESPB: number;
     courseCode: string;
     semesterNum: number;
-    //spisak studenata za ceo predmet
+    studentList: mongoose.Types.ObjectId[];//spisak studenata za ceo predmet
 }
 
 export const CourseSchema = new mongoose.Schema<ICourse>({
@@ -36,6 +36,10 @@ export const CourseSchema = new mongoose.Schema<ICourse>({
     semesterNum: {
         type: Number,
         required: true
+    },
+    studentList: {
+        type: [Schema.Types.ObjectId],
+        ref: 'Student',
     }
 });
 

@@ -5,19 +5,19 @@ import { IClassroom } from "./classroom_t";
 // imam jos jedno potencialno resenje, da postoji kolokvijum i lab
 // i da sadrze aktivnosti, mozda treba da se promeni ime ali sustina je ista
 
-export interface IActivity extends mongoose.Document {
+export interface ISession extends mongoose.Document {
     desc: string;
     mandatory: boolean;
     points: number;
-    type: string; // kolokvijum, ispit ili laboratorijska vezba
     duration: number; // u minutima
     startTime: Date;
     classroom: IClassroom; //kabineti gde se odrzavaju labovi
     course:  mongoose.Types.ObjectId;
-    //spisak studenata za aktivnost 
+    //spisak studenata za aktivnost
+    //potencijalno i nije neophodno ali treba testirati
 }
 
-export const ActivitySchema = new mongoose.Schema<IActivity> ({
+export const SessionSchema = new mongoose.Schema<ISession> ({
     desc: {
         type: String,
         required:true
@@ -48,6 +48,6 @@ export const ActivitySchema = new mongoose.Schema<IActivity> ({
     }
 });
 
-const Activity = mongoose.model<IActivity>('Activity', ActivitySchema);
+const Activity = mongoose.model<ISession>('Session', SessionSchema);
 
 export default Activity;
