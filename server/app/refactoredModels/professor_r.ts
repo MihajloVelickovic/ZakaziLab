@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import User from "./user_r";
+import { IAssistant } from "./assistant_r";
 
 
 
